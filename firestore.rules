@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Game root documents
+    match /games/{gameId} {
+      // Anyone can read a game (needed for live sync)
+      allow read: if true;
+      // Only Cloud Functions write the game doc (via Admin SDK — bypasses rules)
+      // Direct client writes only allowed to join the room initially
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+
+      // Players sub-collection: anyone can join by writing their own player doc
+      match /players/{playerId} {
+        allow read:   if true;
+        allow create: if true;
+        allow update: if request.auth == null; // unauthenticated join allowed
+        allow delete: if false;
+      }
+
+      // Public guess log: readable by all, written only by Cloud Functions
+      match /guesses_public/{guessId} {
+        allow read:  if true;
+        allow write: if false;
+      }
+    }
+  }
+}

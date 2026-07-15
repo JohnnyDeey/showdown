@@ -1,0 +1,12 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "guesses_public",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

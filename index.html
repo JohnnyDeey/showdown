@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Family Showdown</title>
+  <meta name="description" content="Real-time multiplayer number guessing game. Create a room, share the code, and outwit your family.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="icon" type="image/png" href="icons/icon-32x32.png">
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Showdown">
+  <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+
+  <!-- OG / Social -->
+  <meta property="og:title" content="Family Showdown">
+  <meta property="og:description" content="Real-time multiplayer number guessing game.">
+  <meta property="og:image" content="icons/icon-512x512.png">
+  <meta property="og:type" content="website">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Pulse ring on active timer */
+    @keyframes ring-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+      70%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    .timer-urgent { animation: ring-pulse 1s ease-in-out infinite; }
+
+    /* Feed entry animation */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .feed-entry { animation: slideIn 0.25s ease forwards; }
+
+    /* Update toast */
+    #updateToast {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    #updateToast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Solo modal */
+    #soloModal {
+      transition: opacity 0.2s ease;
+    }
+
+    /* Shake animation for wrong guess feedback */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-6px); }
+      40%,80% { transform: translateX(6px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+
+    /* Install banner */
+    #installBanner {
+      transition: transform 0.3s ease;
+      transform: translateY(-100%);
+    }
+    #installBanner.show { transform: translateY(0); }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col select-none overflow-hidden">
+
+  <!-- ===== INSTALL BANNER (shown before PWA install) ===== -->
+  <div id="installBanner" class="fixed top-0 left-0 right-0 z-50 bg-indigo-600 px-4 py-3 flex items-center justify-between shadow-lg">
+    <div class="flex items-center gap-3">
+      <img src="icons/icon-72x72.png" class="w-8 h-8 rounded-lg" alt="icon">
+      <div>
+        <p class="text-xs font-bold">Add to Home Screen</p>
+        <p class="text-[10px] text-indigo-200">Play offline, no browser bar</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button id="installBtn" class="bg-white text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg">Install</button>
+      <button id="dismissBanner" class="text-indigo-200 text-xs px-2">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== LOBBY / ROOM DISCOVERY ===== -->
+  <div id="setupScreen" class="flex-1 flex flex-col justify-center p-6 max-w-sm mx-auto w-full">
+    <div class="text-center mb-8">
+      <div class="relative inline-block">
+        <div class="bg-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-900/50">
+          <i class="fa-solid fa-bolt text-2xl text-white"></i>
+        </div>
+      </div>
+      <h1 class="text-3xl font-black tracking-tight">FAMILY<br><span class="text-indigo-400">SHOWDOWN</span></h1>
+      <p class="text-slate-500 text-xs mt-1 mono">Number Guessing · Real-Time · Multiplayer</p>
+    </div>
+
+    <!-- Error message -->
+    <div id="errorMsg" class="hidden bg-rose-950 border border-rose-800 text-rose-300 text-xs px-4 py-2 rounded-xl mb-4 text-center"></div>
+
+    <div class="space-y-5">
+      <!-- Join -->
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+        <h3 class="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-door-open text-indigo-400"></i> Join a Game
+        </h3>
+        <div class="space-y-2.5">
+          <input type="text" id="joinRoomId" placeholder="6-LETTER ROOM CODE" maxlength="6"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-center mono font-bold tracking-widest text-base uppercase focus:border-indigo-500 focus:outline-none transition-colors">
+          <input type="text" id="joinName" placeholder="YOUR NAME"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 uppercase focus:border-indigo-500 focus:outline-none transition-colors">
+          <input type="password" inputmode="numeric" id="joinPin" placeholder="PIN (4 DIGITS)" maxlength="4"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-center mono focus:border-indigo-500 focus:outline-none transition-colors">
+          <button id="joinBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 font-bold py-2.5 rounded-xl uppercase text-sm transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-slate-800"></div>
+        <span class="text-[10px] text-slate-600 uppercase font-bold">or host</span>
+        <div class="flex-1 h-px bg-slate-800"></div>
+      </div>
+
+      <!-- Create -->
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+        <h3 class="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-crown text-amber-400"></i> Host New Game
+        </h3>
+        <div class="space-y-2.5">
+          <input type="text" id="createName" placeholder="YOUR NAME (HOST)"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 uppercase focus:border-indigo-500 focus:outline-none transition-colors">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" id="minRange" placeholder="MIN (e.g. 1)"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-center focus:border-indigo-500 focus:outline-none transition-colors mono">
+            <input type="number" id="maxRange" placeholder="MAX (e.g. 1000)"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-center focus:border-indigo-500 focus:outline-none transition-colors mono">
+          </div>
+          <button id="createBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 font-bold py-2.5 rounded-xl uppercase text-sm transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus"></i> Create Room
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GAMEPLAY SCREEN ===== -->
+  <div id="gameplayScreen" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex justify-between items-center shrink-0">
+      <div>
+        <span class="text-[9px] text-slate-500 uppercase font-bold tracking-wider block">Room</span>
+        <span id="activeRoomCode" class="text-xl mono font-black text-amber-400 tracking-widest">------</span>
+      </div>
+
+      <!-- Timer -->
+      <div id="timerPill" class="flex items-center gap-2 bg-slate-950 px-4 py-2 rounded-full border border-slate-800">
+        <i class="fa-solid fa-stopwatch text-rose-500"></i>
+        <span id="timerLabel" class="mono text-lg font-black text-rose-400">60s</span>
+      </div>
+
+      <button id="endSessionBtn" class="bg-rose-950 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-900 px-3 py-2 rounded-xl text-xs font-bold uppercase transition-all">
+        <i class="fa-solid fa-xmark mr-1"></i>End
+      </button>
+    </header>
+
+    <!-- Live feed area -->
+    <div class="bg-slate-900/40 border-b border-slate-900 flex flex-col shrink-0" style="height:38%">
+      <div class="grid grid-cols-2 gap-2 p-3 shrink-0">
+        <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-900 text-center">
+          <p class="text-[8px] text-slate-500 uppercase font-bold tracking-wider">Low Limit</p>
+          <p id="liveMin" class="mono text-sm font-bold text-emerald-400 mt-0.5">--</p>
+        </div>
+        <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-900 text-center">
+          <p class="text-[8px] text-slate-500 uppercase font-bold tracking-wider">High Limit</p>
+          <p id="liveMax" class="mono text-sm font-bold text-rose-400 mt-0.5">--</p>
+        </div>
+      </div>
+
+      <!-- Player turn strip -->
+      <div id="turnStrip" class="px-3 pb-2 shrink-0">
+        <div class="bg-slate-950 rounded-xl px-3 py-2 flex items-center gap-2 border border-slate-900">
+          <i class="fa-solid fa-arrow-pointer text-indigo-400 text-xs"></i>
+          <span id="turnNotice" class="text-xs text-slate-400 truncate">Connecting...</span>
+        </div>
+      </div>
+
+      <!-- Feed -->
+      <div class="flex-1 overflow-y-auto px-3 pb-3 space-y-1" id="compactFeed">
+        <p class="text-[10px] text-slate-600 text-center pt-2">Guesses appear here...</p>
+      </div>
+    </div>
+
+    <!-- Action panel -->
+    <div class="flex-1 bg-slate-950 flex flex-col justify-center items-center p-6 overflow-hidden">
+
+      <!-- Waiting -->
+      <div id="panelWait" class="text-center space-y-3 w-full max-w-xs">
+        <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto">
+          <i class="fa-solid fa-hourglass-half text-slate-600 text-xl animate-spin" style="animation-duration:3s"></i>
+        </div>
+        <h3 class="font-bold text-base text-slate-300">Awaiting Turn…</h3>
+        <p class="text-xs text-slate-600 max-w-[200px] mx-auto leading-relaxed">Sit tight. The guess console opens when it's your move.</p>
+      </div>
+
+      <!-- Active turn input -->
+      <div id="panelTurn" class="hidden w-full max-w-xs space-y-4">
+        <div class="text-center">
+          <div class="inline-flex items-center gap-2 bg-indigo-950 border border-indigo-800 px-3 py-1.5 rounded-full mb-2">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse inline-block"></span>
+            <span class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Your Turn</span>
+          </div>
+          <p id="rangeHint" class="text-xs text-slate-500 mono">Range: <span id="rangeDisplay">-- to --</span></p>
+        </div>
+
+        <div class="space-y-3">
+          <input type="number" step="0.01" id="guessInput"
+            class="w-full bg-slate-900 border-2 border-indigo-500 focus:border-indigo-400 rounded-2xl py-4 text-3xl mono font-bold text-center focus:outline-none transition-colors"
+            placeholder="0">
+          <button id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 font-bold py-3.5 rounded-xl uppercase text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/50">
+            <i class="fa-solid fa-paper-plane"></i> Send Guess
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WIN OVERLAY ===== -->
+  <div id="winOverlay" class="fixed inset-0 bg-slate-950/98 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
+    <div class="text-center space-y-6 p-8 max-w-xs">
+      <div class="text-6xl">🎉</div>
+      <div>
+        <h2 class="text-2xl font-black">WINNER!</h2>
+        <p class="text-slate-400 text-sm mt-1">The secret number was</p>
+        <p id="winNum" class="text-5xl mono font-black text-emerald-400 my-3">--</p>
+        <p id="winnerName" class="text-indigo-300 text-sm font-bold"></p>
+      </div>
+      <button onclick="location.reload()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl uppercase text-sm transition-all">
+        Play Again
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== SOLO DECIDE MODAL ===== -->
+  <div id="soloModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-6">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-7 w-full max-w-xs text-center space-y-5">
+      <div class="text-4xl">⏱️</div>
+      <div>
+        <h3 class="text-lg font-black">Opponent Timed Out</h3>
+        <p class="text-slate-400 text-xs mt-2 leading-relaxed">You're the last player standing. Continue solo to find the number, or close the room.</p>
+      </div>
+      <div class="space-y-2">
+        <button id="soloPlayBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 font-bold py-3 rounded-xl uppercase text-sm transition-all">
+          <i class="fa-solid fa-play mr-2"></i>Continue Solo
+        </button>
+        <button id="soloExitBtn" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 font-bold py-3 rounded-xl uppercase text-sm transition-all text-slate-300">
+          <i class="fa-solid fa-door-open mr-2"></i>Close Room
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WAITING FOR SURVIVOR MODAL ===== -->
+  <div id="waitSurvivorModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-6">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-7 w-full max-w-xs text-center space-y-4">
+      <div class="w-12 h-12 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center mx-auto">
+        <i class="fa-solid fa-hourglass text-amber-400 animate-pulse"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-black">Survivor Deciding…</h3>
+        <p class="text-slate-400 text-xs mt-2">Your opponent timed out. Waiting to see if the last player continues or closes the room.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== UPDATE TOAST ===== -->
+  <div id="updateToast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-indigo-600 text-white text-xs font-bold px-5 py-3 rounded-full shadow-xl flex items-center gap-3 whitespace-nowrap">
+    <i class="fa-solid fa-rotate"></i>
+    <span>New version available</span>
+    <button id="reloadBtn" class="bg-white text-indigo-700 px-2 py-0.5 rounded-full text-[10px] font-black uppercase">Update</button>
+  </div>
+
+  <!-- ===== FIREBASE + APP LOGIC ===== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getFirestore, doc, setDoc, onSnapshot,
+      collection, query, orderBy, limit, deleteDoc, updateDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
+
+    // ── CONFIG ── Replace with your real Firebase project values ──
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const db   = getFirestore(app);
+    const fns  = getFunctions(app);
+
+    // ── STATE ──
+    let roomCode      = "";
+    let myUserId      = "";
+    let myPin         = "";
+    let timerInterval = null;
+    let lastTimerKey  = null; // prevents duplicate intervals on same timestamp
+
+    // ── HELPERS ──
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 4000);
+    }
+
+    function setLoading(btn, loading) {
+      btn.disabled = loading;
+      btn.style.opacity = loading ? '0.6' : '1';
+    }
+
+    // ── CREATE ROOM ──
+    document.getElementById('createBtn').addEventListener('click', async () => {
+      const nameEl  = document.getElementById('createName');
+      const minEl   = document.getElementById('minRange');
+      const maxEl   = document.getElementById('maxRange');
+
+      const creatorName = nameEl.value.trim();
+      const minVal = parseFloat(minEl.value);
+      const maxVal = parseFloat(maxEl.value);
+
+      if (!creatorName) return showError("Enter your name.");
+      if (isNaN(minVal) || isNaN(maxVal)) return showError("Set a valid min and max range.");
+      if (minVal >= maxVal) return showError("Min must be less than Max.");
+
+      const btn = document.getElementById('createBtn');
+      setLoading(btn, true);
+
+      myUserId = creatorName.toLowerCase().replace(/\s+/g, '_');
+      myPin    = "HOST";
+
+      try {
+        const createFn = httpsCallable(fns, 'createGameRoom');
+        const res = await createFn({ minRange: minVal, maxRange: maxVal, creatorName });
+        roomCode = res.data.gameId;
+
+        await setDoc(doc(db, `games/${roomCode}/players`, myUserId), {
+          name: creatorName, pin: myPin, guessCount: 0, lastGuess: null
+        });
+
+        launchGameplay();
+      } catch (err) {
+        showError("Could not create room. Check your connection.");
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+
+    // ── JOIN ROOM ──
+    document.getElementById('joinBtn').addEventListener('click', async () => {
+      const code = document.getElementById('joinRoomId').value.trim().toUpperCase();
+      const name = document.getElementById('joinName').value.trim();
+      myPin = document.getElementById('joinPin').value.trim();
+
+      if (!code || code.length !== 6) return showError("Enter the 6-letter room code.");
+      if (!name) return showError("Enter your name.");
+      if (!myPin || myPin.length !== 4) return showError("PIN must be 4 digits.");
+
+      myUserId = name.toLowerCase().replace(/\s+/g, '_');
+      roomCode = code;
+
+      const btn = document.getElementById('joinBtn');
+      setLoading(btn, true);
+
+      try {
+        await setDoc(doc(db, `games/${roomCode}/players`, myUserId), {
+          name, pin: myPin, guessCount: 0, lastGuess: null
+        }, { merge: true });
+
+        launchGameplay();
+      } catch (err) {
+        showError("Could not join room. Check the code and try again.");
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+
+    // ── ALSO SUPPORT ENTER KEY ON FORMS ──
+    ['joinRoomId','joinName','joinPin'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('joinBtn').click();
+      });
+    });
+    ['createName','minRange','maxRange'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('createBtn').click();
+      });
+    });
+
+    // ── LAUNCH GAMEPLAY ──
+    function launchGameplay() {
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('gameplayScreen').classList.remove('hidden');
+      document.getElementById('activeRoomCode').innerText = roomCode;
+      initRoomSync();
+    }
+
+    // ── GUESS SUBMIT ──
+    document.getElementById('submitBtn').addEventListener('click', submitGuess);
+    document.getElementById('guessInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') submitGuess();
+    });
+
+    async function submitGuess() {
+      const val = parseFloat(document.getElementById('guessInput').value);
+      if (isNaN(val)) {
+        document.getElementById('guessInput').classList.add('shake');
+        setTimeout(() => document.getElementById('guessInput').classList.remove('shake'), 400);
+        return;
+      }
+
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('guessInput').value = '';
+
+      try {
+        const guessFn = httpsCallable(fns, 'submitGuess');
+        await guessFn({ gameId: roomCode, userId: myUserId, guess: val });
+      } catch (err) {
+        showError("Failed to submit guess.");
+      } finally {
+        document.getElementById('submitBtn').disabled = false;
+      }
+    }
+
+    // ── ROOM SYNC ──
+    function initRoomSync() {
+      const gameRef = doc(db, "games", roomCode);
+
+      onSnapshot(gameRef, (snap) => {
+        if (!snap.exists()) {
+          clearInterval(timerInterval);
+          alert("Room closed.");
+          location.reload();
+          return;
+        }
+
+        const data = snap.data();
+        const minVal = data.rangeMin ?? data.minRange ?? 0;
+        const maxVal = data.rangeMax ?? data.maxRange ?? 0;
+
+        document.getElementById('liveMin').innerText     = minVal.toFixed(2);
+        document.getElementById('liveMax').innerText     = maxVal.toFixed(2);
+        document.getElementById('rangeDisplay').innerText = `${minVal.toFixed(2)} → ${maxVal.toFixed(2)}`;
+
+        // ── WON ──
+        if (data.status === 'won') {
+          clearInterval(timerInterval);
+          hideAllModals();
+          showWinScreen(data);
+          return;
+        }
+
+        // ── SOLO DECIDE ──
+        if (data.status === 'solo_decide') {
+          clearInterval(timerInterval);
+          if (data.survivorId === myUserId) {
+            showSoloModal();
+          } else {
+            document.getElementById('waitSurvivorModal').classList.remove('hidden');
+          }
+          return;
+        }
+
+        // Hide modals if we come back to 'playing'
+        hideAllModals();
+
+        // Timer
+        if (data.lastActiveTimestamp) {
+          const timerKey = data.lastActiveTimestamp.toMillis();
+          if (timerKey !== lastTimerKey) {
+            lastTimerKey = timerKey;
+            startLocalTimer(timerKey, data.activePlayerIndex, data.playerOrder);
+          }
+        }
+
+        // Turn management
+        const currentPlayerId = data.playerOrder?.[data.activePlayerIndex];
+        if (currentPlayerId === myUserId) {
+          showMyTurnPanel();
+        } else {
+          showWaitPanel(currentPlayerId);
+        }
+      });
+
+      // Feed
+      const feedQuery = query(
+        collection(db, `games/${roomCode}/guesses_public`),
+        orderBy("timestamp", "desc"),
+        limit(6)
+      );
+      onSnapshot(feedQuery, (snap) => {
+        const feed = document.getElementById('compactFeed');
+        feed.innerHTML = '';
+        snap.forEach(d => {
+          const item = d.data();
+          const div  = document.createElement('div');
+          div.className = 'feed-entry flex items-center gap-2 py-1 border-b border-slate-900';
+          const isSystem = item.name === 'SYSTEM';
+          div.innerHTML = `
+            <span class="text-[9px] font-bold mono ${isSystem ? 'text-amber-400' : 'text-indigo-400'} shrink-0">${item.name}</span>
+            <span class="text-[10px] text-slate-300 flex-1">${item.result}</span>
+          `;
+          feed.appendChild(div);
+        });
+      });
+    }
+
+    // ── TIMER ──
+    function startLocalTimer(serverStartMillis, activeIndex, orderArray) {
+      clearInterval(timerInterval);
+      const timerEl  = document.getElementById('timerLabel');
+      const timerPill = document.getElementById('timerPill');
+
+      timerInterval = setInterval(async () => {
+        const elapsed   = Math.floor((Date.now() - serverStartMillis) / 1000);
+        const remaining = 60 - elapsed;
+
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          timerEl.innerText = "0s";
+          timerPill.classList.add('timer-urgent');
+
+          const activeUserId = orderArray[activeIndex];
+          if (activeUserId === myUserId) {
+            try {
+              const timeoutFn = httpsCallable(fns, 'handleTimeout');
+              await timeoutFn({ gameId: roomCode, userId: myUserId });
+            } catch (e) { /* already handled server-side */ }
+          }
+        } else {
+          timerEl.innerText = `${remaining}s`;
+          if (remaining <= 10) {
+            timerPill.classList.add('timer-urgent');
+          } else {
+            timerPill.classList.remove('timer-urgent');
+          }
+        }
+      }, 1000);
+    }
+
+    // ── PANEL HELPERS ──
+    function showMyTurnPanel() {
+      document.getElementById('panelWait').classList.add('hidden');
+      document.getElementById('panelTurn').classList.remove('hidden');
+      document.getElementById('guessInput').focus();
+      document.getElementById('turnNotice').innerText = "Your turn!";
+    }
+
+    function showWaitPanel(currentPlayerId) {
+      document.getElementById('panelTurn').classList.add('hidden');
+      document.getElementById('panelWait').classList.remove('hidden');
+      document.getElementById('turnNotice').innerText = currentPlayerId
+        ? `Waiting for ${currentPlayerId.replace(/_/g, ' ')}…`
+        : "Waiting…";
+    }
+
+    function hideAllModals() {
+      document.getElementById('soloModal').classList.add('hidden');
+      document.getElementById('waitSurvivorModal').classList.add('hidden');
+    }
+
+    // ── SOLO MODAL ──
+    function showSoloModal() {
+      document.getElementById('soloModal').classList.remove('hidden');
+    }
+
+    document.getElementById('soloPlayBtn').addEventListener('click', async () => {
+      document.getElementById('soloModal').classList.add('hidden');
+      try {
+        await updateDoc(doc(db, "games", roomCode), {
+          status: 'playing',
+          lastActiveTimestamp: serverTimestamp()
+        });
+      } catch (e) {
+        showError("Could not resume game.");
+      }
+    });
+
+    document.getElementById('soloExitBtn').addEventListener('click', async () => {
+      document.getElementById('soloModal').classList.add('hidden');
+      clearInterval(timerInterval);
+      try {
+        await deleteDoc(doc(db, "games", roomCode));
+      } finally {
+        location.reload();
+      }
+    });
+
+    // ── END SESSION ──
+    document.getElementById('endSessionBtn').addEventListener('click', async () => {
+      if (!confirm("Delete this room and end the session?")) return;
+      clearInterval(timerInterval);
+      try {
+        await deleteDoc(doc(db, "games", roomCode));
+      } finally {
+        location.reload();
+      }
+    });
+
+    // ── WIN SCREEN ──
+    function showWinScreen(data) {
+      document.getElementById('winNum').innerText  = data.targetNumber?.toFixed(2) ?? "🎯";
+      document.getElementById('winnerName').innerText = data.winnerId
+        ? `🏆 ${data.winnerId.replace(/_/g, ' ')}`
+        : '';
+      document.getElementById('winOverlay').classList.remove('hidden');
+    }
+  </script>
+
+  <!-- ===== SERVICE WORKER REGISTRATION ===== -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const newSW = reg.installing;
+            newSW.addEventListener('statechange', () => {
+              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                // New version available
+                const toast = document.getElementById('updateToast');
+                toast.classList.add('show');
+                document.getElementById('reloadBtn').addEventListener('click', () => {
+                  newSW.postMessage({ type: 'SKIP_WAITING' });
+                  location.reload();
+                });
+              }
+            });
+          });
+        });
+      });
+    }
+
+    // ── PWA INSTALL PROMPT ──
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // Only show if not already installed
+      if (!window.matchMedia('(display-mode: standalone)').matches) {
+        setTimeout(() => {
+          document.getElementById('installBanner').classList.add('show');
+        }, 2000);
+      }
+    });
+
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installBanner').classList.remove('show');
+    });
+
+    document.getElementById('dismissBanner').addEventListener('click', () => {
+      document.getElementById('installBanner').classList.remove('show');
+    });
+
+    // Handle SW skip-waiting message
+    navigator.serviceWorker?.addEventListener('message', (e) => {
+      if (e.data?.type === 'SKIP_WAITING') location.reload();
+    });
+  </script>
+</body>
+</html>
