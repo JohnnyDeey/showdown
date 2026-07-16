@@ -792,28 +792,50 @@ document.getElementById('guessInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); submitGuess(); }
 });
 
+// Reset countdown on any user interaction inside gameplay
+document.getElementById('s5').addEventListener('click', resetTimerOnActivity);
+document.getElementById('guessInput').addEventListener('input', resetTimerOnActivity);
+
+function resetTimerOnActivity() {
+  // Only reset if we're in a game and it's our turn
+  if (!roomCode || !myUserId) return;
+  if (document.getElementById('panelTurn').style.display === 'none') return;
+  // Update lastActiveTimestamp to reset the server clock
+  // (We reset locally — server resets on actual guess submission)
+  const pill = document.getElementById('timerPill');
+  const label = document.getElementById('timerLabel');
+  // Just reset visual to 60s while they type — server authoritative on submit
+  label.textContent = '60s';
+  pill.classList.remove('timer-urgent');
+}
+
 async function submitGuess() {
   const input = document.getElementById('guessInput');
   const val   = parseFloat(input.value);
   if (isNaN(val)) {
     input.classList.add('shake');
     setTimeout(() => input.classList.remove('shake'), 400);
+    toast('Enter a number first.');
     return;
   }
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
   const guessVal = val;
   input.value = '';
 
   try {
     const fn  = httpsCallable(fns, 'submitGuess');
     const res = await fn({ gameId: roomCode, userId: myUserId, guess: guessVal });
-    const result = res.data.result; // 'higher', 'lower', 'correct', 'won'
+    const result = res.data?.result ?? 'unknown';
     showResultFlash(result, guessVal);
   } catch(e) {
-    toast('Failed to submit. Try again.');
+    const msg = e?.message || e?.code || 'Unknown error';
+    toast(`Error: ${msg}`);
+    input.value = guessVal; // restore the value
     btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Guess';
   }
 }
 
