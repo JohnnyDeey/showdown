@@ -371,10 +371,7 @@
         const res = await createFn({ minRange: minVal, maxRange: maxVal, creatorName });
         roomCode = res.data.gameId;
 
-        await setDoc(doc(db, `games/${roomCode}/players`, myUserId), {
-          name: creatorName, pin: myPin, guessCount: 0, lastGuess: null
-        });
-
+        
         launchGameplay();
       } catch (err) {
         showError("Could not create room. Check your connection.");
