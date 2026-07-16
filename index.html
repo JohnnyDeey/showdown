@@ -179,12 +179,12 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 /* Guess input (floating above bottom) */
 .guess-bar{background:var(--wh);border-top:1.5px solid var(--bd);padding:10px 14px;display:flex;gap:8px;flex-shrink:0;align-items:center;width:100%}
 .guess-bar.hidden{display:none}
-#guessInput{flex:1;background:var(--sf);border:2px solid var(--or);border-radius:12px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;text-align:center;color:var(--ink);outline:none;-webkit-appearance:none;-moz-appearance:textfield}
+#guessInput{flex:1;min-width:0;max-width:calc(100% - 60px);background:var(--sf);border:2px solid var(--or);border-radius:12px;padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;text-align:center;color:var(--ink);outline:none;-webkit-appearance:none;-moz-appearance:textfield}
 #guessInput:focus{box-shadow:0 0 0 3px rgba(249,115,22,.12)}
 #guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .shake{animation:shake .3s ease}
-#submitBtn{background:linear-gradient(135deg,#f97316,#fb923c);border:none;border-radius:12px;padding:12px 16px;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(249,115,22,.3)}
+#submitBtn{background:linear-gradient(135deg,#f97316,#fb923c);border:none;border-radius:12px;padding:12px;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(249,115,22,.3)}
 #submitBtn:disabled{opacity:.5}
 
 /* Wait panel (not your turn) */
@@ -453,6 +453,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
     <div class="gp-room">
       <span>Room</span>
       <span class="gp-code" id="activeRoomCode">------</span>
+      <span id="roundBadge" style="font-size:9px;font-weight:800;color:#78716c;text-transform:uppercase;letter-spacing:.08em;display:none">Round <span id="roundNum">1</span></span>
     </div>
     <div class="timer-pill" id="timerPill">
       <i class="fa-solid fa-stopwatch"></i>
@@ -512,7 +513,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   </div>
   </div><!-- end specTabLive -->
 
-  <div class="spec-tab-panel" id="specTabSummary" style="background:#fafaf9;color:#1c1917;overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div class="spec-tab-panel" id="specTabSummary" style="background:#fafaf9!important;color:#1c1917;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;z-index:1">
     <div class="spec-summary-area" id="specSummaryArea">
       <div style="color:#78716c;font-size:13px;text-align:center;padding:40px;font-weight:600">Game summary appears here when the game ends or you click Summary.</div>
     </div>
@@ -598,6 +599,23 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
       <button class="modal-btn pr" id="sameRangeBtn"><i class="fa-solid fa-check"></i> Keep Same Range</button>
       <button class="modal-btn se" id="newRangeBtn"><i class="fa-solid fa-pen"></i> Change Range</button>
       <button class="modal-btn se" id="confirmNewRangeBtn" style="display:none;background:linear-gradient(135deg,#f97316,#fb923c);color:#fff"><i class="fa-solid fa-play"></i> Start New Round</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACCEPT REMATCH MODAL (shown to non-proposing players) -->
+<div class="modal-ov" id="acceptRematchModal">
+  <div class="modal-card">
+    <div class="modal-icon" style="background:#f0fdf4;color:#16a34a;border:1.5px solid #86efac;font-size:22px">🔄</div>
+    <h3 id="acceptRematchTitle">Play Again?</h3>
+    <div id="acceptRematchRangeInfo" style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:12px;margin-bottom:14px;text-align:center">
+      <p style="font-size:11px;font-weight:600;color:#78716c;margin-bottom:4px">New Range</p>
+      <p style="font-family:JetBrains Mono,monospace;font-size:18px;font-weight:700;color:#f97316" id="acceptRematchRange">-- to --</p>
+    </div>
+    <p style="font-size:12px;font-weight:600;color:#78716c;margin-bottom:16px" id="acceptRematchMsg">Your opponent wants to play another round. Accept?</p>
+    <div class="modal-btns">
+      <button class="modal-btn pr" id="acceptRematchBtn"><i class="fa-solid fa-check"></i> Accept & Play</button>
+      <button class="modal-btn se" id="declineRematchBtn"><i class="fa-solid fa-xmark"></i> Decline</button>
     </div>
   </div>
 </div>
@@ -930,13 +948,49 @@ function initRoomSync() {
     }
 
     if (data.status === 'won') { clearInterval(timerInterval); hideModals(); showWin(data); return; }
-    // If win screen is showing but game restarted (another player hit Play Again)
-    if (document.getElementById('winScreen').classList.contains('show')) {
+    
+    // Round badge
+    if (data.roundNumber > 1) {
+      document.getElementById('roundBadge').style.display = 'block';
+      document.getElementById('roundNum').textContent = data.roundNumber || 1;
+    }
+
+    // Rematch pending — show accept/decline to non-proposer, wait to proposer
+    if (data.status === 'rematch_pending') {
+      clearInterval(timerInterval);
+      if (data.rematchProposedBy === myUserId) {
+        // I proposed — wait for others
+        document.getElementById('winScreen').classList.remove('show');
+        toast('Waiting for others to accept…');
+      } else {
+        // Someone else proposed — show accept modal
+        document.getElementById('winScreen').classList.remove('show');
+        const proposerName = playerNames[data.rematchProposedBy] || data.rematchProposedBy?.replace(/_/g,' ') || 'Your opponent';
+        document.getElementById('acceptRematchTitle').textContent = proposerName + ' wants to play again!';
+        document.getElementById('acceptRematchRange').textContent = data.proposedMin?.toFixed(2) + ' – ' + data.proposedMax?.toFixed(2);
+        document.getElementById('acceptRematchMsg').textContent = 'Round ' + (data.roundNumber||2) + ' — New range shown above. Accept?';
+        document.getElementById('acceptRematchModal').classList.add('show');
+      }
+      return;
+    }
+
+    // If coming back to 'playing' from any other state — new round started
+    if (document.getElementById('winScreen').classList.contains('show') ||
+        document.getElementById('acceptRematchModal').classList.contains('show')) {
       document.getElementById('winScreen').classList.remove('show');
       document.getElementById('playAgainModal').classList.remove('show');
+      document.getElementById('acceptRematchModal').classList.remove('show');
       document.getElementById('waitNewRoundModal').classList.remove('show');
       myGuesses = [];
-      toast('New round started by another player!', true);
+      origMin = data.origMin ?? data.rangeMin;
+      origMax = data.origMax ?? data.rangeMax;
+      if (origMin !== null) {
+        document.getElementById('origMinDisplay').textContent = origMin.toFixed(2);
+        document.getElementById('origMaxDisplay').textContent = origMax.toFixed(2);
+      }
+      document.getElementById('publicFeed').innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:8px">Round ' + (data.roundNumber||'') + ' started!</div>';
+      switchTab('board');
+      toast('Round ' + (data.roundNumber||2) + ' started!', true);
     }
     if (data.status === 'solo_decide') {
       clearInterval(timerInterval);
@@ -1110,6 +1164,7 @@ function startTimer(serverMs, activeIndex, orderArray) {
 function hideModals() {
   document.getElementById('soloModal').classList.remove('show');
   document.getElementById('waitSurvivorModal').classList.remove('show');
+  document.getElementById('acceptRematchModal').classList.remove('show');
 }
 document.getElementById('soloPlayBtn').addEventListener('click', async () => {
   document.getElementById('soloModal').classList.remove('show');
@@ -1143,11 +1198,10 @@ function showWin(data) {
 }
 
 // ── PLAY AGAIN ──
-// Play Again — needs delegation since winScreen may not exist at bind time
+// Play Again — first clicker sets the terms
 document.addEventListener('click', (e) => {
   if (e.target.closest('#playAgainBtn')) {
     document.getElementById('winScreen').classList.remove('show');
-    // Reset modal state
     document.getElementById('newRangeFields').style.display = 'none';
     document.getElementById('confirmNewRangeBtn').style.display = 'none';
     document.getElementById('newRangeBtn').style.display = 'flex';
@@ -1164,79 +1218,130 @@ document.getElementById('newRangeBtn').addEventListener('click', () => {
 });
 
 document.getElementById('sameRangeBtn').addEventListener('click', async () => {
-  document.getElementById('playAgainModal').classList.remove('show');
-  await startNewRound(origMin, origMax);
+  if (isSolo) {
+    // Solo: start immediately
+    document.getElementById('playAgainModal').classList.remove('show');
+    await startNewRound(origMin, origMax, (await getDoc(doc(db,'games',roomCode))).data()?.roundNumber + 1 || 2);
+  } else {
+    await proposeRematch(origMin, origMax);
+  }
 });
 
 document.getElementById('confirmNewRangeBtn').addEventListener('click', async () => {
   const min = parseFloat(document.getElementById('newMin').value);
   const max = parseFloat(document.getElementById('newMax').value);
-  if (isNaN(min) || isNaN(max) || min >= max) {
-    toast('Enter a valid min and max range.');
-    return;
+  if (isNaN(min) || isNaN(max) || min >= max) { toast('Enter a valid min and max.'); return; }
+  if (isSolo) {
+    document.getElementById('playAgainModal').classList.remove('show');
+    await startNewRound(min, max, (await getDoc(doc(db,'games',roomCode))).data()?.roundNumber + 1 || 2);
+  } else {
+    await proposeRematch(min, max);
   }
-  document.getElementById('playAgainModal').classList.remove('show');
-  await startNewRound(min, max);
 });
 
-async function startNewRound(min, max) {
+// ── PLAY AGAIN FLOW ──
+// Step 1: First player clicks Play Again → sets proposed range → writes to Firestore as 'rematch_pending'
+// Step 2: Other players see a prompt to accept
+// Step 3: When all accept (or solo) → game resets
+
+async function proposeRematch(min, max) {
   try {
-    // Generate new secret number
-    const newTarget = parseFloat((Math.random() * (max - min) + min).toFixed(2));
-    
-    // Reset the game document for a new round — same room, same players
     const snap = await getDoc(doc(db, 'games', roomCode));
     const gd = snap.data();
-    const pOrder = gd.playerOrder || [myUserId];
+    const roundNum = (gd.roundNumber || 1) + 1;
     
-    // Shuffle player order for fairness
+    await updateDoc(doc(db, 'games', roomCode), {
+      status:            'rematch_pending',
+      proposedMin:       min,
+      proposedMax:       max,
+      rematchProposedBy: myUserId,
+      rematchAccepted:   [myUserId],  // proposer auto-accepts
+      roundNumber:       roundNum
+    });
+    document.getElementById('playAgainModal').classList.remove('show');
+    toast('Waiting for others to accept…');
+  } catch(e) {
+    toast('Error: ' + (e.message||''));
+  }
+}
+
+async function acceptRematch() {
+  try {
+    const snap = await getDoc(doc(db, 'games', roomCode));
+    const gd = snap.data();
+    const accepted = gd.rematchAccepted || [];
+    if (!accepted.includes(myUserId)) accepted.push(myUserId);
+    
+    const allPlayers = gd.playerOrder || [];
+    const allAccepted = allPlayers.every(uid => accepted.includes(uid));
+    
+    if (allAccepted) {
+      // Everyone agreed — start the new round
+      await startNewRound(gd.proposedMin, gd.proposedMax, gd.roundNumber);
+    } else {
+      await updateDoc(doc(db, 'games', roomCode), { rematchAccepted: accepted });
+      document.getElementById('acceptRematchModal').classList.remove('show');
+      toast('Accepted! Waiting for others…');
+    }
+  } catch(e) {
+    toast('Error: ' + (e.message||''));
+  }
+}
+
+async function startNewRound(min, max, roundNum) {
+  try {
+    const newTarget = parseFloat((Math.random() * (max - min) + min).toFixed(2));
+    const snap = await getDoc(doc(db, 'games', roomCode));
+    const gd = snap.data();
+    let pOrder = [...(gd.playerOrder || [myUserId])];
+    
+    // Shuffle
     for (let i = pOrder.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [pOrder[i], pOrder[j]] = [pOrder[j], pOrder[i]];
     }
 
     await updateDoc(doc(db, 'games', roomCode), {
-      rangeMin:          min,
-      rangeMax:          max,
-      origMin:           min,
-      origMax:           max,
-      targetNumber:      newTarget,
-      status:            'playing',
-      winnerId:          null,
-      playerOrder:       pOrder,
-      activePlayerIndex: 0,
+      rangeMin: min, rangeMax: max, origMin: min, origMax: max,
+      targetNumber: newTarget,
+      status: 'playing', winnerId: null,
+      playerOrder: pOrder, activePlayerIndex: 0,
+      roundNumber: roundNum || 2,
+      rematchAccepted: [], rematchProposedBy: null,
       lastActiveTimestamp: serverTimestamp()
     });
 
-    // Reset each player's guess count
     for (const uid of pOrder) {
-      await updateDoc(doc(db, `games/${roomCode}/players`, uid), {
-        guessCount: 0, lastGuess: null
-      });
+      try {
+        await updateDoc(doc(db, `games/${roomCode}/players`, uid), { guessCount:0, lastGuess:null });
+      } catch(e) {}
     }
 
-    // Reset local state
     myGuesses = [];
-    origMin = min;
-    origMax = max;
+    origMin = min; origMax = max;
     lastTimerKey = null;
-
-    // Hide win screen, go back to gameplay
+    document.getElementById('acceptRematchModal').classList.remove('show');
     document.getElementById('winScreen').classList.remove('show');
-    document.getElementById('origMinDisplay').textContent = min.toFixed(2);
-    document.getElementById('origMaxDisplay').textContent = max.toFixed(2);
-    document.getElementById('publicFeed').innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:8px">New round started!</div>';
-    document.getElementById('myGuessList').innerHTML = '<div style="font-size:12px;color:var(--ink3);text-align:center;padding:20px">New round — your guesses appear here.</div>';
-    switchTab('board');
     saveSession();
-    toast('New round started!', true);
   } catch(e) {
-    toast('Error starting new round: ' + (e.message||''));
+    toast('Error starting round: ' + (e.message||''));
   }
 }
 
 // Listen for game status change back to 'playing' (when another player starts a new round)
 // This is handled by the existing onSnapshot in initRoomSync — it will clear win screen automatically
+
+// ── ACCEPT / DECLINE REMATCH ──
+document.getElementById('acceptRematchBtn').addEventListener('click', async () => {
+  await acceptRematch();
+});
+
+document.getElementById('declineRematchBtn').addEventListener('click', async () => {
+  document.getElementById('acceptRematchModal').classList.remove('show');
+  // Revert game to won state (declined)
+  toast('You declined the rematch.');
+  // Just close the modal — room stays as won
+});
 
 // ── EXIT HOME ──
 document.getElementById('exitHomeBtn')?.addEventListener('click', async () => {
@@ -1281,7 +1386,10 @@ window.switchSpecTab = function(tab) {
   document.querySelectorAll('.spec-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='live'?0:1)));
   document.getElementById('specTabLive').classList.toggle('active', tab==='live');
   document.getElementById('specTabSummary').classList.toggle('active', tab==='summary');
-  if (tab==='summary') renderSpecSummary();
+  if (tab==='summary') {
+    // Always render with whatever data we have
+    renderSpecSummary();
+  }
 };
 
 // Confetti burst
@@ -1460,6 +1568,14 @@ function launchSpectatorMode(gameId, specCode) {
 
 function renderSpecSummary() {
   const el = document.getElementById('specSummaryArea');
+  if (!el) return;
+  
+  // If no data yet, show live player stats from specPlayerStats
+  if (specAllGuesses.length === 0 && Object.keys(specPlayerStats).length === 0) {
+    el.innerHTML = '<div style="color:#78716c;font-size:13px;text-align:center;padding:40px;font-weight:600">No game data yet — summary appears as the game progresses.</div>';
+    return;
+  }
+  
   const totalGuesses = specAllGuesses.filter(g=>g.name!=='SYSTEM').length;
   const elapsed = specGameStartTime ? Math.floor((Date.now()-specGameStartTime)/1000) : 0;
   const mins = Math.floor(elapsed/60), secs = elapsed%60;
