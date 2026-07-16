@@ -116,31 +116,26 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
     }
 
     // ── TOO HIGH / TOO LOW ──
-    let newMin = game.rangeMin, newMax = game.rangeMax, direction;
-    if (guess < target) {
-      newMin = Math.max(newMin, guess); direction = "higher";
-    } else {
-      newMax = Math.min(newMax, guess); direction = "lower";
-    }
-
+    // Direction — but NEVER update the range in Firestore
+    const direction = guess < target ? "higher" : "lower";
     const nextIndex = (game.activePlayerIndex + 1) % playerOrder.length;
 
-    // Public: shows name + direction only — NO number
+    // Public feed: name + direction ONLY — no number ever
     const pubRef = db.collection(`games/${gameId}/guesses_public`).doc();
     tx.set(pubRef, {
       name: cleanName,
-      result: direction,   // "higher" or "lower" — no number revealed
+      result: direction,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    // Private: full result stored only in player's private subcollection
+    // Private: full detail only in player's own subcollection
     const privRef = db.collection(`games/${gameId}/private_${userId}`).doc();
     tx.set(privRef, {
       guess, result: direction,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    // Update player guess count
+    // Update guess count — do NOT touch rangeMin/rangeMax
     const playerRef = db.doc(`games/${gameId}/players/${userId}`);
     tx.update(playerRef, {
       guessCount: admin.firestore.FieldValue.increment(1),
@@ -148,9 +143,9 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
     });
 
     tx.update(gameRef, {
-      rangeMin: newMin, rangeMax: newMax,
       activePlayerIndex: nextIndex,
       lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+      // rangeMin and rangeMax are intentionally NOT updated
     });
 
     return { success: true, result: direction };
