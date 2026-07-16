@@ -157,18 +157,12 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .shake{animation:shake .35s ease}
 
-/* Result flash */
-#resultFlash{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(255,255,255,.97);backdrop-filter:blur(4px)}
-#resultFlash.show{display:flex}
-.rf-icon{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px}
-.rf-icon.higher{background:#fef2f2;color:var(--ro)}
-.rf-icon.lower{background:#fff7ed;color:var(--or)}
-.rf-icon.correct{background:#f0fdf4;color:#16a34a}
-.rf-text{font-size:28px;font-weight:900}
-.rf-text.higher{color:var(--ro)}
-.rf-text.lower{color:var(--or)}
-.rf-text.correct{color:#16a34a}
-.rf-sub{font-size:13px;font-weight:600;color:var(--ink3)}
+/* Result toast — small, bottom of screen */
+#resultToast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;z-index:150;display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:99px;font-size:15px;font-weight:800;pointer-events:none;transition:opacity .15s,transform .15s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+#resultToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#resultToast.higher{background:#fff1f2;border:2px solid #fda4af;color:var(--ro)}
+#resultToast.lower{background:#fff7ed;border:2px solid #fed7aa;color:var(--or)}
+#resultToast.correct{background:#f0fdf4;border:2px solid #86efac;color:#16a34a}
 
 /* Win screen */
 #winScreen{position:fixed;inset:0;background:var(--sf);z-index:150;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
@@ -387,12 +381,8 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   </div>
 </div>
 
-<!-- RESULT FLASH (private — only shown to the guesser) -->
-<div id="resultFlash">
-  <div class="rf-icon" id="rfIcon"></div>
-  <div class="rf-text" id="rfText"></div>
-  <div class="rf-sub" id="rfSub"></div>
-</div>
+<!-- Result toast — small popup shown only to the guesser -->
+<div id="resultToast"></div>
 
 <!-- WIN SCREEN -->
 <div id="winScreen">
@@ -697,7 +687,7 @@ function initRoomSync() {
       origMax = data.rangeMax ?? data.maxRange ?? 0;
       document.getElementById('origMin').textContent = origMin.toFixed(2);
       document.getElementById('origMax').textContent = origMax.toFixed(2);
-      document.getElementById('rangeHint').textContent = `${origMin.toFixed(2)} and ${origMax.toFixed(2)}`;
+      document.getElementById('rangeHint').textContent = `${origMin.toFixed(2)} and ${origMax.toFixed(2)}`;  // set once, never again
       origMinSet = true;
     }
     // NOTE: We intentionally do NOT update origMin/origMax after this point
@@ -759,35 +749,56 @@ function initRoomSync() {
     updatePlayerNames(data.playerOrder || []);
   });
 
-  // Listen to players for names + guess counts (for stats)
+  // Players collection — names + guess counts
   onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
     snap.forEach(d => { playerNames[d.id] = d.data().name; });
-    renderStatsLeaderboard();
   });
 
-  // Listen to MY private results — stored only for me
+  // PUBLIC feed — everyone sees Too High / Too Low (but NEVER the number guessed)
   onSnapshot(
-    query(collection(db,`games/${roomCode}/private_${myUserId}`), orderBy('timestamp','desc'), limit(20)),
+    query(collection(db,`games/${roomCode}/guesses_public`), orderBy('timestamp','desc'), limit(10)),
+    (snap) => {
+      const feed = document.getElementById('myFeed');
+      feed.innerHTML = '';
+      if (snap.empty) {
+        feed.innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Guesses appear here…</div>';
+        return;
+      }
+      snap.forEach(d => {
+        const item   = d.data();
+        const isSys  = item.name === 'SYSTEM';
+        const isMe   = item.name === myUserId.replace(/_/g,' ');
+        const div    = document.createElement('div');
+        div.className = 'feed-entry ' + (isMe ? 'mine' : 'theirs');
+
+        let label = '', color = 'var(--ink2)';
+        if (item.result === 'higher')  { label = '↑ Too Low';  color = 'var(--ro)'; }
+        else if (item.result === 'lower')   { label = '↓ Too High'; color = 'var(--or)'; }
+        else if (item.result === 'correct') { label = '🎯 Correct!'; color = '#16a34a'; }
+        else if (isSys) { label = item.result; color = 'var(--am)'; }
+        else { label = item.result; }
+
+        // Show name + direction only — no number
+        const displayName = isSys ? '⚙️' : (playerNames[item.name.toLowerCase().replace(/ /g,'_')] || item.name);
+        div.innerHTML = `
+          <span class="feed-n ${isSys?'sys':'pl'}">${displayName}</span>
+          <span class="feed-r" style="color:${color};font-weight:800">${label}</span>
+        `;
+        feed.appendChild(div);
+      });
+    }
+  );
+
+  // MY PRIVATE feed — only I can see my own guess values + results
+  onSnapshot(
+    query(collection(db,`games/${roomCode}/private_${myUserId}`), orderBy('timestamp','asc'), limit(30)),
     (snap) => {
       myGuesses = [];
       snap.forEach(d => {
         const item = d.data();
         myGuesses.push({ val: item.guess, result: item.result });
       });
-      // Reverse to show oldest first in feed
-      myGuesses = [...myGuesses].reverse();
-      renderMyFeed();
       renderMyGuessList();
-    }
-  );
-
-  // Public feed — shows ONLY activity (no values, no direction)
-  onSnapshot(
-    query(collection(db,`games/${roomCode}/guesses_public`), orderBy('timestamp','desc'), limit(8)),
-    (snap) => {
-      const feed = document.getElementById('myFeed');
-      // Only show public entries when it's NOT my turn (to show activity)
-      // We merge with private feed when it IS my turn
     }
   );
 }
@@ -832,16 +843,16 @@ document.getElementById('guessInput').addEventListener('input', () => {
 
 async function submitGuess() {
   const input = document.getElementById('guessInput');
-  const val   = parseFloat(input.value);
-  if (isNaN(val)) {
+  const raw = input.value.trim();
+  const val = parseFloat(raw);
+  if (raw === '' || isNaN(val)) {
     input.classList.add('shake');
     setTimeout(() => input.classList.remove('shake'), 400);
-    toast('Enter a number first.');
     return;
   }
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
   const guessVal = val;
   input.value = '';
 
@@ -849,76 +860,40 @@ async function submitGuess() {
     const fn  = httpsCallable(fns,'submitGuess');
     const res = await fn({ gameId: roomCode, userId: myUserId, guess: guessVal });
     const result = res.data?.result ?? 'unknown';
-
-    // Track my guesses locally
-    myGuesses.push({ val: guessVal, result });
-    renderMyFeed();
-    renderMyGuessList();
-    showResultFlash(result, guessVal);
+    showResultToast(result, guessVal);
   } catch(e) {
     const msg = e?.message || 'Unknown error';
-    toast(`Error: ${msg}`);
+    toast("Error: " + msg);
     input.value = guessVal;
+  } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Guess';
+    setTimeout(() => document.getElementById('guessInput').focus(), 100);
   }
 }
 
-// ── PRIVATE FEED (only my guesses) ──
-function renderMyFeed() {
-  const feed = document.getElementById('myFeed');
-  feed.innerHTML = '';
-  if (myGuesses.length === 0) {
-    feed.innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Your guesses appear here…</div>';
-    return;
-  }
-  [...myGuesses].reverse().forEach(g => {
-    const div = document.createElement('div');
-    div.className = 'feed-entry mine';
-    let tag = '', color = 'var(--ink2)';
-    if (g.result === 'higher') { tag = '↑ Too Low'; color = 'var(--ro)'; }
-    else if (g.result === 'lower') { tag = '↓ Too High'; color = 'var(--or)'; }
-    else if (g.result === 'won') { tag = '🎯 Correct!'; color = '#16a34a'; }
-    div.innerHTML = `
-      <span class="feed-n pl" style="font-family:'JetBrains Mono',monospace">${g.val}</span>
-      <span class="feed-r" style="color:${color};font-weight:800">${tag}</span>
-    `;
-    feed.appendChild(div);
-  });
-}
+// renderMyFeed replaced by Firestore private listener above
 
-// ── RESULT FLASH ──
-function showResultFlash(result, val) {
-  const overlay = document.getElementById('resultFlash');
-  const icon    = document.getElementById('rfIcon');
-  const text    = document.getElementById('rfText');
-  const sub     = document.getElementById('rfSub');
-
+// ── RESULT TOAST (small, private, shown only to guesser) ──
+function showResultToast(result, val) {
+  const el = document.getElementById('resultToast');
+  el.className = '';
   if (result === 'higher') {
-    icon.className = 'rf-icon higher'; icon.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-    text.className = 'rf-text higher'; text.textContent = 'Too Low! ↑';
-    sub.textContent = 'Guess higher next time';
+    el.className = 'higher';
+    el.innerHTML = '<i class="fa-solid fa-arrow-up"></i> Too Low — Guess Higher';
   } else if (result === 'lower') {
-    icon.className = 'rf-icon lower'; icon.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
-    text.className = 'rf-text lower'; text.textContent = 'Too High! ↓';
-    sub.textContent = 'Guess lower next time';
+    el.className = 'lower';
+    el.innerHTML = '<i class="fa-solid fa-arrow-down"></i> Too High — Guess Lower';
   } else if (result === 'won') {
-    icon.className = 'rf-icon correct'; icon.innerHTML = '<i class="fa-solid fa-trophy"></i>';
-    text.className = 'rf-text correct'; text.textContent = '🎯 Correct!';
-    sub.textContent = `${val} is the number!`;
+    el.className = 'correct';
+    el.innerHTML = '<i class="fa-solid fa-trophy"></i> Correct! You got it!';
   } else {
-    icon.className = 'rf-icon lower'; icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
-    text.className = 'rf-text lower'; text.textContent = 'Guess Sent';
-    sub.textContent = '';
+    el.className = 'lower';
+    el.innerHTML = '<i class="fa-solid fa-circle-check"></i> Guess sent';
   }
-
-  overlay.classList.add('show');
-  setTimeout(() => {
-    overlay.classList.remove('show');
-    document.getElementById('submitBtn').disabled = false;
-    document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Guess';
-    document.getElementById('guessInput').focus();
-  }, 2000);
+  el.id = 'resultToast';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
 }
 
 // ── TIMER (only runs on MY turn) ──
@@ -1068,37 +1043,29 @@ function showWinScreen(data) {
 
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const reg = await navigator.serviceWorker.register('/sw.js');
-      
-      // If a new SW is waiting, activate it immediately
-      if (reg.waiting) {
-        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-      }
-
-      reg.addEventListener('updatefound', () => {
-        const newSW = reg.installing;
-        newSW.addEventListener('statechange', () => {
-          if (newSW.state === 'installed') {
-            // Force immediate takeover
-            newSW.postMessage({ type: 'SKIP_WAITING' });
-          }
+  // Only register SW on the real deployed domain, not in preview/iframe
+  const isRealSite = location.hostname !== 'localhost' && 
+                     !location.hostname.includes('claudeusercontent');
+  if (isRealSite) {
+    window.addEventListener('load', async () => {
+      try {
+        const reg = await navigator.serviceWorker.register('/sw.js');
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed') newSW.postMessage({ type: 'SKIP_WAITING' });
+          });
         });
-      });
-
-      // When SW takes control, reload to get fresh content
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
-    } catch(e) {
-      console.log('SW registration failed:', e);
-    }
-  });
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) { refreshing = true; window.location.reload(); }
+        });
+      } catch(e) {
+        console.log('SW registration skipped:', e);
+      }
+    });
+  }
 }
 </script>
 </body>
