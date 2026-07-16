@@ -1,6 +1,6 @@
 // Family Showdown Service Worker
 // Bump this version on EVERY deploy to force cache clear
-const CACHE_VERSION = 'showdown-v3';
+const CACHE_VERSION = 'showdown-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
