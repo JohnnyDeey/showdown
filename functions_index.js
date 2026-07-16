@@ -86,11 +86,11 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
 
     // ── WIN ──
     if (Math.abs(guess - target) < 0.005) {
-      // Public: just says someone got it — no value shown
+      // Public: shows name + correct, no number
       const pubRef = db.collection(`games/${gameId}/guesses_public`).doc();
       tx.set(pubRef, {
         name: cleanName,
-        result: "✅ Got it!",          // NO number shown publicly
+        result: "correct",
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -125,11 +125,11 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
 
     const nextIndex = (game.activePlayerIndex + 1) % playerOrder.length;
 
-    // Public: just says "someone guessed" — NO value, NO direction
+    // Public: shows name + direction only — NO number
     const pubRef = db.collection(`games/${gameId}/guesses_public`).doc();
     tx.set(pubRef, {
       name: cleanName,
-      result: "🎲 Made a guess",       // opponents see NOTHING useful
+      result: direction,   // "higher" or "lower" — no number revealed
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
