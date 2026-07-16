@@ -19,196 +19,256 @@
 body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow-y:auto;user-select:none}
 .screen{display:none;flex:1;flex-direction:column}
 .screen.active{display:flex}
-.btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s,opacity .15s}
+
+/* Shared components */
+.btn{width:100%;padding:13px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s,opacity .15s}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn-or{background:linear-gradient(135deg,#f97316,#fb923c);color:#fff;box-shadow:0 4px 16px rgba(249,115,22,.3)}
-.btn-te{background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;box-shadow:0 4px 16px rgba(13,148,136,.25)}
-.btn-gn{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 16px rgba(34,197,94,.25)}
+.btn-te{background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;box-shadow:0 4px 14px rgba(13,148,136,.25)}
+.btn-gn{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.25)}
 .btn-ghost{background:var(--wh);border:1.5px solid var(--bd);color:var(--ink2)}
-.btn-ro{background:linear-gradient(135deg,#f43f5e,#fb7185);color:#fff}
-.field{width:100%;background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--ink);outline:none;transition:border-color .15s;-webkit-appearance:none;-moz-appearance:textfield}
+.btn-purple{background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.25)}
+.field{width:100%;background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:12px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--ink);outline:none;transition:border-color .15s;-webkit-appearance:none;-moz-appearance:textfield}
 .field:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(249,115,22,.1)}
 .field::placeholder{color:var(--ink3);font-weight:600}
 .field-code{text-align:center;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.2em;text-transform:uppercase}
 .field::-webkit-inner-spin-button{-webkit-appearance:none}
-.card{background:var(--wh);border:1.5px solid var(--bd);border-radius:18px;padding:20px}
-.clabel{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card{background:var(--wh);border:1.5px solid var(--bd);border-radius:18px;padding:18px}
+.clabel{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .stack{display:flex;flex-direction:column;gap:10px}
-.divider{display:flex;align-items:center;gap:10px;padding:4px 0}
+.divider{display:flex;align-items:center;gap:10px;padding:2px 0}
 .divider::before,.divider::after{content:'';flex:1;height:1.5px;background:var(--bd)}
 .divider span{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em}
+.back-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink3);margin-bottom:18px;cursor:pointer;width:fit-content}
+.s-title{font-size:20px;font-weight:900;margin-bottom:4px}
+.s-sub{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:18px}
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ro);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:99px;z-index:300;white-space:nowrap;display:none;box-shadow:0 4px 16px rgba(0,0,0,.15)}
 .toast.ok{background:var(--gn)}
 .toast.show{display:block}
 
-/* ── S1 LOBBY ── */
-#s1{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:24px 20px 40px;max-width:420px;margin:0 auto;width:100%;flex:1}
-.logo-ring{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,#f97316,#f43f5e);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 8px 24px rgba(249,115,22,.3)}
-.logo-ring i{font-size:28px;color:#fff}
-.lobby-title{font-size:26px;font-weight:900;letter-spacing:-.5px;text-align:center}
-.lobby-title span{color:var(--or)}
-.lobby-sub{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px;margin-bottom:28px;text-align:center}
-
-/* ── S2 MODE ── */
-#s2{padding:32px 20px 48px;max-width:420px;margin:0 auto;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;gap:14px}
-.mode-card{background:var(--wh);border:2px solid var(--bd);border-radius:20px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
-.mode-card:active{transform:scale(.98)}
-.mode-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px}
-.mode-icon.or{background:#fff7ed;color:var(--or)}
-.mode-icon.te{background:#f0fdfa;color:var(--te)}
-.mode-card h3{font-size:16px;font-weight:800;margin-bottom:4px}
-.mode-card p{font-size:12px;font-weight:600;color:var(--ink3);line-height:1.5}
-
-/* ── S3 SETUP ── */
-#s3{padding:24px 20px 48px;max-width:420px;margin:0 auto;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.back-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink3);margin-bottom:20px;cursor:pointer;width:fit-content}
-.s-title{font-size:20px;font-weight:900;margin-bottom:4px}
-.s-sub{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:20px}
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.field-grid .field{text-align:center}
-.pc-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.pc-btn{background:var(--wh);border:1.5px solid var(--bd);border-radius:10px;padding:10px 0;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--ink2);cursor:pointer;text-align:center;transition:all .15s}
-.pc-btn.sel{background:var(--or);border-color:var(--or);color:#fff}
-
-/* ── S4 WAITING ROOM ── */
-#s4{overflow:hidden}
-.wr-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.wr-code-big{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--or);letter-spacing:.15em}
-.wr-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px}
-.share-box{background:var(--wh);border:1.5px solid var(--bd);border-radius:16px;padding:18px;text-align:center;margin-bottom:16px}
-.share-box p{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:8px}
-.code-display{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;color:var(--or);letter-spacing:.2em}
-.copy-btn{margin-top:10px;background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 18px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.pl-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:10px}
-.pl-slot{background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.pl-av{width:38px;height:38px;border-radius:50%;background:var(--sf);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.pl-name{font-size:14px;font-weight:800}
-.pl-tag{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase}
-.host-badge{font-size:9px;font-weight:800;background:#fff7ed;color:var(--or);border:1px solid #fed7aa;padding:2px 8px;border-radius:99px;margin-left:auto}
-.wr-waiting{background:var(--sf);border:1.5px dashed var(--bd);border-radius:12px;padding:16px;text-align:center;margin-bottom:8px}
-.wr-waiting p{font-size:12px;font-weight:600;color:var(--ink3)}
-.wr-footer{padding:14px 20px;background:var(--wh);border-top:1.5px solid var(--bd);flex-shrink:0}
-.wr-status{font-size:12px;font-weight:700;color:var(--ink3);text-align:center;margin-bottom:10px}
-.wr-status span{color:var(--or);font-weight:900}
-
-/* ── S5 GAMEPLAY ── */
-#s5{height:100dvh;overflow:hidden;position:fixed;inset:0}
-.gp-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.gp-room{display:flex;flex-direction:column}
-.gp-room span:first-child{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
-.gp-code{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--or);letter-spacing:.12em}
-.gp-right{display:flex;align-items:center;gap:8px}
-.timer-pill{display:flex;align-items:center;gap:6px;background:#fff1f2;border:1.5px solid #fda4af;padding:6px 14px;border-radius:99px}
-.timer-pill i{color:var(--ro);font-size:12px}
-.timer-num{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--ro)}
-@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(244,63,94,.4)}70%{box-shadow:0 0 0 8px rgba(244,63,94,0)}100%{box-shadow:0 0 0 0 rgba(244,63,94,0)}}
-.timer-urgent{animation:pulse-ring .9s infinite}
-.burger-btn{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:7px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:16px;color:var(--ink2)}
-.btn-end-sm{background:#fff1f2;border:1.5px solid #fda4af;color:var(--ro);padding:7px 10px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:4px}
-
-/* Player chips */
-.chips-strip{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;gap:12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
-.chips-strip::-webkit-scrollbar{display:none}
-.p-chip{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:48px}
-.p-chip-av{width:38px;height:38px;border-radius:50%;background:var(--sf);border:2.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s}
-.p-chip-av.active{border-color:#16a34a;box-shadow:0 0 0 3px rgba(34,197,94,.2);background:#f0fdf4}
-.p-chip-av.me-ring{border-color:var(--or)}
-.p-chip-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);text-align:center;max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.p-chip-name.active{color:#16a34a}
-
-/* Live area — shows ONLY initial limits, never updates */
-.live-area{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;flex-direction:column;flex-shrink:0;height:38%}
-.limits-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;flex-shrink:0}
-.limit-box{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;text-align:center}
-.limit-box .ll{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
-.limit-box .lv{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;margin-top:1px}
-.limit-box.lo .lv{color:var(--te)}
-.limit-box.hi .lv{color:var(--ro)}
-.turn-row{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:7px 12px;display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0}
-.turn-row i{color:var(--or);font-size:11px}
-#turnNotice{font-size:12px;font-weight:700;color:var(--ink2);flex:1}
-
-/* Feed — private: only shows YOUR results, others see "Someone guessed…" */
-#myFeed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
-.feed-entry{display:flex;align-items:center;gap:8px;border-radius:8px;padding:5px 10px;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
-.feed-entry.mine{background:#fff7ed;border:1px solid #fed7aa}
-.feed-entry.theirs{background:var(--sf);border:1px solid var(--bd)}
-.feed-n{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
-.feed-r{font-size:11px;font-weight:700;color:var(--ink2);flex:1}
-
-/* Action panel */
-.action-panel{background:var(--sf);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 20px;flex-shrink:0;height:62%;overflow:hidden}
-#panelWait{text-align:center}
-.wait-icon{width:56px;height:56px;border-radius:16px;background:var(--wh);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px}
-#panelWait h3{font-size:16px;font-weight:800;margin-bottom:4px}
-#panelWait p{font-size:12px;font-weight:600;color:var(--ink3);max-width:200px;line-height:1.5;margin:0 auto}
-#panelTurn{width:100%;max-width:320px;display:none}
-.turn-badge{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1.5px solid #86efac;color:#16a34a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:5px 12px;border-radius:99px;margin-bottom:10px}
-.turn-badge .dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.turn-header{text-align:center;margin-bottom:14px}
-.turn-header h3{font-size:19px;font-weight:900}
-.turn-header p{font-size:11px;font-weight:600;color:var(--ink3);margin-top:3px}
-#guessInput{width:100%;background:var(--wh);border:2.5px solid var(--or);border-radius:16px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;text-align:center;color:var(--ink);outline:none;margin-bottom:12px;-webkit-appearance:none;-moz-appearance:textfield;transition:border-color .15s}
-#guessInput:focus{box-shadow:0 0 0 4px rgba(249,115,22,.12)}
-#guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.shake{animation:shake .35s ease}
-
-/* Result toast — small, bottom of screen */
-#resultToast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;z-index:150;display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:99px;font-size:15px;font-weight:800;pointer-events:none;transition:opacity .15s,transform .15s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+/* Result mini-toast */
+#resultToast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);opacity:0;z-index:150;display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:99px;font-size:14px;font-weight:800;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.12)}
 #resultToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #resultToast.higher{background:#fff1f2;border:2px solid #fda4af;color:var(--ro)}
 #resultToast.lower{background:#fff7ed;border:2px solid #fed7aa;color:var(--or)}
 #resultToast.correct{background:#f0fdf4;border:2px solid #86efac;color:#16a34a}
 
+/* S1 Lobby */
+#s1{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.lobby-wrap{padding:24px 20px 40px;max-width:420px;margin:0 auto;width:100%}
+.logo-ring{width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,#f97316,#f43f5e);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 8px 24px rgba(249,115,22,.3)}
+.logo-ring i{font-size:26px;color:#fff}
+.lobby-title{font-size:26px;font-weight:900;letter-spacing:-.5px;text-align:center}
+.lobby-title span{color:var(--or)}
+.lobby-sub{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;margin-bottom:26px;text-align:center}
+
+/* S2 Mode */
+#s2{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.s2-wrap{padding:28px 20px 40px;max-width:420px;margin:0 auto;width:100%}
+.mode-card{background:var(--wh);border:2px solid var(--bd);border-radius:18px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s;margin-bottom:12px}
+.mode-card:active{transform:scale(.98)}
+.mode-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px}
+.mode-icon.or{background:#fff7ed;color:var(--or)}
+.mode-icon.te{background:#f0fdfa;color:var(--te)}
+.mode-icon.pu{background:#f5f3ff;color:#7c3aed}
+.mode-card h3{font-size:15px;font-weight:800;margin-bottom:4px}
+.mode-card p{font-size:12px;font-weight:600;color:var(--ink3);line-height:1.5}
+
+/* S3 Setup */
+#s3{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.s3-wrap{padding:24px 20px 40px;max-width:420px;margin:0 auto;width:100%}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field-grid .field{text-align:center}
+.pc-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:6px}
+.pc-btn{background:var(--wh);border:1.5px solid var(--bd);border-radius:10px;padding:9px 0;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--ink2);cursor:pointer;text-align:center;transition:all .15s}
+.pc-btn.sel{background:var(--or);border-color:var(--or);color:#fff}
+.spectator-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;cursor:pointer;margin-top:2px}
+.spectator-toggle span{font-size:13px;font-weight:700;color:var(--ink2)}
+.spectator-toggle small{font-size:11px;font-weight:600;color:var(--ink3);display:block;margin-top:2px}
+.toggle-sw{width:42px;height:24px;border-radius:12px;background:var(--bd);position:relative;transition:background .2s;flex-shrink:0}
+.toggle-sw.on{background:var(--or)}
+.toggle-sw::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-sw.on::after{left:21px}
+
+/* S4 Waiting Room */
+#s4{overflow:hidden}
+.wr-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.wr-code{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--or);letter-spacing:.15em}
+.wr-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 18px}
+.code-box{background:var(--wh);border:1.5px solid var(--bd);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.code-box p{font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:6px}
+.code-display{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:.2em}
+.code-display.game{color:var(--or)}
+.code-display.spec{color:#7c3aed}
+.copy-btn{margin-top:8px;background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:7px 16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.pl-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:8px}
+.pl-slot{background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.pl-av{width:36px;height:36px;border-radius:50%;background:var(--sf);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pl-name{font-size:13px;font-weight:800}
+.pl-tag{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase}
+.host-badge{font-size:9px;font-weight:800;background:#fff7ed;color:var(--or);border:1px solid #fed7aa;padding:2px 8px;border-radius:99px;margin-left:auto}
+.wr-footer{padding:12px 18px;background:var(--wh);border-top:1.5px solid var(--bd);flex-shrink:0}
+.wr-status{font-size:12px;font-weight:700;color:var(--ink3);text-align:center;margin-bottom:8px}
+.wr-status span{color:var(--or);font-weight:900}
+
+/* S5 Gameplay */
+#s5{position:fixed;inset:0;overflow:hidden}
+.gp-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.gp-room span:first-child{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);display:block}
+.gp-code{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--or);letter-spacing:.1em}
+.timer-pill{display:flex;align-items:center;gap:5px;background:#fff1f2;border:1.5px solid #fda4af;padding:5px 12px;border-radius:99px}
+.timer-pill i{color:var(--ro);font-size:11px}
+.timer-num{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--ro)}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(244,63,94,.4)}70%{box-shadow:0 0 0 8px rgba(244,63,94,0)}100%{box-shadow:0 0 0 0 rgba(244,63,94,0)}}
+.timer-urgent{animation:pulse-ring .9s infinite}
+.gp-btns{display:flex;align-items:center;gap:6px}
+.icon-btn{background:var(--sf);border:1.5px solid var(--bd);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--ink2);display:flex;align-items:center}
+.icon-btn.ro{background:#fff1f2;border-color:#fda4af;color:var(--ro);font-size:11px;font-weight:800;font-family:'Nunito',sans-serif;gap:4px}
+
+/* Tabs */
+.tabs{display:flex;background:var(--wh);border-bottom:1.5px solid var(--bd);flex-shrink:0}
+.tab{flex:1;padding:9px;font-size:12px;font-weight:800;text-align:center;cursor:pointer;color:var(--ink3);border-bottom:2.5px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.06em}
+.tab.active{color:var(--or);border-bottom-color:var(--or)}
+
+/* Tab panels */
+.tab-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
+.tab-panel.active{display:flex}
+
+/* Chips strip */
+.chips-strip{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:8px 12px;display:flex;gap:10px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.chips-strip::-webkit-scrollbar{display:none}
+.p-chip{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:46px}
+.p-chip-av{width:36px;height:36px;border-radius:50%;background:var(--sf);border:2.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .3s}
+.p-chip-av.active{border-color:#16a34a;box-shadow:0 0 0 3px rgba(34,197,94,.2);background:#f0fdf4}
+.p-chip-av.me-ring{border-color:var(--or)}
+.p-chip-name{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);text-align:center;max-width:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p-chip-name.active{color:#16a34a}
+
+/* Board tab (public) */
+.board-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 14px}
+.range-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.range-box{background:var(--wh);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;text-align:center}
+.range-box .rl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
+.range-box .rv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;margin-top:1px}
+.range-box.lo .rv{color:var(--te)}
+.range-box.hi .rv{color:var(--ro)}
+.turn-banner{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.turn-banner i{color:var(--or);font-size:11px}
+#turnNotice{font-size:12px;font-weight:700;color:var(--ink2);flex:1}
+.feed-list{display:flex;flex-direction:column;gap:5px}
+.feed-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;border:1.5px solid var(--bd);background:var(--wh)}
+.feed-item.sys{background:var(--sf);border-color:var(--bd)}
+.fi-name{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;min-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi-result{font-size:12px;font-weight:800;flex:1}
+.fi-result.higher{color:var(--ro)}
+.fi-result.lower{color:var(--or)}
+.fi-result.correct{color:#16a34a}
+.fi-result.sys{color:var(--am);font-size:11px}
+
+/* My guesses tab (private) */
+.my-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.my-guess-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--wh);border:1.5px solid var(--bd);border-radius:12px}
+.mg-num{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--ink);min-width:60px}
+.mg-tag{font-size:12px;font-weight:800;flex:1}
+.mg-tag.higher{color:var(--ro)}
+.mg-tag.lower{color:var(--or)}
+.mg-tag.won{color:#16a34a}
+.mg-idx{font-size:10px;font-weight:700;color:var(--ink3);margin-left:auto}
+
+/* Guess input (floating above bottom) */
+.guess-bar{background:var(--wh);border-top:1.5px solid var(--bd);padding:10px 14px;display:flex;gap:8px;flex-shrink:0;align-items:center}
+.guess-bar.hidden{display:none}
+#guessInput{flex:1;background:var(--sf);border:2px solid var(--or);border-radius:12px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;text-align:center;color:var(--ink);outline:none;-webkit-appearance:none;-moz-appearance:textfield}
+#guessInput:focus{box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+#guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake .3s ease}
+#submitBtn{background:linear-gradient(135deg,#f97316,#fb923c);border:none;border-radius:12px;padding:12px 16px;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(249,115,22,.3)}
+#submitBtn:disabled{opacity:.5}
+
+/* Wait panel (not your turn) */
+.wait-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 20px}
+.wait-icon{width:56px;height:56px;border-radius:16px;background:var(--wh);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px}
+.wait-panel h3{font-size:16px;font-weight:800;margin-bottom:4px}
+.wait-panel p{font-size:12px;font-weight:600;color:var(--ink3);max-width:200px;line-height:1.5}
+
 /* Win screen */
-#winScreen{position:fixed;inset:0;background:var(--sf);z-index:150;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#winScreen{position:fixed;inset:0;background:var(--sf);z-index:150;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
 #winScreen.show{display:flex}
-.win-emoji{font-size:64px;margin-bottom:8px}
-.win-title{font-size:26px;font-weight:900;text-align:center}
-.win-sub{font-size:13px;font-weight:600;color:var(--ink3);margin:6px 0 4px;text-align:center}
-.win-num{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:var(--te);margin:4px 0 8px;text-align:center}
-.win-winner{font-size:14px;font-weight:800;color:var(--or);margin-bottom:24px;text-align:center}
+.win-emoji{font-size:60px;margin-bottom:8px}
+.win-title{font-size:26px;font-weight:900}
+.win-sub{font-size:13px;font-weight:600;color:var(--ink3);margin:6px 0 4px}
+.win-num{font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;color:var(--te);margin:4px 0 8px}
+.win-winner{font-size:14px;font-weight:800;color:var(--or);margin-bottom:22px}
 .win-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px}
 
-/* Burger / Stats panel */
-#statsPanel{position:fixed;inset:0;z-index:200;display:none;flex-direction:column}
+/* Spectator screen (TV) */
+#specScreen{position:fixed;inset:0;overflow:hidden;background:var(--ink);color:#fff;display:none;flex-direction:column}
+#specScreen.show{display:flex}
+.spec-header{background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.1);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.spec-title{font-size:18px;font-weight:900;color:#fb923c}
+.spec-code{font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,.5);letter-spacing:.1em}
+.spec-body{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;overflow:hidden}
+.spec-left{display:flex;flex-direction:column;gap:12px}
+.spec-turn-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.spec-turn-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px}
+#specActiveName{font-size:40px;font-weight:900;color:#fff}
+.spec-live-badge{margin-top:12px;display:flex;align-items:center;gap:6px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.3);color:#5eead4;font-size:10px;font-weight:700;padding:5px 12px;border-radius:99px}
+.spec-live-dot{width:6px;height:6px;border-radius:50%;background:#14b8a6;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.spec-range-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spec-range-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;text-align:center}
+.spec-range-box .rl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4)}
+.spec-range-box .rv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;margin-top:4px}
+.spec-range-box.lo .rv{color:#34d399}
+.spec-range-box.hi .rv{color:#fb7185}
+.spec-right{display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.spec-feed-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.spec-feed-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px}
+#specFeed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.spec-fi{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border-radius:8px;padding:8px 12px}
+.spec-fi-name{font-size:13px;font-weight:800}
+.spec-fi-tag{font-size:10px;font-weight:800;text-transform:uppercase;padding:3px 10px;border-radius:99px}
+.spec-fi-tag.higher{background:rgba(244,63,94,.15);color:#fb7185}
+.spec-fi-tag.lower{background:rgba(245,158,11,.15);color:#fbbf24}
+.spec-fi-tag.correct{background:rgba(34,197,94,.15);color:#4ade80}
+.spec-fi-tag.sys{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);font-size:9px}
+.spec-stats-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px}
+#specStats{display:flex;flex-direction:column;gap:6px}
+.spec-stat-row{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:rgba(255,255,255,.04);border-radius:8px}
+.spec-stat-name{font-size:12px;font-weight:700}
+.spec-stat-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.5)}
+.spec-stat-count strong{color:#fff}
+
+/* Burger stats drawer */
+#statsPanel{position:fixed;inset:0;z-index:200;display:none}
 #statsPanel.show{display:flex}
 .stats-backdrop{position:absolute;inset:0;background:rgba(28,25,23,.5)}
-.stats-drawer{position:absolute;right:0;top:0;bottom:0;width:min(320px,90vw);background:var(--wh);display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
-.stats-header{padding:20px;border-bottom:1.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.stats-header h3{font-size:17px;font-weight:900}
-.stats-close{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--ink2)}
-.stats-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
-.stats-section{margin-bottom:20px}
-.stats-section-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.stat-row{background:var(--sf);border:1.5px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
-.stat-av{width:36px;height:36px;border-radius:50%;background:var(--sf);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.stat-info{flex:1}
-.stat-name{font-size:13px;font-weight:800}
-.stat-detail{font-size:11px;font-weight:600;color:var(--ink3);margin-top:1px}
-.stat-count{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--or)}
-.my-result-row{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:8px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.my-result-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ink)}
-.my-result-tag{font-size:10px;font-weight:800;text-transform:uppercase}
-.my-result-tag.h{color:var(--ro)}
-.my-result-tag.l{color:var(--or)}
-.my-result-tag.c{color:#16a34a}
+.stats-drawer{position:absolute;right:0;top:0;bottom:0;width:min(310px,88vw);background:var(--wh);display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+.stats-hdr{padding:16px 18px;border-bottom:1.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.stats-hdr h3{font-size:16px;font-weight:900}
+.stats-close-btn{background:var(--sf);border:1.5px solid var(--bd);border-radius:9px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--ink2)}
+.stats-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+.stat-section-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:8px;margin-top:14px;display:flex;align-items:center;gap:5px}
+.stat-section-title:first-child{margin-top:0}
+.stat-row{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.stat-av{width:32px;height:32px;border-radius:50%;background:var(--sf);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.stat-name{font-size:13px;font-weight:800;flex:1}
+.stat-count{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--or)}
 
 /* Modals */
-.modal-overlay{position:fixed;inset:0;background:rgba(28,25,23,.8);backdrop-filter:blur(6px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px}
-.modal-overlay.show{display:flex}
-.modal-card{background:var(--wh);border:1.5px solid var(--bd);border-radius:22px;padding:28px 22px;text-align:center;max-width:300px;width:100%}
-.modal-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px}
+.modal-ov{position:fixed;inset:0;background:rgba(28,25,23,.8);backdrop-filter:blur(6px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-ov.show{display:flex}
+.modal-card{background:var(--wh);border:1.5px solid var(--bd);border-radius:22px;padding:26px 20px;text-align:center;max-width:300px;width:100%;position:relative}
+.modal-x{position:absolute;top:12px;right:12px;background:var(--sf);border:1.5px solid var(--bd);border-radius:8px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink3)}
+.modal-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px}
 .modal-icon.am{background:#fffbeb;color:var(--am);border:1.5px solid #fde68a}
 .modal-icon.ro{background:#fff1f2;color:var(--ro);border:1.5px solid #fda4af}
-.modal-card h3{font-size:17px;font-weight:900;margin-bottom:8px}
-.modal-card p{font-size:12px;font-weight:600;color:var(--ink3);line-height:1.6;margin-bottom:18px}
+.modal-card h3{font-size:16px;font-weight:900;margin-bottom:6px}
+.modal-card p{font-size:12px;font-weight:600;color:var(--ink3);line-height:1.6;margin-bottom:16px}
 .modal-btns{display:flex;flex-direction:column;gap:8px}
-.modal-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+.modal-btn{width:100%;padding:12px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .modal-btn.pr{background:linear-gradient(135deg,var(--te),#14b8a6);color:#fff}
 .modal-btn.se{background:var(--sf);border:1.5px solid var(--bd);color:var(--ink2)}
 </style>
@@ -216,11 +276,12 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 <body>
 
 <div class="toast" id="toast"></div>
+<div id="resultToast"></div>
 
-<!-- S1: LOBBY -->
+<!-- ══ S1: LOBBY ══ -->
 <div id="s1" class="screen active">
-  <div style="overflow-y:auto;padding:24px 20px 40px;max-width:420px;margin:0 auto;width:100%">
-    <div style="text-align:center;margin-bottom:28px;padding-top:4px">
+  <div class="lobby-wrap">
+    <div style="text-align:center;margin-bottom:26px;padding-top:4px">
       <div class="logo-ring"><i class="fa-solid fa-bolt"></i></div>
       <div class="lobby-title">Family <span>Showdown</span></div>
       <div class="lobby-sub">Number Guessing · Real-Time · Multiplayer</div>
@@ -229,9 +290,17 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
       <div class="card">
         <div class="clabel"><i class="fa-solid fa-door-open" style="color:var(--or)"></i> Join a Game</div>
         <div class="stack">
-          <input type="text" id="joinRoomId" class="field field-code" placeholder="6-LETTER CODE" maxlength="6" autocomplete="off">
+          <input type="text" id="joinRoomId" class="field field-code" placeholder="GAME CODE" maxlength="6" autocomplete="off">
           <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
           <button class="btn btn-or" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
+        </div>
+      </div>
+      <div class="divider"><span>or</span></div>
+      <div class="card">
+        <div class="clabel"><i class="fa-solid fa-tv" style="color:#7c3aed"></i> Join as Spectator (TV)</div>
+        <div class="stack">
+          <input type="text" id="specJoinCode" class="field field-code" placeholder="SPECTATOR CODE" maxlength="6" autocomplete="off">
+          <button class="btn btn-purple" id="specJoinBtn"><i class="fa-solid fa-eye"></i> View on TV</button>
         </div>
       </div>
       <div class="divider"><span>or</span></div>
@@ -246,28 +315,28 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   </div>
 </div>
 
-<!-- S2: MODE -->
+<!-- ══ S2: MODE ══ -->
 <div id="s2" class="screen">
-  <div style="padding:32px 20px;max-width:420px;margin:0 auto;width:100%">
+  <div class="s2-wrap">
     <div class="back-row" id="s2back"><i class="fa-solid fa-arrow-left"></i> Back</div>
     <div class="s-title">How do you want to play?</div>
-    <div class="s-sub" style="margin-bottom:16px">Choose a game mode</div>
+    <div class="s-sub">Choose a game mode</div>
     <div class="mode-card" id="modeSolo">
       <div class="mode-icon or"><i class="fa-solid fa-user"></i></div>
       <h3>Solo Mode</h3>
-      <p>Play alone — guess the secret number yourself at your own pace.</p>
+      <p>Play alone — guess the secret number at your own pace. No timer pressure.</p>
     </div>
-    <div class="mode-card" id="modeMulti" style="margin-top:12px">
+    <div class="mode-card" id="modeMulti">
       <div class="mode-icon te"><i class="fa-solid fa-users"></i></div>
       <h3>Multiplayer</h3>
-      <p>Invite family or friends. Take turns — first to guess the number wins!</p>
+      <p>Invite family or friends. Take turns — first to guess the exact number wins!</p>
     </div>
   </div>
 </div>
 
-<!-- S3: SETUP -->
+<!-- ══ S3: SETUP ══ -->
 <div id="s3" class="screen">
-  <div style="padding:24px 20px;max-width:420px;margin:0 auto;width:100%;overflow-y:auto;flex:1">
+  <div class="s3-wrap">
     <div class="back-row" id="s3back"><i class="fa-solid fa-arrow-left"></i> Back</div>
     <div class="s-title" id="s3title">Set Up Your Game</div>
     <div class="s-sub" id="s3sub">Configure the number range</div>
@@ -280,7 +349,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
         </div>
       </div>
       <div class="card" id="pcCard">
-        <div class="clabel"><i class="fa-solid fa-users" style="color:var(--te)"></i> Max Players</div>
+        <div class="clabel"><i class="fa-solid fa-users" style="color:var(--te)"></i> Max Players (you + others)</div>
         <div class="pc-row">
           <button class="pc-btn sel" data-n="2">2</button>
           <button class="pc-btn" data-n="3">3</button>
@@ -288,34 +357,51 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
           <button class="pc-btn" data-n="5">5</button>
           <button class="pc-btn" data-n="6">6</button>
         </div>
-        <p style="font-size:11px;font-weight:600;color:var(--ink3);margin-top:10px;text-align:center">Minimum 2 players needed to start</p>
+        <p style="font-size:11px;font-weight:600;color:var(--ink3);margin-top:8px;text-align:center">Minimum 2 players needed to start</p>
+      </div>
+      <div class="card">
+        <div class="clabel"><i class="fa-solid fa-tv" style="color:#7c3aed"></i> Spectator / TV Screen</div>
+        <div class="spectator-toggle" id="specToggle">
+          <div>
+            <span>Enable spectator screen</span>
+            <small>Generates a second code for a TV to show live results</small>
+          </div>
+          <div class="toggle-sw" id="toggleSw"></div>
+        </div>
       </div>
       <button class="btn btn-or" id="createRoomBtn"><i class="fa-solid fa-bolt"></i> Generate Room Code</button>
     </div>
   </div>
 </div>
 
-<!-- S4: WAITING ROOM -->
+<!-- ══ S4: WAITING ROOM ══ -->
 <div id="s4" class="screen">
   <div class="wr-header">
     <div>
-      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)">Room Code</div>
-      <div class="wr-code-big" id="wrCode">------</div>
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)">Room</div>
+      <div class="wr-code" id="wrCode">------</div>
     </div>
     <div style="font-size:12px;font-weight:700;color:var(--ink3)">
-      <span id="wrCount" style="color:var(--or);font-weight:900">1</span> / <span id="wrMax">?</span> joined
+      <span id="wrCount" style="color:var(--or);font-weight:900">1</span>/<span id="wrMax">?</span> joined
     </div>
   </div>
   <div class="wr-body">
-    <div class="share-box">
-      <p>Share this code with friends</p>
-      <div class="code-display" id="wrCodeBig">------</div>
-      <button class="copy-btn" id="copyCodeBtn"><i class="fa-solid fa-copy"></i> Copy Code</button>
+    <!-- Game code -->
+    <div class="code-box">
+      <p>Share this code with players</p>
+      <div class="code-display game" id="wrCodeGame">------</div>
+      <button class="copy-btn" id="copyGameCode"><i class="fa-solid fa-copy"></i> Copy Game Code</button>
+    </div>
+    <!-- Spectator code (shown only if enabled) -->
+    <div class="code-box" id="specCodeBox" style="display:none">
+      <p>Spectator / TV code (read-only, no guessing)</p>
+      <div class="code-display spec" id="wrCodeSpec">------</div>
+      <button class="copy-btn" id="copySpecCode"><i class="fa-solid fa-copy"></i> Copy TV Code</button>
     </div>
     <div class="pl-label">Players in Room</div>
     <div id="wrPlayerList"></div>
-    <div class="wr-waiting" id="wrWaiting">
-      <p>Waiting for others to join… share your code!</p>
+    <div id="wrWaiting" style="background:var(--sf);border:1.5px dashed var(--bd);border-radius:12px;padding:14px;text-align:center;margin-top:4px">
+      <p style="font-size:12px;font-weight:600;color:var(--ink3)">Waiting for others to join… share your code!</p>
     </div>
   </div>
   <div class="wr-footer">
@@ -324,7 +410,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   </div>
 </div>
 
-<!-- S5: GAMEPLAY -->
+<!-- ══ S5: GAMEPLAY ══ -->
 <div id="s5" class="screen">
   <header class="gp-header">
     <div class="gp-room">
@@ -335,54 +421,58 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
       <i class="fa-solid fa-stopwatch"></i>
       <span class="timer-num" id="timerLabel">60s</span>
     </div>
-    <div class="gp-right">
-      <button class="burger-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></button>
-      <button class="btn-end-sm" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
+    <div class="gp-btns">
+      <button class="icon-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></button>
+      <button class="icon-btn ro" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
     </div>
   </header>
 
-  <!-- Player chips — everyone sees who's active -->
+  <!-- Tabs: Board | My Guesses -->
+  <div class="tabs">
+    <div class="tab active" id="tabBoard" onclick="switchTab('board')">📊 Board</div>
+    <div class="tab" id="tabMine" onclick="switchTab('mine')">🔒 My Guesses</div>
+  </div>
+
+  <!-- Player chips (always visible) -->
   <div class="chips-strip" id="chipsStrip"></div>
 
-  <!-- Live area — shows ORIGINAL limits only, never updates range -->
-  <div class="live-area">
-    <div class="limits-strip">
-      <div class="limit-box lo"><div class="ll">Start Low</div><div class="lv" id="origMin">--</div></div>
-      <div class="limit-box hi"><div class="ll">Start High</div><div class="lv" id="origMax">--</div></div>
+  <!-- TAB: BOARD (public — everyone sees direction only) -->
+  <div class="tab-panel active" id="panelBoard">
+    <div class="board-area">
+      <div class="range-row">
+        <div class="range-box lo"><div class="rl">Start Low</div><div class="rv" id="origMinDisplay">--</div></div>
+        <div class="range-box hi"><div class="rl">Start High</div><div class="rv" id="origMaxDisplay">--</div></div>
+      </div>
+      <div class="turn-banner">
+        <i class="fa-solid fa-arrow-pointer"></i>
+        <span id="turnNotice">Connecting…</span>
+      </div>
+      <div class="feed-list" id="publicFeed">
+        <div style="font-size:11px;color:var(--ink3);text-align:center;padding:8px">Guesses appear here…</div>
+      </div>
     </div>
-    <div class="turn-row">
-      <i class="fa-solid fa-arrow-pointer"></i>
-      <span id="turnNotice">Connecting…</span>
+    <!-- Guess bar (shown only on your turn) -->
+    <div class="guess-bar hidden" id="guessBar">
+      <input type="number" step="0.01" id="guessInput" placeholder="Your guess">
+      <button id="submitBtn"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
-    <!-- Private feed: YOU see your own results, others see only activity -->
-    <div id="myFeed">
-      <div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Your guesses appear here…</div>
+    <!-- Wait message (shown when not your turn) -->
+    <div class="wait-panel" id="waitPanel" style="display:none">
+      <div class="wait-icon">⏳</div>
+      <h3>Awaiting your turn…</h3>
+      <p>Watch the board above. Your guess bar opens when it's your move.</p>
     </div>
   </div>
 
-  <!-- Action panel -->
-  <div class="action-panel">
-    <div id="panelWait">
-      <div class="wait-icon">⏳</div>
-      <h3>Awaiting your turn…</h3>
-      <p>Your input opens when it's your move. Watch the player strip above.</p>
-    </div>
-    <div id="panelTurn">
-      <div style="text-align:center;margin-bottom:12px">
-        <div class="turn-badge"><span class="dot"></span> Your Turn</div>
-        <div class="turn-header">
-          <h3>Enter your guess</h3>
-          <p id="rangeHintText" style="font-size:11px;font-weight:600;color:var(--ink3)">Loading range…</p>
-        </div>
+  <!-- TAB: MY GUESSES (private — only you see your numbers) -->
+  <div class="tab-panel" id="panelMine">
+    <div class="my-area" id="myGuessList">
+      <div style="font-size:12px;color:var(--ink3);text-align:center;padding:20px">
+        Your private guess history appears here.<br>Only you can see this.
       </div>
-      <input type="number" step="0.01" id="guessInput" placeholder="0">
-      <button class="btn btn-or" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Submit Guess</button>
     </div>
   </div>
 </div>
-
-<!-- Result toast — small popup shown only to the guesser -->
-<div id="resultToast"></div>
 
 <!-- WIN SCREEN -->
 <div id="winScreen">
@@ -393,38 +483,48 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   <div class="win-winner" id="winnerName"></div>
   <div class="win-actions">
     <button class="btn btn-or" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
-    <button class="btn btn-ghost" id="exitBtn"><i class="fa-solid fa-house"></i> Exit to Home</button>
+    <button class="btn btn-ghost" onclick="location.reload()"><i class="fa-solid fa-house"></i> Exit to Home</button>
   </div>
 </div>
 
-<!-- STATS PANEL (burger menu) -->
-<div id="statsPanel">
-  <div class="stats-backdrop" id="statsBackdrop"></div>
-  <div class="stats-drawer">
-    <div class="stats-header">
-      <h3>📊 Game Stats</h3>
-      <button class="stats-close" id="statsClose">✕ Close</button>
+<!-- SPECTATOR SCREEN (TV) -->
+<div id="specScreen">
+  <div class="spec-header">
+    <div>
+      <div class="spec-title">🎯 Family Showdown — Live</div>
+      <div class="spec-code" id="specHeaderCode">Spectator View</div>
     </div>
-    <div class="stats-body">
-      <div class="stats-section">
-        <div class="stats-section-title"><i class="fa-solid fa-trophy" style="color:var(--am)"></i> Leaderboard</div>
-        <div id="statsLeaderboard"><p style="font-size:12px;color:var(--ink3)">No data yet…</p></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.4)" id="specRoomCodeDisplay"></div>
+  </div>
+  <div class="spec-body">
+    <div class="spec-left">
+      <div class="spec-turn-card">
+        <div class="spec-turn-label">Current Turn</div>
+        <div id="specActiveName">Waiting…</div>
+        <div class="spec-live-badge"><span class="spec-live-dot"></span> Live</div>
       </div>
-      <div class="stats-section">
-        <div class="stats-section-title"><i class="fa-solid fa-clock" style="color:var(--te)"></i> Game Info</div>
-        <div id="statsInfo"></div>
+      <div class="spec-range-row">
+        <div class="spec-range-box lo"><div class="rl">Start Low</div><div class="rv" id="specMin">--</div></div>
+        <div class="spec-range-box hi"><div class="rl">Start High</div><div class="rv" id="specMax">--</div></div>
       </div>
-      <div class="stats-section">
-        <div class="stats-section-title"><i class="fa-solid fa-list" style="color:var(--or)"></i> My Guesses This Game</div>
-        <div id="myGuessList"><p style="font-size:12px;color:var(--ink3)">No guesses yet…</p></div>
+    </div>
+    <div class="spec-right">
+      <div class="spec-feed-card">
+        <div class="spec-feed-title"><i class="fa-solid fa-bolt" style="color:var(--am)"></i> Action Feed</div>
+        <div id="specFeed"><div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:16px">Waiting for first guess…</div></div>
+      </div>
+      <div class="spec-stats-card">
+        <div class="spec-feed-title"><i class="fa-solid fa-chart-simple" style="color:var(--or)"></i> Player Stats</div>
+        <div id="specStats"><div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center">No players yet</div></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- SOLO MODAL -->
-<div class="modal-overlay" id="soloModal">
+<div class="modal-ov" id="soloModal">
   <div class="modal-card">
+    <button class="modal-x" onclick="document.getElementById('soloModal').classList.remove('show')">✕</button>
     <div class="modal-icon am"><i class="fa-solid fa-person-running"></i></div>
     <h3>You're the last one!</h3>
     <p>Your opponent timed out. Keep guessing solo or close the room.</p>
@@ -436,14 +536,29 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 </div>
 
 <!-- WAIT SURVIVOR MODAL -->
-<div class="modal-overlay" id="waitSurvivorModal">
+<div class="modal-ov" id="waitSurvivorModal">
   <div class="modal-card">
-    <div style="position:relative">
-      <button onclick="document.getElementById('waitSurvivorModal').classList.remove('show')" style="position:absolute;right:0;top:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:8px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink3)">✕</button>
-    </div>
+    <button class="modal-x" onclick="document.getElementById('waitSurvivorModal').classList.remove('show')">✕</button>
     <div class="modal-icon ro"><i class="fa-solid fa-hourglass-half"></i></div>
     <h3>Opponent deciding…</h3>
     <p>The last player is choosing whether to continue or close the room.</p>
+  </div>
+</div>
+
+<!-- STATS DRAWER -->
+<div id="statsPanel">
+  <div class="stats-backdrop" id="statsBackdrop"></div>
+  <div class="stats-drawer">
+    <div class="stats-hdr">
+      <h3>📊 Stats</h3>
+      <button class="stats-close-btn" id="statsClose">✕ Close</button>
+    </div>
+    <div class="stats-body">
+      <div class="stat-section-title"><i class="fa-solid fa-trophy" style="color:var(--am)"></i> Leaderboard</div>
+      <div id="statsLeaderboard"><p style="font-size:12px;color:var(--ink3)">No data yet…</p></div>
+      <div class="stat-section-title"><i class="fa-solid fa-clock" style="color:var(--te)"></i> Game Info</div>
+      <div id="statsInfo"></div>
+    </div>
   </div>
 </div>
 
@@ -472,25 +587,11 @@ const fns = getFunctions(app);
 // ── STATE ──
 let roomCode = "", myUserId = "", myName = "";
 let timerInterval = null, lastTimerKey = null;
-let isSolo = false, selectedMaxPlayers = 2;
-let origMin = null, origMax = null; // NEVER updated after game starts
-let myGuesses = []; // local history of my own guesses
+let isSolo = false, selectedMaxPlayers = 2, wantSpectator = false;
+let origMin = null, origMax = null;
+let myGuesses = [];
 let gameStartTime = null;
-let playerNames = {}; // uid → name map
-
-// ── SCREEN ──
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// ── TOAST ──
-function toast(msg, ok=false) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show' + (ok?' ok':'');
-  setTimeout(() => el.classList.remove('show'), 3000);
-}
+let playerNames = {};
 
 // ── EMOJIS ──
 const EMOJIS = ['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
@@ -500,6 +601,32 @@ function emoji(uid) {
   return EMOJIS[Math.abs(h) % EMOJIS.length];
 }
 
+// ── UTILS ──
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function toast(msg, ok=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show' + (ok?' ok':'');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+function dirLabel(r) {
+  if (r==='higher') return {text:'↑ Too Low', cls:'higher'};
+  if (r==='lower')  return {text:'↓ Too High', cls:'lower'};
+  if (r==='correct'||r==='won') return {text:'🎯 Correct!', cls:'correct'};
+  if (r==='timeout') return {text:'⏱ Timed out', cls:'sys'};
+  return {text:'🎲 Guessed', cls:'sys'};
+}
+
+// ── TAB SWITCH ──
+window.switchTab = function(tab) {
+  document.getElementById('tabBoard').classList.toggle('active', tab==='board');
+  document.getElementById('tabMine').classList.toggle('active', tab==='mine');
+  document.getElementById('panelBoard').classList.toggle('active', tab==='board');
+  document.getElementById('panelMine').classList.toggle('active', tab==='mine');
+};
+
 // ── ENTER KEY ──
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
@@ -507,17 +634,18 @@ document.addEventListener('keydown', e => {
   if (!active) return;
   if (active.id === 's1') {
     const code = document.getElementById('joinRoomId').value.trim();
-    const jname = document.getElementById('joinName').value.trim();
-    if (code || jname) document.getElementById('joinBtn').click();
-    else document.getElementById('hostBtn').click();
+    const name = document.getElementById('joinName').value.trim();
+    const spec = document.getElementById('specJoinCode').value.trim();
+    const host = document.getElementById('hostName').value.trim();
+    if (code || name) document.getElementById('joinBtn').click();
+    else if (spec) document.getElementById('specJoinBtn').click();
+    else if (host) document.getElementById('hostBtn').click();
   } else if (active.id === 's3') {
     document.getElementById('createRoomBtn').click();
-  } else if (active.id === 's5') {
-    if (document.getElementById('panelTurn').style.display !== 'none') submitGuess();
   }
 });
 
-// ── S1: LOBBY ──
+// ── S1: JOIN GAME ──
 document.getElementById('joinBtn').addEventListener('click', async () => {
   const code = document.getElementById('joinRoomId').value.trim().toUpperCase();
   const name = document.getElementById('joinName').value.trim();
@@ -529,7 +657,7 @@ document.getElementById('joinBtn').addEventListener('click', async () => {
   btn.disabled = true;
   try {
     const snap = await getDoc(doc(db,'games',roomCode));
-    if (!snap.exists()) return toast('Room not found.');
+    if (!snap.exists()) return toast('Room not found. Check the code.');
     const gd = snap.data();
     if (gd.status === 'playing' || gd.status === 'won') return toast('This game has already started.');
     await setDoc(doc(db,`games/${roomCode}/players`,myUserId), { name, guessCount:0, lastGuess:null }, { merge:true });
@@ -538,16 +666,32 @@ document.getElementById('joinBtn').addEventListener('click', async () => {
       pOrder.push(myUserId);
       await updateDoc(doc(db,'games',roomCode), { playerOrder: pOrder });
     }
-    startWaitingRoom(gd.maxPlayers || 6, false);
+    playerNames[myUserId] = name;
+    startWaitingRoom(gd.maxPlayers || 6, false, gd.spectatorCode);
   } catch(e) { toast('Could not join. Try again.'); }
   finally { btn.disabled = false; }
 });
 
+// ── S1: JOIN AS SPECTATOR ──
+document.getElementById('specJoinBtn').addEventListener('click', async () => {
+  const code = document.getElementById('specJoinCode').value.trim().toUpperCase();
+  if (!code || code.length !== 6) return toast('Enter the 6-letter spectator code.');
+  const btn = document.getElementById('specJoinBtn');
+  btn.disabled = true;
+  try {
+    const fn  = httpsCallable(fns,'resolveSpectatorCode');
+    const res = await fn({ spectatorCode: code });
+    const gameId = res.data.gameId;
+    launchSpectatorMode(gameId, code);
+  } catch(e) { toast('Spectator code not found.'); }
+  finally { btn.disabled = false; }
+});
+
+// ── S1: HOST ──
 document.getElementById('hostBtn').addEventListener('click', () => {
   const name = document.getElementById('hostName').value.trim();
   if (!name) return toast('Enter your name first.');
-  myName = name;
-  myUserId = name.toLowerCase().replace(/\s+/g,'_');
+  myName = name; myUserId = name.toLowerCase().replace(/\s+/g,'_');
   show('s2');
 });
 
@@ -557,7 +701,7 @@ document.getElementById('modeSolo').addEventListener('click', () => {
   isSolo = true;
   document.getElementById('pcCard').style.display = 'none';
   document.getElementById('s3title').textContent = 'Solo Game Setup';
-  document.getElementById('s3sub').textContent = 'Set the number range and play alone';
+  document.getElementById('s3sub').textContent = 'Set the number range';
   show('s3');
 });
 document.getElementById('modeMulti').addEventListener('click', () => {
@@ -578,49 +722,58 @@ document.querySelectorAll('.pc-btn').forEach(btn => {
   });
 });
 
+// Spectator toggle
+document.getElementById('specToggle').addEventListener('click', () => {
+  wantSpectator = !wantSpectator;
+  document.getElementById('toggleSw').classList.toggle('on', wantSpectator);
+});
+
 document.getElementById('createRoomBtn').addEventListener('click', async () => {
   const minVal = parseFloat(document.getElementById('minRange').value);
   const maxVal = parseFloat(document.getElementById('maxRange').value);
   if (isNaN(minVal) || isNaN(maxVal)) return toast('Set a valid min and max range.');
   if (minVal >= maxVal) return toast('Min must be less than Max.');
   const btn = document.getElementById('createRoomBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating…';
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating…';
   try {
     const fn  = httpsCallable(fns,'createGameRoom');
-    const res = await fn({ minRange: minVal, maxRange: maxVal, creatorName: myName });
+    const res = await fn({ minRange: minVal, maxRange: maxVal, creatorName: myName, withSpectator: wantSpectator });
     roomCode = res.data.gameId;
+    const spectatorCode = res.data.spectatorCode;
     await setDoc(doc(db,`games/${roomCode}/players`,myUserId), { name: myName, guessCount:0, lastGuess:null });
     await updateDoc(doc(db,'games',roomCode), { maxPlayers: isSolo ? 1 : selectedMaxPlayers });
+    playerNames[myUserId] = myName;
     if (isSolo) {
       await updateDoc(doc(db,'games',roomCode), {
-        status:'playing', playerOrder:[myUserId], activePlayerIndex:0,
-        lastActiveTimestamp: serverTimestamp()
+        status:'playing', playerOrder:[myUserId], activePlayerIndex:0, lastActiveTimestamp: serverTimestamp()
       });
       launchGameplay();
     } else {
-      startWaitingRoom(selectedMaxPlayers, true);
+      startWaitingRoom(selectedMaxPlayers, true, spectatorCode);
     }
-  } catch(e) { toast('Could not create room.'); }
+  } catch(e) { toast('Could not create room. ' + (e.message||'')); }
   finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Room Code'; }
 });
 
 // ── S4: WAITING ROOM ──
-function startWaitingRoom(maxPlayers, isHost) {
-  document.getElementById('wrCode').textContent    = roomCode;
-  document.getElementById('wrCodeBig').textContent = roomCode;
-  document.getElementById('wrMax').textContent     = maxPlayers;
+function startWaitingRoom(maxPlayers, isHost, spectatorCode) {
+  document.getElementById('wrCode').textContent     = roomCode;
+  document.getElementById('wrCodeGame').textContent = roomCode;
+  document.getElementById('wrMax').textContent      = maxPlayers;
+  if (spectatorCode) {
+    document.getElementById('specCodeBox').style.display = 'block';
+    document.getElementById('wrCodeSpec').textContent = spectatorCode;
+    document.getElementById('copySpecCode').onclick = () =>
+      navigator.clipboard.writeText(spectatorCode).then(() => toast('Spectator code copied!', true));
+  }
+  document.getElementById('copyGameCode').onclick = () =>
+    navigator.clipboard.writeText(roomCode).then(() => toast('Game code copied!', true));
   show('s4');
-  document.getElementById('copyCodeBtn').onclick = () => {
-    navigator.clipboard.writeText(roomCode).then(() => toast('Code copied!', true));
-  };
-  const plRef = collection(db,`games/${roomCode}/players`);
-  onSnapshot(plRef, (snap) => {
+
+  onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
     const players = [];
-    snap.forEach(d => players.push({ id:d.id, ...d.data() }));
+    snap.forEach(d => { players.push({id:d.id,...d.data()}); playerNames[d.id]=d.data().name; });
     document.getElementById('wrCount').textContent = players.length;
-    // Build playerNames map
-    players.forEach(p => { playerNames[p.id] = p.name; });
     renderWaitingPlayers(players);
     const enough = players.length >= (isSolo ? 1 : 2);
     document.getElementById('startGameBtn').disabled = !enough;
@@ -629,13 +782,13 @@ function startWaitingRoom(maxPlayers, isHost) {
       ? `<span>${players.length}</span> players ready — host can start!`
       : `Need at least <span>2</span> players to start`;
   });
+
   if (isHost) {
     document.getElementById('startGameBtn').onclick = async () => {
       const snap = await getDoc(doc(db,'games',roomCode));
       const pOrder = snap.data().playerOrder || [myUserId];
       await updateDoc(doc(db,'games',roomCode), {
-        status:'playing', playerOrder: pOrder, activePlayerIndex:0,
-        lastActiveTimestamp: serverTimestamp()
+        status:'playing', playerOrder: pOrder, activePlayerIndex:0, lastActiveTimestamp: serverTimestamp()
       });
       launchGameplay();
     };
@@ -652,14 +805,9 @@ function startWaitingRoom(maxPlayers, isHost) {
 function renderWaitingPlayers(players) {
   const list = document.getElementById('wrPlayerList');
   list.innerHTML = '';
-  players.forEach((p, i) => {
-    const div = document.createElement('div');
-    div.className = 'pl-slot';
-    div.innerHTML = `
-      <div class="pl-av">${emoji(p.id)}</div>
-      <div><div class="pl-name">${p.name}</div><div class="pl-tag">${p.id === myUserId ? 'You' : 'Player'}</div></div>
-      ${i === 0 ? '<span class="host-badge">Host</span>' : ''}
-    `;
+  players.forEach((p,i) => {
+    const div = document.createElement('div'); div.className = 'pl-slot';
+    div.innerHTML = `<div class="pl-av">${emoji(p.id)}</div><div><div class="pl-name">${p.name}</div><div class="pl-tag">${p.id===myUserId?'You':'Player'}</div></div>${i===0?'<span class="host-badge">Host</span>':''}`;
     list.appendChild(div);
   });
 }
@@ -674,179 +822,133 @@ function launchGameplay() {
 
 // ── ROOM SYNC ──
 function initRoomSync() {
+  let origSet = false;
   const gameRef = doc(db,'games',roomCode);
-  let origMinSet = false;
 
   onSnapshot(gameRef, (snap) => {
     if (!snap.exists()) { alert('Room closed.'); location.reload(); return; }
     const data = snap.data();
 
-    // Store original limits ONCE — never update them (no convergence hint)
-    if (!origMinSet) {
-      origMin = data.rangeMin ?? data.minRange ?? 0;
-      origMax = data.rangeMax ?? data.maxRange ?? 0;
-      document.getElementById('origMin').textContent = origMin.toFixed(2);
-      document.getElementById('origMax').textContent = origMax.toFixed(2);
-      document.getElementById('rangeHintText').textContent = `Original range: ${origMin.toFixed(2)} – ${origMax.toFixed(2)}`;
-      origMinSet = true;
+    // Set original range ONCE — never update again
+    if (!origSet) {
+      origMin = data.origMin ?? data.rangeMin ?? 0;
+      origMax = data.origMax ?? data.rangeMax ?? 0;
+      document.getElementById('origMinDisplay').textContent = origMin.toFixed(2);
+      document.getElementById('origMaxDisplay').textContent = origMax.toFixed(2);
+      origSet = true;
     }
-    // NOTE: We intentionally do NOT update origMin/origMax after this point
-    // Players only see the original range — not the narrowed range
 
-    if (data.status === 'won') {
-      clearInterval(timerInterval); hideModals(); showWinScreen(data); return;
-    }
+    if (data.status === 'won') { clearInterval(timerInterval); hideModals(); showWin(data); return; }
     if (data.status === 'solo_decide') {
       clearInterval(timerInterval);
       if (data.survivorId === myUserId) document.getElementById('soloModal').classList.add('show');
       else document.getElementById('waitSurvivorModal').classList.add('show');
       return;
     }
-
     hideModals();
 
-    // Timer: only run when it's MY turn
     const currentId = data.playerOrder?.[data.activePlayerIndex];
     const isMyTurn  = currentId === myUserId;
 
+    // Timer: only run on MY turn
     if (data.lastActiveTimestamp) {
       const key = data.lastActiveTimestamp.toMillis();
       if (key !== lastTimerKey) {
         lastTimerKey = key;
-        if (isMyTurn) {
-          startTimer(key, data.activePlayerIndex, data.playerOrder);
-        } else {
-          // Not my turn — stop timer and show 60s
-          clearInterval(timerInterval);
-          document.getElementById('timerLabel').textContent = '60s';
-          document.getElementById('timerPill').classList.remove('timer-urgent');
-        }
+        if (isMyTurn) startTimer(key, data.activePlayerIndex, data.playerOrder);
+        else { clearInterval(timerInterval); document.getElementById('timerLabel').textContent='60s'; document.getElementById('timerPill').classList.remove('timer-urgent'); }
       }
     }
 
     // Player chips
-    renderChips(data.playerOrder || [], data.activePlayerIndex);
+    renderChips(data.playerOrder||[], data.activePlayerIndex);
 
-    // Turn notice
+    // Turn UI
     if (isMyTurn) {
-      document.getElementById('panelWait').style.display  = 'none';
-      document.getElementById('panelTurn').style.display  = 'block';
-      document.getElementById('turnNotice').textContent   = '⚡ Your turn — make your guess!';
+      document.getElementById('turnNotice').textContent = '⚡ Your turn — enter your guess!';
+      document.getElementById('guessBar').classList.remove('hidden');
+      document.getElementById('waitPanel').style.display = 'none';
       document.getElementById('guessInput').focus();
     } else {
-      document.getElementById('panelTurn').style.display  = 'none';
-      document.getElementById('panelWait').style.display  = 'block';
-      document.getElementById('turnNotice').textContent   = currentId
-        ? `${(playerNames[currentId] || currentId.replace(/_/g,' '))} is guessing…`
-        : 'Waiting…';
-      // Stop timer when not my turn
-      clearInterval(timerInterval);
-      document.getElementById('timerLabel').textContent = '60s';
-      document.getElementById('timerPill').classList.remove('timer-urgent');
+      document.getElementById('guessBar').classList.add('hidden');
+      document.getElementById('waitPanel').style.display = 'flex';
+      const name = playerNames[currentId] || (currentId||'').replace(/_/g,' ');
+      document.getElementById('turnNotice').textContent = currentId ? name + ' is guessing…' : 'Waiting…';
     }
-
-    // Update stats panel player info
-    updatePlayerNames(data.playerOrder || []);
   });
 
-  // Players collection — names + guess counts
-  onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
-    snap.forEach(d => { playerNames[d.id] = d.data().name; });
-  });
-
-  // PUBLIC feed — everyone sees Too High / Too Low (but NEVER the number guessed)
+  // PUBLIC feed — direction only, no numbers
   onSnapshot(
-    query(collection(db,`games/${roomCode}/guesses_public`), orderBy('timestamp','desc'), limit(10)),
+    query(collection(db,`games/${roomCode}/guesses_public`), orderBy('timestamp','desc'), limit(12)),
     (snap) => {
-      const feed = document.getElementById('myFeed');
+      const feed = document.getElementById('publicFeed');
       feed.innerHTML = '';
       if (snap.empty) {
-        feed.innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Guesses appear here…</div>';
+        feed.innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:8px">Guesses appear here…</div>';
         return;
       }
       snap.forEach(d => {
-        const item   = d.data();
-        const isSys  = item.name === 'SYSTEM';
-        const isMe   = item.name === myUserId.replace(/_/g,' ');
-        const div    = document.createElement('div');
-        div.className = 'feed-entry ' + (isMe ? 'mine' : 'theirs');
-
-        // Map result to display label — NEVER show numbers
-        let label = '', color = 'var(--ink2)';
-        const r = item.result || '';
-        if (r === 'higher' || r.includes('Too Low') || r.includes('Low')) {
-          label = '↑ Too Low'; color = 'var(--ro)';
-        } else if (r === 'lower' || r.includes('Too High') || r.includes('High')) {
-          label = '↓ Too High'; color = 'var(--or)';
-        } else if (r === 'correct' || r === 'won' || r.includes('CORRECT') || r.includes('Got it')) {
-          label = '🎯 Correct!'; color = '#16a34a';
-        } else if (isSys) {
-          label = r; color = 'var(--am)';
-        } else {
-          label = '🎲 Guessed'; color = 'var(--ink3)';
-        }
-
-        // Show name + direction only — no number
-        const displayName = isSys ? '⚙️ System' : (playerNames[item.name.toLowerCase().replace(/ /g,'_')] || item.name);
-        // NEVER show the actual guess number — only the direction label
-        div.innerHTML = `
-          <span class="feed-n ${isSys?'sys':'pl'}">${displayName}</span>
-          <span class="feed-r" style="color:${color};font-weight:800">${label}</span>
-        `;
+        const item = d.data();
+        const isSys = item.name === 'SYSTEM';
+        const {text, cls} = dirLabel(item.result);
+        const displayName = isSys ? '⚙️' : (playerNames[item.name.toLowerCase().replace(/ /g,'_')] || item.name);
+        const div = document.createElement('div');
+        div.className = 'feed-item' + (isSys?' sys':'');
+        div.innerHTML = `<span class="fi-name" style="color:${isSys?'var(--am)':'var(--or)'}">${displayName}</span><span class="fi-result ${cls}">${text}</span>`;
         feed.appendChild(div);
       });
     }
   );
 
-  // MY PRIVATE feed — only I can see my own guess values + results
+  // Players
+  onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
+    snap.forEach(d => { playerNames[d.id] = d.data().name; });
+  });
+
+  // MY PRIVATE guesses — only I see my numbers
   onSnapshot(
-    query(collection(db,`games/${roomCode}/private_${myUserId}`), orderBy('timestamp','asc'), limit(30)),
+    query(collection(db,`games/${roomCode}/private_${myUserId}`), orderBy('timestamp','asc'), limit(50)),
     (snap) => {
       myGuesses = [];
-      snap.forEach(d => {
-        const item = d.data();
-        myGuesses.push({ val: item.guess, result: item.result });
-      });
-      renderMyGuessList();
+      snap.forEach(d => myGuesses.push({val:d.data().guess, result:d.data().result}));
+      renderMyGuesses();
     }
   );
+}
+
+function renderMyGuesses() {
+  const el = document.getElementById('myGuessList');
+  el.innerHTML = '';
+  if (myGuesses.length === 0) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--ink3);text-align:center;padding:20px">Your private guess history.<br>Only you can see this.</div>';
+    return;
+  }
+  [...myGuesses].reverse().forEach((g,i) => {
+    const {text, cls} = dirLabel(g.result);
+    const div = document.createElement('div'); div.className = 'my-guess-item';
+    div.innerHTML = `<span class="mg-num">${g.val}</span><span class="mg-tag ${cls}">${text}</span><span class="mg-idx">#${myGuesses.length-i}</span>`;
+    el.appendChild(div);
+  });
 }
 
 // ── PLAYER CHIPS ──
 function renderChips(playerOrder, activeIndex) {
   const strip = document.getElementById('chipsStrip');
   strip.innerHTML = '';
-  playerOrder.forEach((uid, i) => {
-    const name    = playerNames[uid] || uid.replace(/_/g,' ');
-    const isActive = i === activeIndex;
-    const isMe    = uid === myUserId;
-    const chip    = document.createElement('div');
-    chip.className = 'p-chip';
-    chip.innerHTML = `
-      <div class="p-chip-av ${isActive?'active':''} ${isMe?'me-ring':''}">
-        ${emoji(uid)}
-      </div>
-      <div class="p-chip-name ${isActive?'active':''}">${name.split(' ')[0]}</div>
-    `;
+  playerOrder.forEach((uid,i) => {
+    const name = playerNames[uid] || uid.replace(/_/g,' ');
+    const isActive = i===activeIndex, isMe = uid===myUserId;
+    const chip = document.createElement('div'); chip.className = 'p-chip';
+    chip.innerHTML = `<div class="p-chip-av ${isActive?'active':''} ${isMe?'me-ring':''}">${emoji(uid)}</div><div class="p-chip-name ${isActive?'active':''}">${name.split(' ')[0]}</div>`;
     strip.appendChild(chip);
-  });
-}
-
-function updatePlayerNames(playerOrder) {
-  playerOrder.forEach(uid => {
-    if (!playerNames[uid]) playerNames[uid] = uid.replace(/_/g,' ');
   });
 }
 
 // ── SUBMIT GUESS ──
 document.getElementById('submitBtn').addEventListener('click', submitGuess);
-document.getElementById('guessInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); submitGuess(); }
-});
-
-// Reset timer on typing (visual only)
+document.getElementById('guessInput').addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();submitGuess();} });
 document.getElementById('guessInput').addEventListener('input', () => {
-  document.getElementById('timerLabel').textContent = '60s';
+  document.getElementById('timerLabel').textContent='60s';
   document.getElementById('timerPill').classList.remove('timer-urgent');
 });
 
@@ -854,161 +956,55 @@ async function submitGuess() {
   const input = document.getElementById('guessInput');
   const raw = input.value.trim();
   const val = parseFloat(raw);
-  if (raw === '' || isNaN(val)) {
-    input.classList.add('shake');
-    setTimeout(() => input.classList.remove('shake'), 400);
-    return;
-  }
+  if (raw===''||isNaN(val)) { input.classList.add('shake'); setTimeout(()=>input.classList.remove('shake'),300); return; }
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
   const guessVal = val;
   input.value = '';
-
   try {
     const fn  = httpsCallable(fns,'submitGuess');
-    const res = await fn({ gameId: roomCode, userId: myUserId, guess: guessVal });
+    const res = await fn({ gameId:roomCode, userId:myUserId, guess:guessVal });
     const result = res.data?.result ?? 'unknown';
     showResultToast(result, guessVal);
+    // Switch to My Guesses tab briefly to show result
+    switchTab('mine');
+    setTimeout(() => switchTab('board'), 2500);
   } catch(e) {
-    const msg = e?.message || 'Unknown error';
-    toast("Error: " + msg);
+    toast('Error: ' + (e.message||'Unknown error'));
     input.value = guessVal;
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Guess';
-    setTimeout(() => document.getElementById('guessInput').focus(), 100);
+    setTimeout(()=>document.getElementById('guessInput').focus(), 100);
   }
 }
 
-// renderMyFeed replaced by Firestore private listener above
-
-// ── RESULT TOAST (small, private, shown only to guesser) ──
+// ── RESULT TOAST ──
 function showResultToast(result, val) {
   const el = document.getElementById('resultToast');
   el.className = '';
-  if (result === 'higher') {
-    el.className = 'higher';
-    el.innerHTML = '<i class="fa-solid fa-arrow-up"></i> Too Low — Guess Higher';
-  } else if (result === 'lower') {
-    el.className = 'lower';
-    el.innerHTML = '<i class="fa-solid fa-arrow-down"></i> Too High — Guess Lower';
-  } else if (result === 'won') {
-    el.className = 'correct';
-    el.innerHTML = '<i class="fa-solid fa-trophy"></i> Correct! You got it!';
-  } else {
-    el.className = 'lower';
-    el.innerHTML = '<i class="fa-solid fa-circle-check"></i> Guess sent';
-  }
-  el.id = 'resultToast';
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
+  if (result==='higher')      { el.className='higher'; el.innerHTML='<i class="fa-solid fa-arrow-up"></i> Too Low — Guess Higher'; }
+  else if (result==='lower')  { el.className='lower';  el.innerHTML='<i class="fa-solid fa-arrow-down"></i> Too High — Guess Lower'; }
+  else if (result==='won')    { el.className='correct'; el.innerHTML='<i class="fa-solid fa-trophy"></i> Correct! You got it!'; }
+  else                        { el.className='lower';  el.innerHTML='<i class="fa-solid fa-circle-check"></i> Guess sent'; }
+  el.id = 'resultToast'; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2500);
 }
 
-// ── TIMER (only runs on MY turn) ──
+// ── TIMER ──
 function startTimer(serverMs, activeIndex, orderArray) {
   clearInterval(timerInterval);
-  const pill  = document.getElementById('timerPill');
-  const label = document.getElementById('timerLabel');
-
+  const pill=document.getElementById('timerPill'), label=document.getElementById('timerLabel');
   timerInterval = setInterval(async () => {
-    const elapsed   = Math.floor((Date.now() - serverMs) / 1000);
-    const remaining = 60 - elapsed;
+    const remaining = 60 - Math.floor((Date.now()-serverMs)/1000);
     if (remaining <= 0) {
-      clearInterval(timerInterval);
-      label.textContent = '0s';
-      pill.classList.add('timer-urgent');
-      if ((orderArray||[])[activeIndex] === myUserId) {
-        try { await httpsCallable(fns,'handleTimeout')({ gameId:roomCode, userId:myUserId }); } catch(e){}
+      clearInterval(timerInterval); label.textContent='0s'; pill.classList.add('timer-urgent');
+      if ((orderArray||[])[activeIndex]===myUserId) {
+        try { await httpsCallable(fns,'handleTimeout')({gameId:roomCode,userId:myUserId}); } catch(e){}
       }
     } else {
-      label.textContent = `${remaining}s`;
-      pill.classList.toggle('timer-urgent', remaining <= 10);
+      label.textContent=remaining+'s'; pill.classList.toggle('timer-urgent',remaining<=10);
     }
   }, 1000);
-}
-
-// ── BURGER / STATS ──
-document.getElementById('burgerBtn').addEventListener('click', () => {
-  renderStatsLeaderboard();
-  renderMyGuessList();
-  renderStatsInfo();
-  document.getElementById('statsPanel').classList.add('show');
-});
-document.getElementById('statsClose').addEventListener('click', () => document.getElementById('statsPanel').classList.remove('show'));
-document.getElementById('statsBackdrop').addEventListener('click', () => document.getElementById('statsPanel').classList.remove('show'));
-
-function renderStatsLeaderboard() {
-  const el = document.getElementById('statsLeaderboard');
-  el.innerHTML = '';
-  // Get player guess counts from Firestore listener — playerNames is populated
-  onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
-    el.innerHTML = '';
-    const players = [];
-    snap.forEach(d => players.push({ id:d.id, ...d.data() }));
-    players.sort((a,b) => (b.guessCount||0) - (a.guessCount||0));
-    players.forEach((p, i) => {
-      const row = document.createElement('div');
-      row.className = 'stat-row';
-      row.innerHTML = `
-        <div class="stat-av">${emoji(p.id)}</div>
-        <div class="stat-info">
-          <div class="stat-name">${p.name} ${p.id===myUserId?'(You)':''}</div>
-          <div class="stat-detail">${i===0?'🥇 Most active':'Player'}</div>
-        </div>
-        <div class="stat-count">${p.guessCount||0}</div>
-      `;
-      el.appendChild(row);
-    });
-    if (players.length === 0) el.innerHTML = '<p style="font-size:12px;color:var(--ink3)">No data yet…</p>';
-  });
-}
-
-function renderMyGuessList() {
-  const el = document.getElementById('myGuessList');
-  el.innerHTML = '';
-  if (myGuesses.length === 0) {
-    el.innerHTML = '<p style="font-size:12px;color:var(--ink3)">No guesses yet…</p>';
-    return;
-  }
-  myGuesses.forEach((g, i) => {
-    const div = document.createElement('div');
-    div.className = 'my-result-row';
-    let tag = '', cls = '';
-    if (g.result==='higher') { tag='Too Low ↑'; cls='h'; }
-    else if (g.result==='lower') { tag='Too High ↓'; cls='l'; }
-    else { tag='✓ Correct!'; cls='c'; }
-    div.innerHTML = `
-      <span style="font-size:11px;font-weight:600;color:var(--ink3)">#${i+1}</span>
-      <span class="my-result-val">${g.val}</span>
-      <span class="my-result-tag ${cls}">${tag}</span>
-    `;
-    el.appendChild(div);
-  });
-}
-
-function renderStatsInfo() {
-  const el = document.getElementById('statsInfo');
-  const elapsed = gameStartTime ? Math.floor((Date.now()-gameStartTime)/1000) : 0;
-  const mins = Math.floor(elapsed/60), secs = elapsed%60;
-  el.innerHTML = `
-    <div class="my-result-row">
-      <span style="font-size:12px;font-weight:700;color:var(--ink3)">Room Code</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${roomCode}</span>
-    </div>
-    <div class="my-result-row">
-      <span style="font-size:12px;font-weight:700;color:var(--ink3)">Time Elapsed</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${mins}m ${secs}s</span>
-    </div>
-    <div class="my-result-row">
-      <span style="font-size:12px;font-weight:700;color:var(--ink3)">My Guesses</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--or)">${myGuesses.length}</span>
-    </div>
-    <div class="my-result-row">
-      <span style="font-size:12px;font-weight:700;color:var(--ink3)">Original Range</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${origMin??'--'} – ${origMax??'--'}</span>
-    </div>
-  `;
 }
 
 // ── MODALS ──
@@ -1018,61 +1014,126 @@ function hideModals() {
 }
 document.getElementById('soloPlayBtn').addEventListener('click', async () => {
   document.getElementById('soloModal').classList.remove('show');
-  try { await updateDoc(doc(db,'games',roomCode), { status:'playing', lastActiveTimestamp: serverTimestamp() }); }
-  catch(e) { toast('Could not resume.'); }
+  try { await updateDoc(doc(db,'games',roomCode),{status:'playing',lastActiveTimestamp:serverTimestamp()}); }
+  catch(e){toast('Could not resume.');}
 });
 document.getElementById('soloExitBtn').addEventListener('click', async () => {
   document.getElementById('soloModal').classList.remove('show');
   clearInterval(timerInterval);
-  try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
+  try{await deleteDoc(doc(db,'games',roomCode));}finally{location.reload();}
 });
-
-// ── END SESSION ──
 document.getElementById('endSessionBtn').addEventListener('click', async () => {
-  if (!confirm('Delete this room and end the game for everyone?')) return;
+  if(!confirm('Delete this room and end the game for everyone?'))return;
   clearInterval(timerInterval);
-  try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
+  try{await deleteDoc(doc(db,'games',roomCode));}finally{location.reload();}
 });
 
-// ── EXIT ──
-document.getElementById('exitBtn').addEventListener('click', () => location.reload());
-
-// ── WIN SCREEN ──
-function showWinScreen(data) {
+// ── WIN ──
+function showWin(data) {
   clearInterval(timerInterval);
-  const isWinner = data.winnerId === myUserId;
-  document.getElementById('winScreen').classList.add('show');
-  document.getElementById('winTitle').textContent = isWinner ? '🏆 You Won!' : 'Game Over!';
-  document.getElementById('winNum').textContent   = data.targetNumber?.toFixed(2) ?? '--';
+  const isWinner = data.winnerId===myUserId;
+  document.getElementById('winTitle').textContent = isWinner?'🏆 You Won!':'Game Over!';
+  document.getElementById('winNum').textContent   = data.targetNumber?.toFixed(2)??'--';
   document.getElementById('winnerName').textContent = data.winnerId
-    ? (isWinner ? 'Congratulations! 🎉' : `${(playerNames[data.winnerId]||data.winnerId.replace(/_/g,' '))} guessed it!`)
+    ? (isWinner?'Congratulations! 🎉':(playerNames[data.winnerId]||data.winnerId.replace(/_/g,' '))+' guessed it!')
     : '';
+  document.getElementById('winScreen').classList.add('show');
+}
+
+// ── BURGER / STATS ──
+document.getElementById('burgerBtn').addEventListener('click', () => {
+  renderStats(); document.getElementById('statsPanel').classList.add('show');
+});
+document.getElementById('statsClose').addEventListener('click', ()=>document.getElementById('statsPanel').classList.remove('show'));
+document.getElementById('statsBackdrop').addEventListener('click', ()=>document.getElementById('statsPanel').classList.remove('show'));
+
+function renderStats() {
+  onSnapshot(collection(db,`games/${roomCode}/players`),(snap)=>{
+    const lb = document.getElementById('statsLeaderboard'); lb.innerHTML='';
+    const ps=[]; snap.forEach(d=>ps.push({id:d.id,...d.data()}));
+    ps.sort((a,b)=>(b.guessCount||0)-(a.guessCount||0));
+    ps.forEach((p,i)=>{
+      const row=document.createElement('div'); row.className='stat-row';
+      row.innerHTML=`<div class="stat-av">${emoji(p.id)}</div><div class="stat-name">${p.name}${p.id===myUserId?' (You)':''}</div><div class="stat-count">${p.guessCount||0}</div>`;
+      lb.appendChild(row);
+    });
+    if(ps.length===0) lb.innerHTML='<p style="font-size:12px;color:var(--ink3)">No data yet…</p>';
+  });
+  const el = document.getElementById('statsInfo');
+  const elapsed = gameStartTime?Math.floor((Date.now()-gameStartTime)/1000):0;
+  el.innerHTML=`<div class="stat-row" style="gap:6px"><span style="font-size:12px;font-weight:700;color:var(--ink3);flex:1">Room</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">${roomCode}</span></div>
+  <div class="stat-row" style="gap:6px"><span style="font-size:12px;font-weight:700;color:var(--ink3);flex:1">Time</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">${Math.floor(elapsed/60)}m ${elapsed%60}s</span></div>
+  <div class="stat-row" style="gap:6px"><span style="font-size:12px;font-weight:700;color:var(--ink3);flex:1">My Guesses</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--or)">${myGuesses.length}</span></div>
+  <div class="stat-row" style="gap:6px"><span style="font-size:12px;font-weight:700;color:var(--ink3);flex:1">Range</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">${origMin??'--'} – ${origMax??'--'}</span></div>`;
+}
+
+// ── SPECTATOR MODE (TV) ──
+function launchSpectatorMode(gameId, specCode) {
+  document.getElementById('specHeaderCode').textContent = 'Code: ' + specCode;
+  document.getElementById('specRoomCodeDisplay').textContent = 'Game: ' + gameId;
+  document.getElementById('specScreen').classList.add('show');
+
+  let origSet = false;
+  onSnapshot(doc(db,'games',gameId),(snap)=>{
+    if(!snap.exists())return;
+    const data=snap.data();
+    if(!origSet){
+      document.getElementById('specMin').textContent=(data.origMin??data.rangeMin??0).toFixed(2);
+      document.getElementById('specMax').textContent=(data.origMax??data.rangeMax??0).toFixed(2);
+      origSet=true;
+    }
+    if(data.status==='playing'){
+      const uid=data.playerOrder?.[data.activePlayerIndex];
+      if(uid){
+        onSnapshot(doc(db,`games/${gameId}/players`,uid),(ps)=>{
+          if(ps.exists()) document.getElementById('specActiveName').textContent=ps.data().name;
+        });
+      }
+    } else if(data.status==='won'){
+      document.getElementById('specActiveName').textContent='🎉 Game Over!';
+    }
+  });
+
+  onSnapshot(query(collection(db,`games/${gameId}/guesses_public`),orderBy('timestamp','desc'),limit(12)),(snap)=>{
+    const feed=document.getElementById('specFeed'); feed.innerHTML='';
+    if(snap.empty){feed.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:16px">Waiting for first guess…</div>';return;}
+    snap.forEach(d=>{
+      const item=d.data(), isSys=item.name==='SYSTEM';
+      const {text,cls}=dirLabel(item.result);
+      const div=document.createElement('div'); div.className='spec-fi';
+      div.innerHTML=`<span class="spec-fi-name">${isSys?'⚙️ System':item.name}</span><span class="spec-fi-tag ${cls}">${text}</span>`;
+      feed.appendChild(div);
+    });
+  });
+
+  onSnapshot(collection(db,`games/${gameId}/players`),(snap)=>{
+    const stats=document.getElementById('specStats'); stats.innerHTML='';
+    const ps=[]; snap.forEach(d=>ps.push({id:d.id,...d.data()}));
+    if(ps.length===0){stats.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center">No players yet</div>';return;}
+    ps.forEach(p=>{
+      const row=document.createElement('div'); row.className='spec-stat-row';
+      row.innerHTML=`<span class="spec-stat-name">${p.name}</span><span class="spec-stat-count">Guesses: <strong>${p.guessCount||0}</strong></span>`;
+      stats.appendChild(row);
+    });
+  });
 }
 </script>
 
 <script>
 if ('serviceWorker' in navigator) {
-  // Only register SW on the real deployed domain, not in preview/iframe
-  const isRealSite = location.hostname !== 'localhost' && 
-                     !location.hostname.includes('claudeusercontent');
-  if (isRealSite) {
+  const isReal = !location.hostname.includes('claudeusercontent') && location.hostname !== 'localhost';
+  if (isReal) {
     window.addEventListener('load', async () => {
       try {
         const reg = await navigator.serviceWorker.register('/sw.js');
-        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        if (reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
         reg.addEventListener('updatefound', () => {
-          const newSW = reg.installing;
-          newSW.addEventListener('statechange', () => {
-            if (newSW.state === 'installed') newSW.postMessage({ type: 'SKIP_WAITING' });
-          });
+          const sw = reg.installing;
+          sw.addEventListener('statechange', () => { if(sw.state==='installed') sw.postMessage({type:'SKIP_WAITING'}); });
         });
         let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!refreshing) { refreshing = true; window.location.reload(); }
-        });
-      } catch(e) {
-        console.log('SW registration skipped:', e);
-      }
+        navigator.serviceWorker.addEventListener('controllerchange', () => { if(!refreshing){refreshing=true;location.reload();} });
+      } catch(e) {}
     });
   }
 }
