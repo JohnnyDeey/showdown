@@ -318,35 +318,54 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 <!-- ══ S1: LOBBY ══ -->
 <div id="s1" class="screen active">
   <div class="lobby-wrap">
-    <div style="text-align:center;margin-bottom:26px;padding-top:4px">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:32px;padding-top:8px">
       <div class="logo-ring"><i class="fa-solid fa-bolt"></i></div>
       <div class="lobby-title">Family <span>Showdown</span></div>
       <div class="lobby-sub">Number Guessing · Real-Time · Multiplayer</div>
     </div>
-    <div class="stack">
-      <div class="card">
-        <div class="clabel"><i class="fa-solid fa-door-open" style="color:var(--or)"></i> Join a Game</div>
-        <div class="stack">
-          <input type="text" id="joinRoomId" class="field field-code" placeholder="GAME CODE" maxlength="6" autocomplete="off">
-          <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
-          <button class="btn btn-or" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
-        </div>
+
+    <!-- Step 1: What do you want to do? -->
+    <div id="lobbyStep1">
+      <p style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);text-align:center;margin-bottom:16px">What would you like to do?</p>
+      <div class="stack">
+        <button class="btn btn-or" id="goJoinBtn" style="padding:18px"><i class="fa-solid fa-door-open"></i> Join a Game</button>
+        <button class="btn btn-te" id="goHostBtn" style="padding:18px"><i class="fa-solid fa-crown"></i> Host a Game</button>
+        <button class="btn btn-ghost" id="goSpecBtn" style="padding:14px;margin-top:4px;font-size:12px"><i class="fa-solid fa-tv" style="color:#7c3aed"></i> View on TV (Spectator)</button>
       </div>
-      <div class="divider"><span>or</span></div>
-      <div class="card">
-        <div class="clabel"><i class="fa-solid fa-tv" style="color:#7c3aed"></i> Join as Spectator (TV)</div>
-        <div class="stack">
-          <input type="text" id="specJoinCode" class="field field-code" placeholder="SPECTATOR CODE" maxlength="6" autocomplete="off">
-          <button class="btn btn-purple" id="specJoinBtn"><i class="fa-solid fa-eye"></i> View on TV</button>
-        </div>
+    </div>
+
+    <!-- Step 2a: Join form -->
+    <div id="lobbyJoinForm" style="display:none">
+      <div class="back-row" id="backToStep1Join" style="margin-bottom:16px"><i class="fa-solid fa-arrow-left"></i> Back</div>
+      <p style="font-size:18px;font-weight:900;margin-bottom:4px">Join a Game</p>
+      <p style="font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:20px">Enter the room code shared by the host</p>
+      <div class="stack">
+        <input type="text" id="joinRoomId" class="field field-code" placeholder="6-LETTER CODE" maxlength="6" autocomplete="off">
+        <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
+        <button class="btn btn-or" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
       </div>
-      <div class="divider"><span>or</span></div>
-      <div class="card">
-        <div class="clabel"><i class="fa-solid fa-crown" style="color:var(--am)"></i> Host New Game</div>
-        <div class="stack">
-          <input type="text" id="hostName" class="field" placeholder="Your name (host)" autocomplete="off">
-          <button class="btn btn-te" id="hostBtn"><i class="fa-solid fa-plus"></i> Host a Game</button>
-        </div>
+    </div>
+
+    <!-- Step 2b: Host form -->
+    <div id="lobbyHostForm" style="display:none">
+      <div class="back-row" id="backToStep1Host" style="margin-bottom:16px"><i class="fa-solid fa-arrow-left"></i> Back</div>
+      <p style="font-size:18px;font-weight:900;margin-bottom:4px">Host a Game</p>
+      <p style="font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:20px">Enter your name to get started</p>
+      <div class="stack">
+        <input type="text" id="hostName" class="field" placeholder="Your name" autocomplete="off">
+        <button class="btn btn-te" id="hostBtn"><i class="fa-solid fa-plus"></i> Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 2c: Spectator form -->
+    <div id="lobbySpecForm" style="display:none">
+      <div class="back-row" id="backToStep1Spec" style="margin-bottom:16px"><i class="fa-solid fa-arrow-left"></i> Back</div>
+      <p style="font-size:18px;font-weight:900;margin-bottom:4px">Spectator / TV View</p>
+      <p style="font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:20px">Enter the spectator code from the host</p>
+      <div class="stack">
+        <input type="text" id="specJoinCode" class="field field-code" placeholder="SPECTATOR CODE" maxlength="6" autocomplete="off">
+        <button class="btn btn-purple" id="specJoinBtn"><i class="fa-solid fa-eye"></i> View Game</button>
       </div>
     </div>
   </div>
@@ -735,19 +754,42 @@ window.switchTab = function(tab) {
   document.getElementById('panelMine').classList.toggle('active', tab==='mine');
 };
 
+// ── LOBBY STEP NAVIGATION ──
+function showLobbyStep(step) {
+  document.getElementById('lobbyStep1').style.display   = step==='main'?'block':'none';
+  document.getElementById('lobbyJoinForm').style.display = step==='join'?'block':'none';
+  document.getElementById('lobbyHostForm').style.display = step==='host'?'block':'none';
+  document.getElementById('lobbySpecForm').style.display = step==='spec'?'block':'none';
+}
+
+document.getElementById('goJoinBtn').addEventListener('click', () => {
+  showLobbyStep('join');
+  setTimeout(() => document.getElementById('joinRoomId').focus(), 100);
+});
+document.getElementById('goHostBtn').addEventListener('click', () => {
+  showLobbyStep('host');
+  setTimeout(() => document.getElementById('hostName').focus(), 100);
+});
+document.getElementById('goSpecBtn').addEventListener('click', () => {
+  showLobbyStep('spec');
+  setTimeout(() => document.getElementById('specJoinCode').focus(), 100);
+});
+document.getElementById('backToStep1Join').addEventListener('click', () => showLobbyStep('main'));
+document.getElementById('backToStep1Host').addEventListener('click', () => showLobbyStep('main'));
+document.getElementById('backToStep1Spec').addEventListener('click', () => showLobbyStep('main'));
+
 // ── ENTER KEY ──
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const active = document.querySelector('.screen.active');
   if (!active) return;
   if (active.id === 's1') {
-    const code = document.getElementById('joinRoomId').value.trim();
-    const name = document.getElementById('joinName').value.trim();
-    const spec = document.getElementById('specJoinCode').value.trim();
-    const host = document.getElementById('hostName').value.trim();
-    if (code || name) document.getElementById('joinBtn').click();
-    else if (spec) document.getElementById('specJoinBtn').click();
-    else if (host) document.getElementById('hostBtn').click();
+    const joinVisible = document.getElementById('lobbyJoinForm').style.display !== 'none';
+    const hostVisible = document.getElementById('lobbyHostForm').style.display !== 'none';
+    const specVisible = document.getElementById('lobbySpecForm').style.display !== 'none';
+    if (joinVisible) document.getElementById('joinBtn').click();
+    else if (hostVisible) document.getElementById('hostBtn').click();
+    else if (specVisible) document.getElementById('specJoinBtn').click();
   } else if (active.id === 's3') {
     document.getElementById('createRoomBtn').click();
   }
@@ -1177,10 +1219,12 @@ document.getElementById('soloExitBtn').addEventListener('click', async () => {
   try{await deleteDoc(doc(db,'games',roomCode));}finally{location.reload();}
 });
 document.getElementById('endSessionBtn').addEventListener('click', async () => {
-  if(!confirm('Delete this room and end the game for everyone?'))return;
+  if(!confirm('Leave this room? The room stays active for others. Only use "Delete Room" to fully close it.'))return;
   clearInterval(timerInterval);
-  clearSession();
-  try{await deleteDoc(doc(db,'games',roomCode));}finally{location.reload();}
+  // Save session so you can come back
+  saveSession();
+  // Just go back to lobby — don't delete room
+  location.reload();
 });
 
 // ── WIN ──
@@ -1425,17 +1469,17 @@ let specTargetNumber = null;
 // ── SESSION PERSISTENCE ──
 function saveSession() {
   if (!roomCode || !myUserId) return;
-  sessionStorage.setItem('showdown_session', JSON.stringify({
+  localStorage.setItem('showdown_session', JSON.stringify({
     roomCode, myUserId, myName, origMin, origMax, gameStartTime
   }));
 }
 
 function clearSession() {
-  sessionStorage.removeItem('showdown_session');
+  localStorage.removeItem('showdown_session');
 }
 
 async function restoreSession() {
-  const raw = sessionStorage.getItem('showdown_session');
+  const raw = localStorage.getItem('showdown_session');
   if (!raw) return false;
   try {
     const s = JSON.parse(raw);
@@ -1454,6 +1498,7 @@ async function restoreSession() {
     origMin       = s.origMin;
     origMax       = s.origMax;
     gameStartTime = s.gameStartTime || Date.now();
+    isSolo        = s.isSolo || false;
     
     // Restore origMin/origMax display
     if (origMin !== null) {
@@ -1643,8 +1688,18 @@ function renderSpecSummary() {
 
   el.innerHTML = summaryHTML;
 }
-// Auto-restore session on load
-setTimeout(() => restoreSession(), 500);
+// Auto-restore session on load — wait for Firebase to fully init
+async function tryRestore() {
+  try {
+    const restored = await restoreSession();
+    if (!restored) {
+      // No session to restore — stay on lobby
+    }
+  } catch(e) {
+    console.log('Restore failed:', e);
+  }
+}
+setTimeout(tryRestore, 800);
 </script>
 
 <script>
