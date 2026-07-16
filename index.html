@@ -4,436 +4,422 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Family Showdown</title>
-  <meta name="description" content="Real-time multiplayer number guessing game. Create a room, share the code, and outwit your family.">
-
-  <!-- PWA -->
+  <meta name="description" content="Real-time family number guessing game. Create a room, share the code, and play together.">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4f46e5">
+  <meta name="theme-color" content="#f97316">
   <link rel="icon" type="image/png" href="icons/icon-32x32.png">
-
-  <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Showdown">
   <link rel="apple-touch-icon" href="icons/icon-152x152.png">
-
-  <!-- OG / Social -->
-  <meta property="og:title" content="Family Showdown">
-  <meta property="og:description" content="Real-time multiplayer number guessing game.">
-  <meta property="og:image" content="icons/icon-512x512.png">
-  <meta property="og:type" content="website">
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
-
-    * { box-sizing: border-box; }
-    body { font-family: 'Space Grotesk', sans-serif; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-
-    /* Pulse ring on active timer */
-    @keyframes ring-pulse {
-      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
-      70%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
-      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
-    }
-    .timer-urgent { animation: ring-pulse 1s ease-in-out infinite; }
-
-    /* Feed entry animation */
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-8px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    .feed-entry { animation: slideIn 0.25s ease forwards; }
-
-    /* Update toast */
-    #updateToast {
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      transform: translateY(100px);
-      opacity: 0;
-    }
-    #updateToast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    /* Solo modal */
-    #soloModal {
-      transition: opacity 0.2s ease;
-    }
-
-    /* Shake animation for wrong guess feedback */
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%,60% { transform: translateX(-6px); }
-      40%,80% { transform: translateX(6px); }
-    }
-    .shake { animation: shake 0.4s ease; }
-
-    /* Install banner */
-    #installBanner {
-      transition: transform 0.3s ease;
-      transform: translateY(-100%);
-    }
-    #installBanner.show { transform: translateY(0); }
-
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-    input[type=number] { -moz-appearance: textfield; }
+    :root{--orange:#f97316;--orange-d:#ea6b0a;--orange-l:#fff7ed;--teal:#0d9488;--teal-d:#0b7a6f;--teal-l:#f0fdfa;--rose:#f43f5e;--rose-l:#fff1f2;--amber:#f59e0b;--amber-l:#fffbeb;--ink:#1c1917;--ink-2:#44403c;--ink-3:#78716c;--border:#e7e5e4;--surface:#fafaf9;--white:#ffffff}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
+    .mono{font-family:'JetBrains Mono',monospace}
+    #setupScreen{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:24px 20px 32px;max-width:420px;margin:0 auto;width:100%}
+    .logo-ring{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--orange),var(--rose));display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 24px rgba(249,115,22,.35)}
+    .logo-ring i{font-size:30px;color:#fff}
+    .lobby-title{font-size:28px;font-weight:900;letter-spacing:-.5px;text-align:center}
+    .lobby-title span{color:var(--orange)}
+    .lobby-sub{text-align:center;font-size:12px;color:var(--ink-3);margin-top:4px;margin-bottom:28px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .card{background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px}
+    .card-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-3);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+    .field{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;outline:none;transition:border-color .15s;-webkit-appearance:none}
+    .field:focus{border-color:var(--orange)}
+    .field::placeholder{color:var(--ink-3);font-weight:600}
+    .field-code{text-align:center;font-family:'JetBrains Mono',monospace;font-size:18px;letter-spacing:.2em;text-transform:uppercase}
+    .field-pin{text-align:center;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.3em}
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+    .field-grid .field{margin-bottom:0;text-align:center}
+    .btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:transform .1s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn:active{transform:scale(.97)}
+    .btn:disabled{opacity:.55}
+    .btn-orange{background:linear-gradient(135deg,var(--orange),#fb923c);color:#fff;box-shadow:0 4px 14px rgba(249,115,22,.35)}
+    .btn-teal{background:linear-gradient(135deg,var(--teal),#14b8a6);color:#fff;box-shadow:0 4px 14px rgba(13,148,136,.3)}
+    .divider{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+    .divider::before,.divider::after{content:'';flex:1;height:1.5px;background:var(--border)}
+    .divider span{font-size:10px;font-weight:800;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em}
+    #errorMsg{background:var(--rose-l);border:1.5px solid #fda4af;color:var(--rose);font-size:12px;font-weight:700;padding:10px 14px;border-radius:12px;margin-bottom:14px;text-align:center;display:none}
+    #gameplayScreen{flex:1;display:none;flex-direction:column;height:100vh;overflow:hidden}
+    .game-header{background:var(--white);border-bottom:1.5px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+    .room-label{display:flex;flex-direction:column}
+    .room-label span:first-child{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3)}
+    .room-code{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--orange);letter-spacing:.15em}
+    .timer-pill{display:flex;align-items:center;gap:6px;background:var(--rose-l);border:1.5px solid #fda4af;padding:6px 14px;border-radius:99px}
+    .timer-pill i{color:var(--rose);font-size:13px}
+    .timer-num{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--rose)}
+    @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(244,63,94,.4)}70%{box-shadow:0 0 0 8px rgba(244,63,94,0)}100%{box-shadow:0 0 0 0 rgba(244,63,94,0)}}
+    .timer-urgent{animation:pulse-ring .9s ease-in-out infinite}
+    .btn-end{background:var(--rose-l);border:1.5px solid #fda4af;color:var(--rose);padding:8px 12px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s}
+    .btn-end:active{transform:scale(.96)}
+    .live-area{background:var(--white);border-bottom:1.5px solid var(--border);padding:12px 14px;display:flex;flex-direction:column;height:38%;flex-shrink:0}
+    .range-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;flex-shrink:0}
+    .range-box{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:8px 12px;text-align:center}
+    .range-box .rl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3)}
+    .range-box .rv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;margin-top:2px}
+    .range-box.lo .rv{color:var(--teal)}
+    .range-box.hi .rv{color:var(--rose)}
+    .turn-row{background:var(--orange-l);border:1.5px solid #fed7aa;border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-shrink:0}
+    .turn-row i{color:var(--orange);font-size:12px}
+    #turnNotice{font-size:12px;font-weight:700;color:var(--ink-2);flex:1}
+    #compactFeed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+    .feed-entry{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;animation:fadeSlide .2s ease forwards}
+    @keyframes fadeSlide{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+    .feed-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
+    .feed-name.system{color:var(--amber)}
+    .feed-name.player{color:var(--orange)}
+    .feed-result{font-size:11px;font-weight:700;color:var(--ink-2);flex:1}
+    .action-panel{flex:1;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;overflow:hidden}
+    #panelWait{text-align:center}
+    .wait-icon{width:60px;height:60px;border-radius:18px;background:var(--white);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+    .wait-icon i{font-size:22px;color:var(--ink-3)}
+    #panelWait h3{font-size:17px;font-weight:800;color:var(--ink);margin-bottom:6px}
+    #panelWait p{font-size:12px;font-weight:600;color:var(--ink-3);max-width:220px;line-height:1.5}
+    #panelTurn{width:100%;max-width:320px;display:none}
+    .turn-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-l);border:1.5px solid #99f6e4;color:var(--teal);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:5px 12px;border-radius:99px;margin-bottom:10px}
+    .turn-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:blink 1s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .turn-header{text-align:center;margin-bottom:16px}
+    .turn-header h3{font-size:20px;font-weight:900;color:var(--ink)}
+    .turn-header p{font-size:11px;font-weight:600;color:var(--ink-3);margin-top:4px}
+    #rangeDisplay{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink-2)}
+    #guessInput{width:100%;background:var(--white);border:2px solid var(--orange);border-radius:16px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;text-align:center;color:var(--ink);outline:none;margin-bottom:12px;-webkit-appearance:none;-moz-appearance:textfield}
+    #guessInput:focus{border-color:var(--orange-d);box-shadow:0 0 0 3px rgba(249,115,22,.15)}
+    #guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+    .shake{animation:shake .35s ease}
+    #winOverlay{position:fixed;inset:0;background:rgba(28,25,23,.92);backdrop-filter:blur(8px);z-index:50;display:none;align-items:center;justify-content:center;padding:24px}
+    #winOverlay.show{display:flex}
+    .win-card{background:var(--white);border:1.5px solid var(--border);border-radius:24px;padding:32px 24px;text-align:center;max-width:300px;width:100%}
+    .win-emoji{font-size:52px;margin-bottom:12px}
+    .win-card h2{font-size:24px;font-weight:900;color:var(--ink)}
+    .win-card .win-sub{font-size:12px;font-weight:600;color:var(--ink-3);margin-top:6px}
+    .win-num{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:700;color:var(--teal);margin:12px 0 6px}
+    .win-winner{font-size:13px;font-weight:800;color:var(--orange);margin-bottom:20px}
+    .win-play-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--orange),#fb923c);color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 14px rgba(249,115,22,.3)}
+    .modal-overlay{position:fixed;inset:0;background:rgba(28,25,23,.85);backdrop-filter:blur(6px);z-index:50;display:none;align-items:center;justify-content:center;padding:24px}
+    .modal-overlay.show{display:flex}
+    .modal-card{background:var(--white);border:1.5px solid var(--border);border-radius:22px;padding:28px 22px;text-align:center;max-width:300px;width:100%}
+    .modal-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px}
+    .modal-icon.amber{background:var(--amber-l);color:var(--amber);border:1.5px solid #fde68a}
+    .modal-icon.rose{background:var(--rose-l);color:var(--rose);border:1.5px solid #fda4af}
+    .modal-card h3{font-size:17px;font-weight:900;color:var(--ink);margin-bottom:8px}
+    .modal-card p{font-size:12px;font-weight:600;color:var(--ink-3);line-height:1.6;margin-bottom:18px}
+    .modal-btns{display:flex;flex-direction:column;gap:8px}
+    .modal-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s}
+    .modal-btn:active{opacity:.8}
+    .modal-btn.primary{background:linear-gradient(135deg,var(--teal),#14b8a6);color:#fff}
+    .modal-btn.secondary{background:var(--surface);border:1.5px solid var(--border);color:var(--ink-2)}
+    #updateToast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:10px 18px;border-radius:99px;display:flex;align-items:center;gap:10px;white-space:nowrap;z-index:100;transition:transform .3s ease}
+    #updateToast.show{transform:translateX(-50%) translateY(0)}
+    .toast-btn{background:var(--orange);color:#fff;border:none;border-radius:99px;padding:3px 10px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:800;text-transform:uppercase;cursor:pointer}
+    #tvScreen{display:none;flex:1;flex-direction:column;height:100vh;overflow:hidden;background:var(--ink);color:#fff}
+    .tv-header{padding:20px 32px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between}
+    .tv-title{font-size:22px;font-weight:900;color:var(--orange);letter-spacing:.04em}
+    .tv-sub{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.12em}
+    .tv-code-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 20px;text-align:center}
+    .tv-code-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4)}
+    .tv-code{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--amber);letter-spacing:.2em}
+    .tv-body{flex:1;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;padding:24px 32px;overflow:hidden}
+    .tv-left{display:flex;flex-direction:column;gap:20px}
+    .tv-turn-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    .tv-turn-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:16px}
+    #tvActivePlayer{font-size:52px;font-weight:900;color:#fff;line-height:1.1}
+    .tv-live-dot{margin-top:16px;display:flex;align-items:center;gap:8px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.3);color:#5eead4;font-size:11px;font-weight:700;padding:6px 14px;border-radius:99px}
+    .tv-live-dot .dot{width:7px;height:7px;border-radius:50%;background:#14b8a6;animation:blink 1s ease-in-out infinite}
+    .tv-range-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .tv-range-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px 20px;text-align:center}
+    .tv-range-box .rl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4)}
+    .tv-range-box .rv{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;margin-top:6px}
+    .tv-range-box.lo .rv{color:#34d399}
+    .tv-range-box.hi .rv{color:#fb7185}
+    .tv-right{display:flex;flex-direction:column;gap:16px;overflow:hidden}
+    .tv-feed-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .tv-feed-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+    #tvFeed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+    .tv-feed-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border-radius:10px;padding:10px 14px}
+    .tv-feed-name{font-size:14px;font-weight:800}
+    .tv-feed-result{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:99px}
+    .tv-feed-result.higher{background:rgba(251,113,133,.15);color:#fb7185}
+    .tv-feed-result.lower{background:rgba(251,191,36,.15);color:var(--amber)}
+    .tv-feed-result.correct{background:rgba(52,211,153,.15);color:#34d399}
+    .tv-feed-result.system{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);font-size:10px}
+    .tv-stats-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px}
+    #tvStats{display:flex;flex-direction:column;gap:8px}
+    .tv-stat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:10px}
+    .tv-stat-name{font-size:13px;font-weight:700}
+    .tv-stat-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,.5)}
+    .tv-stat-count strong{color:#fff}
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col select-none overflow-hidden">
+<body>
 
-  <!-- ===== INSTALL BANNER (shown before PWA install) ===== -->
-  <div id="installBanner" class="fixed top-0 left-0 right-0 z-50 bg-indigo-600 px-4 py-3 flex items-center justify-between shadow-lg">
-    <div class="flex items-center gap-3">
-      <img src="icons/icon-72x72.png" class="w-8 h-8 rounded-lg" alt="icon">
+  <!-- TV VIEW -->
+  <div id="tvScreen">
+    <header class="tv-header">
       <div>
-        <p class="text-xs font-bold">Add to Home Screen</p>
-        <p class="text-[10px] text-indigo-200">Play offline, no browser bar</p>
+        <div class="tv-title">🎯 FAMILY SHOWDOWN</div>
+        <div class="tv-sub">Live Spectator Board</div>
       </div>
-    </div>
-    <div class="flex gap-2">
-      <button id="installBtn" class="bg-white text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg">Install</button>
-      <button id="dismissBanner" class="text-indigo-200 text-xs px-2">✕</button>
-    </div>
-  </div>
-
-  <!-- ===== LOBBY / ROOM DISCOVERY ===== -->
-  <div id="setupScreen" class="flex-1 flex flex-col justify-center p-6 max-w-sm mx-auto w-full">
-    <div class="text-center mb-8">
-      <div class="relative inline-block">
-        <div class="bg-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-900/50">
-          <i class="fa-solid fa-bolt text-2xl text-white"></i>
-        </div>
+      <div class="tv-code-box">
+        <div class="tv-code-label">Room Code</div>
+        <div class="tv-code" id="tvRoomCode">------</div>
       </div>
-      <h1 class="text-3xl font-black tracking-tight">FAMILY<br><span class="text-indigo-400">SHOWDOWN</span></h1>
-      <p class="text-slate-500 text-xs mt-1 mono">Number Guessing · Real-Time · Multiplayer</p>
-    </div>
-
-    <!-- Error message -->
-    <div id="errorMsg" class="hidden bg-rose-950 border border-rose-800 text-rose-300 text-xs px-4 py-2 rounded-xl mb-4 text-center"></div>
-
-    <div class="space-y-5">
-      <!-- Join -->
-      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
-        <h3 class="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-door-open text-indigo-400"></i> Join a Game
-        </h3>
-        <div class="space-y-2.5">
-          <input type="text" id="joinRoomId" placeholder="6-LETTER ROOM CODE" maxlength="6"
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-center mono font-bold tracking-widest text-base uppercase focus:border-indigo-500 focus:outline-none transition-colors">
-          <input type="text" id="joinName" placeholder="YOUR NAME"
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 uppercase focus:border-indigo-500 focus:outline-none transition-colors">
-          <input type="password" inputmode="numeric" id="joinPin" placeholder="PIN (4 DIGITS)" maxlength="4"
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-center mono focus:border-indigo-500 focus:outline-none transition-colors">
-          <button id="joinBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 font-bold py-2.5 rounded-xl uppercase text-sm transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game
-          </button>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <div class="flex-1 h-px bg-slate-800"></div>
-        <span class="text-[10px] text-slate-600 uppercase font-bold">or host</span>
-        <div class="flex-1 h-px bg-slate-800"></div>
-      </div>
-
-      <!-- Create -->
-      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
-        <h3 class="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-crown text-amber-400"></i> Host New Game
-        </h3>
-        <div class="space-y-2.5">
-          <input type="text" id="createName" placeholder="YOUR NAME (HOST)"
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 uppercase focus:border-indigo-500 focus:outline-none transition-colors">
-          <div class="grid grid-cols-2 gap-2">
-            <input type="number" id="minRange" placeholder="MIN (e.g. 1)"
-              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-center focus:border-indigo-500 focus:outline-none transition-colors mono">
-            <input type="number" id="maxRange" placeholder="MAX (e.g. 1000)"
-              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-center focus:border-indigo-500 focus:outline-none transition-colors mono">
-          </div>
-          <button id="createBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 font-bold py-2.5 rounded-xl uppercase text-sm transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-plus"></i> Create Room
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== GAMEPLAY SCREEN ===== -->
-  <div id="gameplayScreen" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
-
-    <!-- Header -->
-    <header class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex justify-between items-center shrink-0">
-      <div>
-        <span class="text-[9px] text-slate-500 uppercase font-bold tracking-wider block">Room</span>
-        <span id="activeRoomCode" class="text-xl mono font-black text-amber-400 tracking-widest">------</span>
-      </div>
-
-      <!-- Timer -->
-      <div id="timerPill" class="flex items-center gap-2 bg-slate-950 px-4 py-2 rounded-full border border-slate-800">
-        <i class="fa-solid fa-stopwatch text-rose-500"></i>
-        <span id="timerLabel" class="mono text-lg font-black text-rose-400">60s</span>
-      </div>
-
-      <button id="endSessionBtn" class="bg-rose-950 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-900 px-3 py-2 rounded-xl text-xs font-bold uppercase transition-all">
-        <i class="fa-solid fa-xmark mr-1"></i>End
-      </button>
     </header>
-
-    <!-- Live feed area -->
-    <div class="bg-slate-900/40 border-b border-slate-900 flex flex-col shrink-0" style="height:38%">
-      <div class="grid grid-cols-2 gap-2 p-3 shrink-0">
-        <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-900 text-center">
-          <p class="text-[8px] text-slate-500 uppercase font-bold tracking-wider">Low Limit</p>
-          <p id="liveMin" class="mono text-sm font-bold text-emerald-400 mt-0.5">--</p>
+    <div class="tv-body">
+      <div class="tv-left">
+        <div class="tv-turn-card">
+          <div class="tv-turn-label">It's their turn now</div>
+          <div id="tvActivePlayer">Waiting…</div>
+          <div class="tv-live-dot"><span class="dot"></span> Live · Awaiting input</div>
         </div>
-        <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-900 text-center">
-          <p class="text-[8px] text-slate-500 uppercase font-bold tracking-wider">High Limit</p>
-          <p id="liveMax" class="mono text-sm font-bold text-rose-400 mt-0.5">--</p>
-        </div>
-      </div>
-
-      <!-- Player turn strip -->
-      <div id="turnStrip" class="px-3 pb-2 shrink-0">
-        <div class="bg-slate-950 rounded-xl px-3 py-2 flex items-center gap-2 border border-slate-900">
-          <i class="fa-solid fa-arrow-pointer text-indigo-400 text-xs"></i>
-          <span id="turnNotice" class="text-xs text-slate-400 truncate">Connecting...</span>
+        <div class="tv-range-row">
+          <div class="tv-range-box lo"><div class="rl">Low Limit</div><div class="rv" id="tvMin">--</div></div>
+          <div class="tv-range-box hi"><div class="rl">High Limit</div><div class="rv" id="tvMax">--</div></div>
         </div>
       </div>
-
-      <!-- Feed -->
-      <div class="flex-1 overflow-y-auto px-3 pb-3 space-y-1" id="compactFeed">
-        <p class="text-[10px] text-slate-600 text-center pt-2">Guesses appear here...</p>
+      <div class="tv-right">
+        <div class="tv-feed-card">
+          <div class="tv-feed-title"><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Action Feed</div>
+          <div id="tvFeed"><div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:20px">Waiting for first guess…</div></div>
+        </div>
+        <div class="tv-stats-card">
+          <div class="tv-feed-title" style="margin-bottom:10px"><i class="fa-solid fa-chart-simple" style="color:#f97316"></i> Player Stats</div>
+          <div id="tvStats"><div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center">No players yet</div></div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- Action panel -->
-    <div class="flex-1 bg-slate-950 flex flex-col justify-center items-center p-6 overflow-hidden">
-
-      <!-- Waiting -->
-      <div id="panelWait" class="text-center space-y-3 w-full max-w-xs">
-        <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto">
-          <i class="fa-solid fa-hourglass-half text-slate-600 text-xl animate-spin" style="animation-duration:3s"></i>
-        </div>
-        <h3 class="font-bold text-base text-slate-300">Awaiting Turn…</h3>
-        <p class="text-xs text-slate-600 max-w-[200px] mx-auto leading-relaxed">Sit tight. The guess console opens when it's your move.</p>
+  <!-- LOBBY -->
+  <div id="setupScreen">
+    <div style="text-align:center;margin-bottom:28px;padding-top:8px">
+      <div class="logo-ring"><i class="fa-solid fa-bolt"></i></div>
+      <div class="lobby-title">Family <span>Showdown</span></div>
+      <div class="lobby-sub">Number Guessing · Real-Time · Multiplayer</div>
+    </div>
+    <div id="errorMsg"></div>
+    <div class="card">
+      <div class="card-label"><i class="fa-solid fa-door-open" style="color:#f97316"></i> Join a Game</div>
+      <input type="text" id="joinRoomId" class="field field-code" placeholder="6-LETTER CODE" maxlength="6">
+      <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
+      <input type="password" inputmode="numeric" id="joinPin" class="field field-pin" placeholder="PIN" maxlength="4">
+      <button class="btn btn-orange" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
+    </div>
+    <div class="divider"><span>or host</span></div>
+    <div class="card">
+      <div class="card-label"><i class="fa-solid fa-crown" style="color:#f59e0b"></i> Host New Game</div>
+      <input type="text" id="createName" class="field" placeholder="Your name (host)" autocomplete="off">
+      <div class="field-grid">
+        <input type="number" id="minRange" class="field" placeholder="Min (e.g. 1)">
+        <input type="number" id="maxRange" class="field" placeholder="Max (e.g. 1000)">
       </div>
+      <button class="btn btn-teal" id="createBtn"><i class="fa-solid fa-plus"></i> Create Room</button>
+    </div>
+    <p style="text-align:center;font-size:10px;color:#78716c;font-weight:600;margin-top:8px;padding-bottom:4px">TV mode: add <strong>?view=tv&gameId=CODE</strong> to the URL</p>
+  </div>
 
-      <!-- Active turn input -->
-      <div id="panelTurn" class="hidden w-full max-w-xs space-y-4">
-        <div class="text-center">
-          <div class="inline-flex items-center gap-2 bg-indigo-950 border border-indigo-800 px-3 py-1.5 rounded-full mb-2">
-            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse inline-block"></span>
-            <span class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Your Turn</span>
+  <!-- GAMEPLAY -->
+  <div id="gameplayScreen">
+    <header class="game-header">
+      <div class="room-label">
+        <span>Room</span>
+        <span class="room-code" id="activeRoomCode">------</span>
+      </div>
+      <div class="timer-pill" id="timerPill">
+        <i class="fa-solid fa-stopwatch"></i>
+        <span class="timer-num" id="timerLabel">60s</span>
+      </div>
+      <button class="btn-end" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
+    </header>
+    <div class="live-area">
+      <div class="range-strip">
+        <div class="range-box lo"><div class="rl">Low Limit</div><div class="rv" id="liveMin">--</div></div>
+        <div class="range-box hi"><div class="rl">High Limit</div><div class="rv" id="liveMax">--</div></div>
+      </div>
+      <div class="turn-row">
+        <i class="fa-solid fa-arrow-pointer"></i>
+        <span id="turnNotice">Connecting…</span>
+      </div>
+      <div id="compactFeed">
+        <div style="font-size:11px;color:#78716c;text-align:center;padding:8px">Guesses appear here…</div>
+      </div>
+    </div>
+    <div class="action-panel">
+      <div id="panelWait">
+        <div class="wait-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+        <h3>Awaiting your turn…</h3>
+        <p>Sit tight! Watch the live feed above. Your console opens when it's your move.</p>
+      </div>
+      <div id="panelTurn">
+        <div class="turn-header">
+          <div style="display:flex;justify-content:center;margin-bottom:8px">
+            <div class="turn-badge"><span class="dot"></span> Your Turn</div>
           </div>
-          <p id="rangeHint" class="text-xs text-slate-500 mono">Range: <span id="rangeDisplay">-- to --</span></p>
+          <h3>Make your guess</h3>
+          <p>Range: <span id="rangeDisplay">-- → --</span></p>
         </div>
-
-        <div class="space-y-3">
-          <input type="number" step="0.01" id="guessInput"
-            class="w-full bg-slate-900 border-2 border-indigo-500 focus:border-indigo-400 rounded-2xl py-4 text-3xl mono font-bold text-center focus:outline-none transition-colors"
-            placeholder="0">
-          <button id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 font-bold py-3.5 rounded-xl uppercase text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/50">
-            <i class="fa-solid fa-paper-plane"></i> Send Guess
-          </button>
-        </div>
+        <input type="number" step="0.01" id="guessInput" placeholder="0">
+        <button class="btn btn-orange" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Send Guess</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== WIN OVERLAY ===== -->
-  <div id="winOverlay" class="fixed inset-0 bg-slate-950/98 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
-    <div class="text-center space-y-6 p-8 max-w-xs">
-      <div class="text-6xl">🎉</div>
-      <div>
-        <h2 class="text-2xl font-black">WINNER!</h2>
-        <p class="text-slate-400 text-sm mt-1">The secret number was</p>
-        <p id="winNum" class="text-5xl mono font-black text-emerald-400 my-3">--</p>
-        <p id="winnerName" class="text-indigo-300 text-sm font-bold"></p>
-      </div>
-      <button onclick="location.reload()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl uppercase text-sm transition-all">
-        Play Again
-      </button>
+  <!-- WIN OVERLAY -->
+  <div id="winOverlay">
+    <div class="win-card">
+      <div class="win-emoji">🎉</div>
+      <h2>Winner!</h2>
+      <p class="win-sub">The secret number was</p>
+      <div class="win-num" id="winNum">--</div>
+      <div class="win-winner" id="winnerName"></div>
+      <button class="win-play-btn" onclick="location.reload()">Play Again</button>
     </div>
   </div>
 
-  <!-- ===== SOLO DECIDE MODAL ===== -->
-  <div id="soloModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-6">
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-7 w-full max-w-xs text-center space-y-5">
-      <div class="text-4xl">⏱️</div>
-      <div>
-        <h3 class="text-lg font-black">Opponent Timed Out</h3>
-        <p class="text-slate-400 text-xs mt-2 leading-relaxed">You're the last player standing. Continue solo to find the number, or close the room.</p>
-      </div>
-      <div class="space-y-2">
-        <button id="soloPlayBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 font-bold py-3 rounded-xl uppercase text-sm transition-all">
-          <i class="fa-solid fa-play mr-2"></i>Continue Solo
-        </button>
-        <button id="soloExitBtn" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 font-bold py-3 rounded-xl uppercase text-sm transition-all text-slate-300">
-          <i class="fa-solid fa-door-open mr-2"></i>Close Room
-        </button>
+  <!-- SOLO MODAL -->
+  <div class="modal-overlay" id="soloModal">
+    <div class="modal-card">
+      <div class="modal-icon amber"><i class="fa-solid fa-person-running"></i></div>
+      <h3>You're the last one!</h3>
+      <p>Your opponent timed out. Keep guessing solo to find the number, or close the room.</p>
+      <div class="modal-btns">
+        <button class="modal-btn primary" id="soloPlayBtn"><i class="fa-solid fa-play"></i> Continue Solo</button>
+        <button class="modal-btn secondary" id="soloExitBtn"><i class="fa-solid fa-door-open"></i> Close Room</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== WAITING FOR SURVIVOR MODAL ===== -->
-  <div id="waitSurvivorModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-6">
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-7 w-full max-w-xs text-center space-y-4">
-      <div class="w-12 h-12 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center mx-auto">
-        <i class="fa-solid fa-hourglass text-amber-400 animate-pulse"></i>
-      </div>
-      <div>
-        <h3 class="text-base font-black">Survivor Deciding…</h3>
-        <p class="text-slate-400 text-xs mt-2">Your opponent timed out. Waiting to see if the last player continues or closes the room.</p>
-      </div>
+  <!-- WAIT SURVIVOR MODAL -->
+  <div class="modal-overlay" id="waitSurvivorModal">
+    <div class="modal-card">
+      <div class="modal-icon rose"><i class="fa-solid fa-hourglass-half"></i></div>
+      <h3>Opponent deciding…</h3>
+      <p>The last player is choosing whether to continue solo or close the room. Hang tight.</p>
     </div>
   </div>
 
-  <!-- ===== UPDATE TOAST ===== -->
-  <div id="updateToast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-indigo-600 text-white text-xs font-bold px-5 py-3 rounded-full shadow-xl flex items-center gap-3 whitespace-nowrap">
+  <!-- UPDATE TOAST -->
+  <div id="updateToast">
     <i class="fa-solid fa-rotate"></i>
-    <span>New version available</span>
-    <button id="reloadBtn" class="bg-white text-indigo-700 px-2 py-0.5 rounded-full text-[10px] font-black uppercase">Update</button>
+    <span>New version ready</span>
+    <button class="toast-btn" id="reloadBtn">Update</button>
   </div>
 
-  <!-- ===== FIREBASE + APP LOGIC ===== -->
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import {
       getFirestore, doc, setDoc, onSnapshot,
-      collection, query, orderBy, limit, deleteDoc, updateDoc,
-      serverTimestamp
+      collection, query, orderBy, limit,
+      deleteDoc, updateDoc, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
 
-    // ── CONFIG ── Replace with your real Firebase project values ──
     const firebaseConfig = {
-  apiKey: "AIzaSyCf977c4OD3HGIb29WCFgbERpItXLlgCs4",
-  authDomain: "showdown-47d2b.firebaseapp.com",
-  projectId: "showdown-47d2b",
-  storageBucket: "showdown-47d2b.firebasestorage.app",
-  messagingSenderId: "11064701473",
-  appId: "1:11064701473:web:d3efd8287af10f64a76960",
-  measurementId: "G-4CVPSZVKS7"
-};
+      apiKey:            "AIzaSyCf977c4OD3HGIb29WCFgbERpItXLlgCs4",
+      authDomain:        "showdown-47d2b.firebaseapp.com",
+      projectId:         "showdown-47d2b",
+      storageBucket:     "showdown-47d2b.firebasestorage.app",
+      messagingSenderId: "11064701473",
+      appId:             "1:11064701473:web:d3efd8287af10f64a76960"
+    };
 
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const fns = getFunctions(app);
 
-    const app  = initializeApp(firebaseConfig);
-    const db   = getFirestore(app);
-    const fns  = getFunctions(app);
+    // URL ROUTING
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTvView  = urlParams.get('view') === 'tv';
+    const tvGameId  = urlParams.get('gameId');
 
-    // ── STATE ──
-    let roomCode      = "";
-    let myUserId      = "";
-    let myPin         = "";
-    let timerInterval = null;
-    let lastTimerKey  = null; // prevents duplicate intervals on same timestamp
+    if (isTvView) {
+      document.getElementById('setupScreen').style.display = 'none';
+      document.getElementById('tvScreen').style.display    = 'flex';
+      if (tvGameId) {
+        document.getElementById('tvRoomCode').textContent = tvGameId.toUpperCase();
+        initTvListeners(tvGameId.toUpperCase());
+      }
+    }
 
-    // ── HELPERS ──
+    // STATE
+    let roomCode = "", myUserId = "", myPin = "", timerInterval = null, lastTimerKey = null;
+
+    // HELPERS
     function showError(msg) {
       const el = document.getElementById('errorMsg');
-      el.textContent = msg;
-      el.classList.remove('hidden');
-      setTimeout(() => el.classList.add('hidden'), 4000);
+      el.textContent = msg; el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
     }
+    function setLoading(btn, on) { btn.disabled = on; btn.style.opacity = on ? '0.6' : '1'; }
 
-    function setLoading(btn, loading) {
-      btn.disabled = loading;
-      btn.style.opacity = loading ? '0.6' : '1';
-    }
-
-    // ── CREATE ROOM ──
-    document.getElementById('createBtn').addEventListener('click', async () => {
-      const nameEl  = document.getElementById('createName');
-      const minEl   = document.getElementById('minRange');
-      const maxEl   = document.getElementById('maxRange');
-
-      const creatorName = nameEl.value.trim();
-      const minVal = parseFloat(minEl.value);
-      const maxVal = parseFloat(maxEl.value);
-
-      if (!creatorName) return showError("Enter your name.");
-      if (isNaN(minVal) || isNaN(maxVal)) return showError("Set a valid min and max range.");
-      if (minVal >= maxVal) return showError("Min must be less than Max.");
-
-      const btn = document.getElementById('createBtn');
-      setLoading(btn, true);
-
-      myUserId = creatorName.toLowerCase().replace(/\s+/g, '_');
-      myPin    = "HOST";
-
-      try {
-        const createFn = httpsCallable(fns, 'createGameRoom');
-        const res = await createFn({ minRange: minVal, maxRange: maxVal, creatorName });
-        roomCode = res.data.gameId;
-
-        
-        launchGameplay();
-      } catch (err) {
-        showError("Could not create room. Check your connection.");
-      } finally {
-        setLoading(btn, false);
-      }
+    // ENTER KEY
+    ['joinRoomId','joinName','joinPin'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('joinBtn').click(); });
+    });
+    ['createName','minRange','maxRange'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('createBtn').click(); });
     });
 
-    // ── JOIN ROOM ──
+    // CREATE
+    document.getElementById('createBtn').addEventListener('click', async () => {
+      const name   = document.getElementById('createName').value.trim();
+      const minVal = parseFloat(document.getElementById('minRange').value);
+      const maxVal = parseFloat(document.getElementById('maxRange').value);
+      if (!name) return showError('Enter your name.');
+      if (isNaN(minVal) || isNaN(maxVal)) return showError('Set a valid min and max.');
+      if (minVal >= maxVal) return showError('Min must be less than Max.');
+      const btn = document.getElementById('createBtn');
+      setLoading(btn, true);
+      myUserId = name.toLowerCase().replace(/\s+/g,'_');
+      myPin = 'HOST';
+      try {
+        const fn = httpsCallable(fns, 'createGameRoom');
+        const res = await fn({ minRange: minVal, maxRange: maxVal, creatorName: name });
+        roomCode = res.data.gameId;
+        launchGameplay();
+      } catch(e) {
+        showError('Could not create room. Check your connection.');
+      } finally { setLoading(btn, false); }
+    });
+
+    // JOIN
     document.getElementById('joinBtn').addEventListener('click', async () => {
       const code = document.getElementById('joinRoomId').value.trim().toUpperCase();
       const name = document.getElementById('joinName').value.trim();
       myPin = document.getElementById('joinPin').value.trim();
-
-      if (!code || code.length !== 6) return showError("Enter the 6-letter room code.");
-      if (!name) return showError("Enter your name.");
-      if (!myPin || myPin.length !== 4) return showError("PIN must be 4 digits.");
-
-      myUserId = name.toLowerCase().replace(/\s+/g, '_');
+      if (!code || code.length !== 6) return showError('Enter the 6-letter room code.');
+      if (!name) return showError('Enter your name.');
+      if (!myPin || myPin.length !== 4) return showError('PIN must be 4 digits.');
+      myUserId = name.toLowerCase().replace(/\s+/g,'_');
       roomCode = code;
-
       const btn = document.getElementById('joinBtn');
       setLoading(btn, true);
-
       try {
-        await setDoc(doc(db, `games/${roomCode}/players`, myUserId), {
-          name, pin: myPin, guessCount: 0, lastGuess: null
-        }, { merge: true });
-
+        await setDoc(doc(db,`games/${roomCode}/players`,myUserId), { name, pin: myPin, guessCount:0, lastGuess:null }, { merge:true });
         launchGameplay();
-      } catch (err) {
-        showError("Could not join room. Check the code and try again.");
-      } finally {
-        setLoading(btn, false);
-      }
+      } catch(e) {
+        showError('Could not join. Check the code and try again.');
+      } finally { setLoading(btn, false); }
     });
 
-    // ── ALSO SUPPORT ENTER KEY ON FORMS ──
-    ['joinRoomId','joinName','joinPin'].forEach(id => {
-      document.getElementById(id).addEventListener('keydown', e => {
-        if (e.key === 'Enter') document.getElementById('joinBtn').click();
-      });
-    });
-    ['createName','minRange','maxRange'].forEach(id => {
-      document.getElementById(id).addEventListener('keydown', e => {
-        if (e.key === 'Enter') document.getElementById('createBtn').click();
-      });
-    });
-
-    // ── LAUNCH GAMEPLAY ──
+    // LAUNCH
     function launchGameplay() {
-      document.getElementById('setupScreen').classList.add('hidden');
-      document.getElementById('gameplayScreen').classList.remove('hidden');
-      document.getElementById('activeRoomCode').innerText = roomCode;
+      document.getElementById('setupScreen').style.display    = 'none';
+      document.getElementById('gameplayScreen').style.display = 'flex';
+      document.getElementById('activeRoomCode').textContent   = roomCode;
       initRoomSync();
     }
 
-    // ── GUESS SUBMIT ──
+    // GUESS
     document.getElementById('submitBtn').addEventListener('click', submitGuess);
-    document.getElementById('guessInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') submitGuess();
-    });
+    document.getElementById('guessInput').addEventListener('keydown', e => { if(e.key==='Enter') submitGuess(); });
 
     async function submitGuess() {
       const val = parseFloat(document.getElementById('guessInput').value);
@@ -442,258 +428,208 @@
         setTimeout(() => document.getElementById('guessInput').classList.remove('shake'), 400);
         return;
       }
-
       document.getElementById('submitBtn').disabled = true;
       document.getElementById('guessInput').value = '';
-
       try {
-        const guessFn = httpsCallable(fns, 'submitGuess');
-        await guessFn({ gameId: roomCode, userId: myUserId, guess: val });
-      } catch (err) {
-        showError("Failed to submit guess.");
+        const fn = httpsCallable(fns, 'submitGuess');
+        await fn({ gameId: roomCode, userId: myUserId, guess: val });
+      } catch(e) {
+        showError('Failed to submit. Try again.');
       } finally {
         document.getElementById('submitBtn').disabled = false;
       }
     }
 
-    // ── ROOM SYNC ──
+    // ROOM SYNC
     function initRoomSync() {
-      const gameRef = doc(db, "games", roomCode);
+      const gameRef = doc(db, 'games', roomCode);
 
       onSnapshot(gameRef, (snap) => {
-        if (!snap.exists()) {
-          clearInterval(timerInterval);
-          alert("Room closed.");
-          location.reload();
-          return;
-        }
-
-        const data = snap.data();
+        if (!snap.exists()) { alert('Room closed.'); location.reload(); return; }
+        const data   = snap.data();
         const minVal = data.rangeMin ?? data.minRange ?? 0;
         const maxVal = data.rangeMax ?? data.maxRange ?? 0;
+        document.getElementById('liveMin').textContent      = minVal.toFixed(2);
+        document.getElementById('liveMax').textContent      = maxVal.toFixed(2);
+        document.getElementById('rangeDisplay').textContent = `${minVal.toFixed(2)} → ${maxVal.toFixed(2)}`;
 
-        document.getElementById('liveMin').innerText     = minVal.toFixed(2);
-        document.getElementById('liveMax').innerText     = maxVal.toFixed(2);
-        document.getElementById('rangeDisplay').innerText = `${minVal.toFixed(2)} → ${maxVal.toFixed(2)}`;
-
-        // ── WON ──
         if (data.status === 'won') {
-          clearInterval(timerInterval);
-          hideAllModals();
-          showWinScreen(data);
-          return;
+          clearInterval(timerInterval); hideModals(); showWin(data); return;
         }
-
-        // ── SOLO DECIDE ──
         if (data.status === 'solo_decide') {
           clearInterval(timerInterval);
           if (data.survivorId === myUserId) {
-            showSoloModal();
+            document.getElementById('soloModal').classList.add('show');
           } else {
-            document.getElementById('waitSurvivorModal').classList.remove('hidden');
+            document.getElementById('waitSurvivorModal').classList.add('show');
           }
           return;
         }
 
-        // Hide modals if we come back to 'playing'
-        hideAllModals();
+        hideModals();
 
-        // Timer
         if (data.lastActiveTimestamp) {
-          const timerKey = data.lastActiveTimestamp.toMillis();
-          if (timerKey !== lastTimerKey) {
-            lastTimerKey = timerKey;
-            startLocalTimer(timerKey, data.activePlayerIndex, data.playerOrder);
-          }
+          const key = data.lastActiveTimestamp.toMillis();
+          if (key !== lastTimerKey) { lastTimerKey = key; startTimer(key, data.activePlayerIndex, data.playerOrder); }
         }
 
-        // Turn management
-        const currentPlayerId = data.playerOrder?.[data.activePlayerIndex];
-        if (currentPlayerId === myUserId) {
-          showMyTurnPanel();
+        const currentId = data.playerOrder?.[data.activePlayerIndex];
+        if (currentId === myUserId) {
+          document.getElementById('panelWait').style.display = 'none';
+          document.getElementById('panelTurn').style.display = 'block';
+          document.getElementById('guessInput').focus();
+          document.getElementById('turnNotice').textContent = 'Your turn!';
         } else {
-          showWaitPanel(currentPlayerId);
+          document.getElementById('panelTurn').style.display = 'none';
+          document.getElementById('panelWait').style.display = 'block';
+          document.getElementById('turnNotice').textContent = currentId ? `Waiting for ${currentId.replace(/_/g,' ')}…` : 'Waiting…';
         }
       });
 
-      // Feed
-      const feedQuery = query(
-        collection(db, `games/${roomCode}/guesses_public`),
-        orderBy("timestamp", "desc"),
-        limit(6)
+      onSnapshot(
+        query(collection(db,`games/${roomCode}/guesses_public`), orderBy('timestamp','desc'), limit(6)),
+        (snap) => {
+          const feed = document.getElementById('compactFeed');
+          feed.innerHTML = '';
+          if (snap.empty) {
+            feed.innerHTML = '<div style="font-size:11px;color:#78716c;text-align:center;padding:8px">Guesses appear here…</div>';
+            return;
+          }
+          snap.forEach(d => {
+            const item = d.data();
+            const isSystem = item.name === 'SYSTEM';
+            const div = document.createElement('div');
+            div.className = 'feed-entry';
+            div.innerHTML = `<span class="feed-name ${isSystem?'system':'player'}">${item.name}</span><span class="feed-result">${item.result}</span>`;
+            feed.appendChild(div);
+          });
+        }
       );
-      onSnapshot(feedQuery, (snap) => {
-        const feed = document.getElementById('compactFeed');
-        feed.innerHTML = '';
-        snap.forEach(d => {
-          const item = d.data();
-          const div  = document.createElement('div');
-          div.className = 'feed-entry flex items-center gap-2 py-1 border-b border-slate-900';
-          const isSystem = item.name === 'SYSTEM';
-          div.innerHTML = `
-            <span class="text-[9px] font-bold mono ${isSystem ? 'text-amber-400' : 'text-indigo-400'} shrink-0">${item.name}</span>
-            <span class="text-[10px] text-slate-300 flex-1">${item.result}</span>
-          `;
-          feed.appendChild(div);
-        });
-      });
     }
 
-    // ── TIMER ──
-    function startLocalTimer(serverStartMillis, activeIndex, orderArray) {
+    // TIMER
+    function startTimer(serverMs, activeIndex, orderArray) {
       clearInterval(timerInterval);
-      const timerEl  = document.getElementById('timerLabel');
-      const timerPill = document.getElementById('timerPill');
-
+      const pill = document.getElementById('timerPill');
+      const label = document.getElementById('timerLabel');
       timerInterval = setInterval(async () => {
-        const elapsed   = Math.floor((Date.now() - serverStartMillis) / 1000);
+        const elapsed   = Math.floor((Date.now() - serverMs) / 1000);
         const remaining = 60 - elapsed;
-
         if (remaining <= 0) {
           clearInterval(timerInterval);
-          timerEl.innerText = "0s";
-          timerPill.classList.add('timer-urgent');
-
-          const activeUserId = orderArray[activeIndex];
-          if (activeUserId === myUserId) {
-            try {
-              const timeoutFn = httpsCallable(fns, 'handleTimeout');
-              await timeoutFn({ gameId: roomCode, userId: myUserId });
-            } catch (e) { /* already handled server-side */ }
+          label.textContent = '0s';
+          pill.classList.add('timer-urgent');
+          if (orderArray[activeIndex] === myUserId) {
+            try { const fn = httpsCallable(fns,'handleTimeout'); await fn({ gameId:roomCode, userId:myUserId }); } catch(e){}
           }
         } else {
-          timerEl.innerText = `${remaining}s`;
-          if (remaining <= 10) {
-            timerPill.classList.add('timer-urgent');
-          } else {
-            timerPill.classList.remove('timer-urgent');
-          }
+          label.textContent = `${remaining}s`;
+          pill.classList.toggle('timer-urgent', remaining <= 10);
         }
       }, 1000);
     }
 
-    // ── PANEL HELPERS ──
-    function showMyTurnPanel() {
-      document.getElementById('panelWait').classList.add('hidden');
-      document.getElementById('panelTurn').classList.remove('hidden');
-      document.getElementById('guessInput').focus();
-      document.getElementById('turnNotice').innerText = "Your turn!";
-    }
-
-    function showWaitPanel(currentPlayerId) {
-      document.getElementById('panelTurn').classList.add('hidden');
-      document.getElementById('panelWait').classList.remove('hidden');
-      document.getElementById('turnNotice').innerText = currentPlayerId
-        ? `Waiting for ${currentPlayerId.replace(/_/g, ' ')}…`
-        : "Waiting…";
-    }
-
-    function hideAllModals() {
-      document.getElementById('soloModal').classList.add('hidden');
-      document.getElementById('waitSurvivorModal').classList.add('hidden');
-    }
-
-    // ── SOLO MODAL ──
-    function showSoloModal() {
-      document.getElementById('soloModal').classList.remove('hidden');
+    // MODALS
+    function hideModals() {
+      document.getElementById('soloModal').classList.remove('show');
+      document.getElementById('waitSurvivorModal').classList.remove('show');
     }
 
     document.getElementById('soloPlayBtn').addEventListener('click', async () => {
-      document.getElementById('soloModal').classList.add('hidden');
-      try {
-        await updateDoc(doc(db, "games", roomCode), {
-          status: 'playing',
-          lastActiveTimestamp: serverTimestamp()
-        });
-      } catch (e) {
-        showError("Could not resume game.");
-      }
+      document.getElementById('soloModal').classList.remove('show');
+      try { await updateDoc(doc(db,'games',roomCode), { status:'playing', lastActiveTimestamp: serverTimestamp() }); }
+      catch(e) { showError('Could not resume.'); }
     });
 
     document.getElementById('soloExitBtn').addEventListener('click', async () => {
-      document.getElementById('soloModal').classList.add('hidden');
+      document.getElementById('soloModal').classList.remove('show');
       clearInterval(timerInterval);
-      try {
-        await deleteDoc(doc(db, "games", roomCode));
-      } finally {
-        location.reload();
-      }
+      try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
     });
 
-    // ── END SESSION ──
     document.getElementById('endSessionBtn').addEventListener('click', async () => {
-      if (!confirm("Delete this room and end the session?")) return;
+      if (!confirm('Delete this room and end the session?')) return;
       clearInterval(timerInterval);
-      try {
-        await deleteDoc(doc(db, "games", roomCode));
-      } finally {
-        location.reload();
-      }
+      try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
     });
 
-    // ── WIN SCREEN ──
-    function showWinScreen(data) {
-      document.getElementById('winNum').innerText  = data.targetNumber?.toFixed(2) ?? "🎯";
-      document.getElementById('winnerName').innerText = data.winnerId
-        ? `🏆 ${data.winnerId.replace(/_/g, ' ')}`
-        : '';
-      document.getElementById('winOverlay').classList.remove('hidden');
+    // WIN
+    function showWin(data) {
+      document.getElementById('winNum').textContent     = data.targetNumber?.toFixed(2) ?? '🎯';
+      document.getElementById('winnerName').textContent = data.winnerId ? `🏆 ${data.winnerId.replace(/_/g,' ')}` : '';
+      document.getElementById('winOverlay').classList.add('show');
+    }
+
+    // TV LISTENERS
+    function initTvListeners(gameId) {
+      onSnapshot(doc(db,'games',gameId), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        document.getElementById('tvMin').textContent = (data.rangeMin ?? 0).toFixed(2);
+        document.getElementById('tvMax').textContent = (data.rangeMax ?? 0).toFixed(2);
+        if (data.status === 'playing') {
+          const uid = data.playerOrder?.[data.activePlayerIndex];
+          if (uid) onSnapshot(doc(db,`games/${gameId}/players`,uid), ps => {
+            if (ps.exists()) document.getElementById('tvActivePlayer').textContent = ps.data().name;
+          });
+        } else if (data.status === 'won') {
+          document.getElementById('tvActivePlayer').textContent = '🎉 Game Over!';
+        }
+      });
+
+      onSnapshot(
+        query(collection(db,`games/${gameId}/guesses_public`), orderBy('timestamp','desc'), limit(10)),
+        (snap) => {
+          const feed = document.getElementById('tvFeed');
+          feed.innerHTML = '';
+          if (snap.empty) { feed.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:20px">Waiting for first guess…</div>'; return; }
+          snap.forEach(d => {
+            const item = d.data(); const isSystem = item.name==='SYSTEM';
+            const result = item.result || '';
+            let cls = 'system';
+            if (result.includes('High') || result.includes('lower')) cls = 'lower';
+            if (result.includes('Low')  || result.includes('higher')) cls = 'higher';
+            if (result.includes('CORRECT') || result.includes('correct') || result.includes('🎯')) cls = 'correct';
+            const div = document.createElement('div');
+            div.className = 'tv-feed-item';
+            div.innerHTML = `<span class="tv-feed-name">${isSystem?'⚙️ System':item.name}</span><span class="tv-feed-result ${cls}">${result}</span>`;
+            feed.appendChild(div);
+          });
+        }
+      );
+
+      onSnapshot(collection(db,`games/${gameId}/players`), (snap) => {
+        const stats = document.getElementById('tvStats');
+        stats.innerHTML = '';
+        if (snap.empty) { stats.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center">No players yet</div>'; return; }
+        snap.forEach(d => {
+          const p = d.data();
+          const row = document.createElement('div');
+          row.className = 'tv-stat-row';
+          row.innerHTML = `<span class="tv-stat-name">${p.name}</span><span class="tv-stat-count">Guesses: <strong>${p.guessCount||0}</strong></span>`;
+          stats.appendChild(row);
+        });
+      });
     }
   </script>
 
-  <!-- ===== SERVICE WORKER REGISTRATION ===== -->
+  <!-- SERVICE WORKER -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           reg.addEventListener('updatefound', () => {
-            const newSW = reg.installing;
-            newSW.addEventListener('statechange', () => {
-              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-                // New version available
-                const toast = document.getElementById('updateToast');
-                toast.classList.add('show');
-                document.getElementById('reloadBtn').addEventListener('click', () => {
-                  newSW.postMessage({ type: 'SKIP_WAITING' });
-                  location.reload();
-                });
+            const sw = reg.installing;
+            sw.addEventListener('statechange', () => {
+              if (sw.state==='installed' && navigator.serviceWorker.controller) {
+                document.getElementById('updateToast').classList.add('show');
+                document.getElementById('reloadBtn').addEventListener('click', () => { sw.postMessage({type:'SKIP_WAITING'}); location.reload(); });
               }
             });
           });
         });
       });
     }
-
-    // ── PWA INSTALL PROMPT ──
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-
-      // Only show if not already installed
-      if (!window.matchMedia('(display-mode: standalone)').matches) {
-        setTimeout(() => {
-          document.getElementById('installBanner').classList.add('show');
-        }, 2000);
-      }
-    });
-
-    document.getElementById('installBtn').addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      document.getElementById('installBanner').classList.remove('show');
-    });
-
-    document.getElementById('dismissBanner').addEventListener('click', () => {
-      document.getElementById('installBanner').classList.remove('show');
-    });
-
-    // Handle SW skip-waiting message
-    navigator.serviceWorker?.addEventListener('message', (e) => {
-      if (e.data?.type === 'SKIP_WAITING') location.reload();
-    });
   </script>
 </body>
 </html>
