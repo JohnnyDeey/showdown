@@ -91,7 +91,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .copy-btn{margin-top:10px;background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .wr-players-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:10px}
 .player-slot{background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.player-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--or),#fb923c);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.player-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--sf);border:2px solid var(--bd)}
 .player-slot .pname{font-size:14px;font-weight:800}
 .player-slot .ptag{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
 .host-badge{font-size:9px;font-weight:800;background:#fff7ed;color:var(--or);border:1px solid #fed7aa;padding:2px 8px;border-radius:99px;margin-left:auto}
@@ -118,7 +118,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .players-strip{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;gap:10px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .players-strip::-webkit-scrollbar{display:none}
 .p-chip{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}
-.p-chip-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;border:2.5px solid transparent;transition:all .3s;flex-shrink:0}
+.p-chip-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2.5px solid transparent;transition:all .3s;flex-shrink:0;background:var(--sf)}
 .p-chip-av.grey{background:#d4d4d4;border-color:#d4d4d4}
 .p-chip-av.active{background:linear-gradient(135deg,#16a34a,#22c55e);border-color:#16a34a;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
 .p-chip-av.me{border-color:var(--or)}
@@ -225,7 +225,6 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
       <div class="stack">
         <input type="text" id="joinRoomId" class="field field-code" placeholder="6-LETTER CODE" maxlength="6">
         <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
-        <input type="password" inputmode="numeric" id="joinPin" class="field field-pin" placeholder="PIN (4 digits)" maxlength="4">
         <button class="btn btn-or" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
       </div>
     </div>
@@ -471,13 +470,11 @@ function toast(msg, ok=false) {
 document.getElementById('joinBtn').addEventListener('click', async () => {
   const code = document.getElementById('joinRoomId').value.trim().toUpperCase();
   const name = document.getElementById('joinName').value.trim();
-  const pin  = document.getElementById('joinPin').value.trim();
   if (!code || code.length !== 6) return toast('Enter the 6-letter room code.');
   if (!name) return toast('Enter your name.');
-  if (!pin || pin.length !== 4) return toast('PIN must be 4 digits.');
 
   myUserId = name.toLowerCase().replace(/\s+/g,'_');
-  myPin = pin; myName = name; roomCode = code;
+  myPin = ''; myName = name; roomCode = code;
 
   const btn = document.getElementById('joinBtn');
   btn.disabled = true;
@@ -489,7 +486,7 @@ document.getElementById('joinBtn').addEventListener('click', async () => {
     if (gd.status === 'playing' || gd.status === 'won') { toast('This game has already started.'); return; }
 
     await setDoc(doc(db,`games/${roomCode}/players`,myUserId), {
-      name, pin: myPin, guessCount:0, lastGuess:null
+      name, guessCount:0, lastGuess:null
     }, { merge:true });
 
     // Add to playerOrder if not already there
@@ -562,7 +559,7 @@ document.getElementById('createRoomBtn').addEventListener('click', async () => {
 
     // Save host as player
     await setDoc(doc(db,`games/${roomCode}/players`,myUserId), {
-      name: myName, pin: myPin, guessCount:0, lastGuess:null
+      name: myName, guessCount:0, lastGuess:null
     });
 
     // Update max players
@@ -670,7 +667,7 @@ function renderWaitingPlayers(players, isHost) {
     const div = document.createElement('div');
     div.className = 'player-slot';
     div.innerHTML = `
-      <div class="player-avatar">${p.name.charAt(0).toUpperCase()}</div>
+      <div class="player-avatar">${getPlayerEmoji(p.id)}</div>
       <div>
         <div class="pname">${p.name}</div>
         <div class="ptag">${p.id === myUserId ? 'You' : 'Player'}</div>
@@ -778,7 +775,7 @@ function renderPlayerChips(playerOrder, activeIndex) {
     chip.className = 'p-chip';
     chip.innerHTML = `
       <div class="p-chip-av ${isActive ? 'active' : 'grey'} ${isMe ? 'me' : ''}">
-        ${name.charAt(0).toUpperCase()}
+        ${getPlayerEmoji(uid)}
       </div>
       <div class="p-chip-name ${isActive ? 'active' : ''}">${name.split(' ')[0]}</div>
     `;
@@ -796,17 +793,22 @@ document.getElementById('guessInput').addEventListener('keydown', e => {
 document.getElementById('s5').addEventListener('click', resetTimerOnActivity);
 document.getElementById('guessInput').addEventListener('input', resetTimerOnActivity);
 
+let timerResetDebounce = null;
 function resetTimerOnActivity() {
-  // Only reset if we're in a game and it's our turn
   if (!roomCode || !myUserId) return;
   if (document.getElementById('panelTurn').style.display === 'none') return;
-  // Update lastActiveTimestamp to reset the server clock
-  // (We reset locally — server resets on actual guess submission)
-  const pill = document.getElementById('timerPill');
-  const label = document.getElementById('timerLabel');
-  // Just reset visual to 60s while they type — server authoritative on submit
-  label.textContent = '60s';
-  pill.classList.remove('timer-urgent');
+  // Reset visual immediately
+  document.getElementById('timerLabel').textContent = '60s';
+  document.getElementById('timerPill').classList.remove('timer-urgent');
+  // Debounce: reset server timestamp max once every 5s to avoid spamming
+  clearTimeout(timerResetDebounce);
+  timerResetDebounce = setTimeout(async () => {
+    try {
+      await updateDoc(doc(db, 'games', roomCode), {
+        lastActiveTimestamp: serverTimestamp()
+      });
+    } catch(e) {} // silent — not critical
+  }, 5000);
 }
 
 async function submitGuess() {
@@ -929,6 +931,31 @@ document.getElementById('endSessionBtn').addEventListener('click', async () => {
   if (!confirm('Delete this room and end the game?')) return;
   clearInterval(timerInterval);
   try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
+});
+
+// ── PLAYER EMOJI ──
+const EMOJIS = ['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
+function getPlayerEmoji(uid) {
+  let hash = 0;
+  for (let i = 0; i < uid.length; i++) hash = uid.charCodeAt(i) + ((hash << 5) - hash);
+  return EMOJIS[Math.abs(hash) % EMOJIS.length];
+}
+
+// ── ENTER KEYS ON ALL INPUTS ──
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const active = document.querySelector('.screen.active');
+  if (!active) return;
+  const id = active.id;
+  if (id === 's1') {
+    // If join fields have content, join; otherwise host
+    const code = document.getElementById('joinRoomId').value.trim();
+    const name = document.getElementById('joinName').value.trim();
+    if (code || name) { document.getElementById('joinBtn').click(); }
+    else { document.getElementById('hostBtn').click(); }
+  } else if (id === 's3') {
+    document.getElementById('createRoomBtn').click();
+  }
 });
 
 // ── WIN ──
