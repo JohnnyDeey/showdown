@@ -4,54 +4,46 @@ const admin     = require("firebase-admin");
 admin.initializeApp();
 const db = admin.firestore();
 
-// ─────────────────────────────────────────────
-// HELPER: generate a 6-char alphanumeric code
-// ─────────────────────────────────────────────
 function generateRoomCode() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I ambiguity
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
   for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return code;
 }
 
-// ─────────────────────────────────────────────
-// createGameRoom
-// Called by the host. Creates the Firestore game document.
-// ─────────────────────────────────────────────
+// ── createGameRoom ──
 exports.createGameRoom = functions.https.onCall(async (data, context) => {
   const { minRange, maxRange, creatorName } = data;
+  const min = parseFloat(minRange);
+  const max = parseFloat(maxRange);
 
-  if (typeof minRange !== "number" || typeof maxRange !== "number" || minRange >= maxRange) {
+  if (isNaN(min) || isNaN(max) || min >= max) {
     throw new functions.https.HttpsError("invalid-argument", "Invalid range.");
   }
   if (!creatorName || typeof creatorName !== "string") {
     throw new functions.https.HttpsError("invalid-argument", "Creator name required.");
   }
 
-  const targetNumber = parseFloat((Math.random() * (maxRange - minRange) + minRange).toFixed(2));
+  const targetNumber = parseFloat((Math.random() * (max - min) + min).toFixed(2));
   const gameId       = generateRoomCode();
   const creatorId    = creatorName.toLowerCase().replace(/\s+/g, "_");
 
   await db.doc(`games/${gameId}`).set({
-    rangeMin:          minRange,
-    rangeMax:          maxRange,
+    rangeMin:            min,
+    rangeMax:            max,
     targetNumber,
-    status:            "waiting",       // waiting → playing → won
+    status:              "waiting",
     creatorId,
-    playerOrder:       [creatorId],
-    activePlayerIndex: 0,
-    createdAt:         admin.firestore.FieldValue.serverTimestamp(),
+    playerOrder:         [creatorId],
+    activePlayerIndex:   0,
+    createdAt:           admin.firestore.FieldValue.serverTimestamp(),
     lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
   });
 
   return { gameId };
 });
 
-// ─────────────────────────────────────────────
-// startGame
-// Host calls this once enough players have joined.
-// Shuffles player order and moves status to 'playing'.
-// ─────────────────────────────────────────────
+// ── startGame ──
 exports.startGame = functions.https.onCall(async (data, context) => {
   const { gameId } = data;
   const gameRef    = db.doc(`games/${gameId}`);
@@ -61,28 +53,22 @@ exports.startGame = functions.https.onCall(async (data, context) => {
     if (!snap.exists) throw new functions.https.HttpsError("not-found", "Game not found.");
 
     const game = snap.data();
-    if (game.status !== "waiting") {
-      return { success: false, message: "Game already started." };
-    }
+    if (game.status !== "waiting") return { success: false, message: "Already started." };
 
-    // Grab all joined players
     const playersSnap = await db.collection(`games/${gameId}/players`).get();
     const playerIds   = playersSnap.docs.map(d => d.id);
 
-    if (playerIds.length < 2) {
-      return { success: false, message: "Need at least 2 players." };
-    }
+    if (playerIds.length < 1) return { success: false, message: "No players." };
 
-    // Shuffle
     for (let i = playerIds.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [playerIds[i], playerIds[j]] = [playerIds[j], playerIds[i]];
     }
 
     tx.update(gameRef, {
-      status:            "playing",
-      playerOrder:       playerIds,
-      activePlayerIndex: 0,
+      status:              "playing",
+      playerOrder:         playerIds,
+      activePlayerIndex:   0,
       lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -90,15 +76,16 @@ exports.startGame = functions.https.onCall(async (data, context) => {
   });
 });
 
-// ─────────────────────────────────────────────
-// submitGuess
-// Validates guess, narrows the range, checks win, rotates turn.
-// ─────────────────────────────────────────────
+// ── submitGuess ──
 exports.submitGuess = functions.https.onCall(async (data, context) => {
-  const { gameId, userId, guess } = data;
+  const { gameId, userId } = data;
+  const guess = parseFloat(data.guess); // force number even if string sent
 
-  if (typeof guess !== "number") {
+  if (isNaN(guess)) {
     throw new functions.https.HttpsError("invalid-argument", "Guess must be a number.");
+  }
+  if (!gameId || !userId) {
+    throw new functions.https.HttpsError("invalid-argument", "Missing gameId or userId.");
   }
 
   const gameRef = db.doc(`games/${gameId}`);
@@ -108,21 +95,23 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
     if (!snap.exists) throw new functions.https.HttpsError("not-found", "Game not found.");
 
     const game = snap.data();
+
     if (game.status !== "playing") {
-      return { success: false, message: "Game is not active." };
+      return { success: false, message: `Game not active (status: ${game.status}).` };
     }
 
-    // Verify it's this player's turn
-    const currentPlayerId = game.playerOrder[game.activePlayerIndex];
+    const playerOrder      = game.playerOrder || [];
+    const currentPlayerId  = playerOrder[game.activePlayerIndex];
+
     if (currentPlayerId !== userId) {
-      return { success: false, message: "Not your turn." };
+      return { success: false, message: `Not your turn. Current: ${currentPlayerId}, You: ${userId}` };
     }
 
-    const target     = game.targetNumber;
-    const logRef     = db.collection(`games/${gameId}/guesses_public`).doc();
-    const cleanName  = userId.replace(/_/g, " ");
+    const target    = parseFloat(game.targetNumber);
+    const logRef    = db.collection(`games/${gameId}/guesses_public`).doc();
+    const cleanName = userId.replace(/_/g, " ");
 
-    // ── WIN CHECK ──
+    // Win check
     if (Math.abs(guess - target) < 0.005) {
       tx.set(logRef, {
         name:      cleanName,
@@ -130,28 +119,29 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       tx.update(gameRef, {
-        status:   "won",
-        winnerId: userId,
+        status:              "won",
+        winnerId:            userId,
         lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       return { success: true, result: "won" };
     }
 
-    // ── NARROW RANGE ──
-    let newMin = game.rangeMin;
-    let newMax = game.rangeMax;
-    let hint;
+    // Too high or too low
+    let newMin    = game.rangeMin;
+    let newMax    = game.rangeMax;
+    let hint, direction;
 
     if (guess < target) {
-      newMin = Math.max(newMin, guess);
-      hint   = `${guess.toFixed(2)} → Too Low ↑`;
+      newMin    = Math.max(newMin, guess);
+      hint      = `${guess.toFixed(2)} → Too Low ↑`;
+      direction = "higher";
     } else {
-      newMax = Math.min(newMax, guess);
-      hint   = `${guess.toFixed(2)} → Too High ↓`;
+      newMax    = Math.min(newMax, guess);
+      hint      = `${guess.toFixed(2)} → Too High ↓`;
+      direction = "lower";
     }
 
-    // ── ROTATE TURN ──
-    const nextIndex = (game.activePlayerIndex + 1) % game.playerOrder.length;
+    const nextIndex = (game.activePlayerIndex + 1) % playerOrder.length;
 
     tx.set(logRef, {
       name:      cleanName,
@@ -160,21 +150,17 @@ exports.submitGuess = functions.https.onCall(async (data, context) => {
     });
 
     tx.update(gameRef, {
-      rangeMin:          newMin,
-      rangeMax:          newMax,
-      activePlayerIndex: nextIndex,
+      rangeMin:            newMin,
+      rangeMax:            newMax,
+      activePlayerIndex:   nextIndex,
       lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    return { success: true, result: "continue" };
+    return { success: true, result: direction };
   });
 });
 
-// ─────────────────────────────────────────────
-// handleTimeout
-// Called by the client whose turn ran out. Removes the
-// stalled player and either passes the turn, prompts solo, or closes.
-// ─────────────────────────────────────────────
+// ── handleTimeout ──
 exports.handleTimeout = functions.https.onCall(async (data, context) => {
   const { gameId, userId } = data;
   const gameRef = db.doc(`games/${gameId}`);
@@ -186,53 +172,48 @@ exports.handleTimeout = functions.https.onCall(async (data, context) => {
     const game = snap.data();
     if (game.status !== "playing") return { success: false };
 
-    let playerOrder = [...game.playerOrder];
+    let playerOrder = [...(game.playerOrder || [])];
     let activeIndex = game.activePlayerIndex;
 
-    // Guard: only act if this is actually the stalled player's slot
     const currentPlayerId = playerOrder[activeIndex];
     if (currentPlayerId !== userId) return { success: false };
 
-    // Remove the timed-out player
     playerOrder.splice(activeIndex, 1);
 
-    const logRef       = db.collection(`games/${gameId}/guesses_public`).doc();
-    const cleanName    = userId.replace(/_/g, " ");
+    const logRef    = db.collection(`games/${gameId}/guesses_public`).doc();
+    const cleanName = userId.replace(/_/g, " ");
 
     if (playerOrder.length >= 2) {
-      // ── SKIP & CONTINUE ──
       const nextIndex = activeIndex % playerOrder.length;
       tx.set(logRef, {
         name:      "SYSTEM",
-        result:    `⏱ ${cleanName} timed out and was removed. Passing turn…`,
+        result:    `⏱ ${cleanName} timed out — passing turn…`,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       tx.update(gameRef, {
         playerOrder,
-        activePlayerIndex: nextIndex,
+        activePlayerIndex:   nextIndex,
         lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       return { success: true, action: "skipped" };
 
     } else if (playerOrder.length === 1) {
-      // ── PROMPT SOLO ──
       const survivorId = playerOrder[0];
       tx.set(logRef, {
         name:      "SYSTEM",
-        result:    `⏱ ${cleanName} timed out! ${survivorId.replace(/_/g, " ")} is the last player.`,
+        result:    `⏱ ${cleanName} timed out! ${survivorId.replace(/_/g, " ")} is last standing.`,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       tx.update(gameRef, {
-        status:            "solo_decide",
+        status:              "solo_decide",
         playerOrder,
-        activePlayerIndex: 0,
+        activePlayerIndex:   0,
         survivorId,
         lastActiveTimestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       return { success: true, action: "prompt_solo" };
 
     } else {
-      // ── EVERYONE GONE ──
       tx.delete(gameRef);
       return { success: true, action: "session_closed" };
     }
