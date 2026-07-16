@@ -203,6 +203,43 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .win-winner{font-size:14px;font-weight:800;color:var(--or);margin-bottom:22px}
 .win-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px}
 
+/* Spectator win celebration */
+#specWinOverlay{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.92);backdrop-filter:blur(8px)}
+#specWinOverlay.show{display:flex}
+.trophy-wrap{text-align:center;animation:trophyIn 0.8s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes trophyIn{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.trophy-emoji{font-size:100px;display:block;filter:drop-shadow(0 0 40px gold)}
+.win-name-big{font-size:42px;font-weight:900;color:#fff;margin-top:12px;text-shadow:0 0 30px rgba(249,115,22,.8)}
+.win-num-big{font-family:'JetBrains Mono',monospace;font-size:28px;color:#34d399;margin-top:8px;font-weight:700}
+.win-caption{font-size:16px;color:rgba(255,255,255,.6);margin-top:8px;font-weight:600}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;animation:confettiFall linear forwards;pointer-events:none;z-index:501}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* Spectator summary tab */
+.spec-tabs{display:flex;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.spec-tab{flex:1;padding:10px;font-size:11px;font-weight:800;text-align:center;cursor:pointer;color:rgba(255,255,255,.4);border-bottom:2.5px solid transparent;text-transform:uppercase;letter-spacing:.08em;transition:all .15s}
+.spec-tab.active{color:#fb923c;border-bottom-color:#fb923c}
+.spec-tab-panel{display:none;flex:1;overflow:hidden}
+.spec-tab-panel.active{display:flex}
+.spec-summary-area{flex:1;overflow-y:auto;padding:14px}
+.summary-table{width:100%;border-collapse:collapse;font-size:12px}
+.summary-table th{padding:8px 10px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.1)}
+.summary-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:700}
+.summary-table tr:last-child td{border-bottom:none}
+.tag-higher{background:rgba(244,63,94,.15);color:#fb7185;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
+.tag-lower{background:rgba(245,158,11,.15);color:#fbbf24;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
+.tag-correct{background:rgba(34,197,94,.2);color:#4ade80;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
+.stat-cards-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat-mini-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center}
+.stat-mini-card .smc-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#fb923c}
+.stat-mini-card .smc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-top:4px}
+.player-stat-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.psc-name{font-size:14px;font-weight:800;margin-bottom:8px}
+.psc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.psc-stat{text-align:center}
+.psc-stat .v{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#fb923c}
+.psc-stat .l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-top:2px}
+
 /* Spectator screen (TV) */
 #specScreen{position:fixed;inset:0;overflow:hidden;background:var(--ink);color:#fff;display:none;flex-direction:column}
 #specScreen.show{display:flex}
@@ -472,6 +509,14 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
       </div>
     </div>
   </div>
+  </div>
+  </div><!-- end specTabLive -->
+
+  <div class="spec-tab-panel" id="specTabSummary">
+    <div class="spec-summary-area" id="specSummaryArea">
+      <div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:40px">Game summary appears here when the game ends or you click Summary.</div>
+    </div>
+  </div>
 </div>
 
 <!-- WIN SCREEN -->
@@ -496,6 +541,11 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
     </div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.4)" id="specRoomCodeDisplay"></div>
   </div>
+  <div class="spec-tabs">
+    <div class="spec-tab active" onclick="switchSpecTab('live')">⚡ Live Board</div>
+    <div class="spec-tab" onclick="switchSpecTab('summary')">📋 Summary</div>
+  </div>
+  <div class="spec-tab-panel active" id="specTabLive">
   <div class="spec-body">
     <div class="spec-left">
       <div class="spec-turn-card">
@@ -518,6 +568,16 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
         <div id="specStats"><div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center">No players yet</div></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- SPECTATOR WIN OVERLAY -->
+<div id="specWinOverlay">
+  <div class="trophy-wrap">
+    <span class="trophy-emoji">🏆</span>
+    <div class="win-name-big" id="specWinName">Winner!</div>
+    <div class="win-num-big" id="specWinNum"></div>
+    <div class="win-caption">guessed the secret number!</div>
   </div>
 </div>
 
@@ -1067,13 +1127,55 @@ function renderStats() {
   <div class="stat-row" style="gap:6px"><span style="font-size:12px;font-weight:700;color:var(--ink3);flex:1">Range</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">${origMin??'--'} – ${origMax??'--'}</span></div>`;
 }
 
+// ── SPEC TAB SWITCH ──
+window.switchSpecTab = function(tab) {
+  document.querySelectorAll('.spec-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='live'?0:1)));
+  document.getElementById('specTabLive').classList.toggle('active', tab==='live');
+  document.getElementById('specTabSummary').classList.toggle('active', tab==='summary');
+  if (tab==='summary') renderSpecSummary();
+};
+
+// Confetti burst
+function launchConfetti() {
+  const colors = ['#f97316','#f43f5e','#22c55e','#f59e0b','#8b5cf6','#06b6d4','#ec4899'];
+  for (let i = 0; i < 120; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = [
+        'left:' + Math.random()*100 + 'vw',
+        'top:-20px',
+        'background:' + colors[Math.floor(Math.random()*colors.length)],
+        'width:' + (6+Math.random()*10) + 'px',
+        'height:' + (6+Math.random()*10) + 'px',
+        'animation-duration:' + (2+Math.random()*3) + 's',
+        'animation-delay:0s',
+        'border-radius:' + (Math.random()>0.5?'50%':'2px')
+      ].join(';');
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }, i * 30);
+  }
+}
+
+// Spec summary data store
+let specAllGuesses = []; // {name, guess, result, timestamp}
+let specPlayerStats = {}; // uid -> {name, guesses:[], guessCount, firstGuessTime, lastGuessTime}
+let specGameStartTime = null;
+let specWinnerName = '';
+let specTargetNumber = null;
+
 // ── SPECTATOR MODE (TV) ──
 function launchSpectatorMode(gameId, specCode) {
   document.getElementById('specHeaderCode').textContent = 'Code: ' + specCode;
   document.getElementById('specRoomCodeDisplay').textContent = 'Game: ' + gameId;
   document.getElementById('specScreen').classList.add('show');
+  specGameStartTime = Date.now();
 
   let origSet = false;
+  let wonShown = false;
+  let playerNamesSpec = {};
+
   onSnapshot(doc(db,'games',gameId),(snap)=>{
     if(!snap.exists())return;
     const data=snap.data();
@@ -1089,16 +1191,47 @@ function launchSpectatorMode(gameId, specCode) {
           if(ps.exists()) document.getElementById('specActiveName').textContent=ps.data().name;
         });
       }
-    } else if(data.status==='won'){
-      document.getElementById('specActiveName').textContent='🎉 Game Over!';
+    } else if(data.status==='won' && !wonShown){
+      wonShown=true;
+      specTargetNumber = data.targetNumber;
+      // Get winner name
+      if(data.winnerId){
+        getDoc(doc(db,`games/${gameId}/players`,data.winnerId)).then(ps=>{
+          const wName = ps.exists()?ps.data().name:data.winnerId.replace(/_/g,' ');
+          specWinnerName = wName;
+          document.getElementById('specActiveName').textContent='🎉 ' + wName + ' won!';
+          // Show win overlay
+          document.getElementById('specWinName').textContent = wName;
+          document.getElementById('specWinNum').textContent = '🎯 ' + data.targetNumber?.toFixed(2);
+          document.getElementById('specWinOverlay').classList.add('show');
+          launchConfetti();
+          // Auto-hide after 6s
+          setTimeout(()=>{
+            document.getElementById('specWinOverlay').classList.remove('show');
+            switchSpecTab('summary');
+          }, 6000);
+        });
+      }
     }
   });
 
-  onSnapshot(query(collection(db,`games/${gameId}/guesses_public`),orderBy('timestamp','desc'),limit(12)),(snap)=>{
-    const feed=document.getElementById('specFeed'); feed.innerHTML='';
-    if(snap.empty){feed.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:16px">Waiting for first guess…</div>';return;}
+  onSnapshot(query(collection(db,`games/${gameId}/guesses_public`),orderBy('timestamp','asc'),limit(100)),(snap)=>{
+    // Store all for summary
+    specAllGuesses = [];
     snap.forEach(d=>{
-      const item=d.data(), isSys=item.name==='SYSTEM';
+      const item=d.data();
+      specAllGuesses.push({
+        name:item.name, result:item.result,
+        ts:item.timestamp?.toDate()
+      });
+    });
+
+    // Render feed (latest first)
+    const feed=document.getElementById('specFeed'); feed.innerHTML='';
+    const items=[...specAllGuesses].reverse().slice(0,12);
+    if(items.length===0){feed.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:16px">Waiting for first guess…</div>';return;}
+    items.forEach(item=>{
+      const isSys=item.name==='SYSTEM';
       const {text,cls}=dirLabel(item.result);
       const div=document.createElement('div'); div.className='spec-fi';
       div.innerHTML=`<span class="spec-fi-name">${isSys?'⚙️ System':item.name}</span><span class="spec-fi-tag ${cls}">${text}</span>`;
@@ -1108,7 +1241,9 @@ function launchSpectatorMode(gameId, specCode) {
 
   onSnapshot(collection(db,`games/${gameId}/players`),(snap)=>{
     const stats=document.getElementById('specStats'); stats.innerHTML='';
-    const ps=[]; snap.forEach(d=>ps.push({id:d.id,...d.data()}));
+    const ps=[]; snap.forEach(d=>{ps.push({id:d.id,...d.data()}); playerNamesSpec[d.id]=d.data().name;});
+    specPlayerStats={};
+    ps.forEach(p=>{specPlayerStats[p.id]={name:p.name,guessCount:p.guessCount||0};});
     if(ps.length===0){stats.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center">No players yet</div>';return;}
     ps.forEach(p=>{
       const row=document.createElement('div'); row.className='spec-stat-row';
@@ -1116,6 +1251,60 @@ function launchSpectatorMode(gameId, specCode) {
       stats.appendChild(row);
     });
   });
+}
+
+function renderSpecSummary() {
+  const el = document.getElementById('specSummaryArea');
+  const totalGuesses = specAllGuesses.filter(g=>g.name!=='SYSTEM').length;
+  const elapsed = specGameStartTime ? Math.floor((Date.now()-specGameStartTime)/1000) : 0;
+  const mins = Math.floor(elapsed/60), secs = elapsed%60;
+
+  // Per-player stats
+  const playerGuesses = {};
+  specAllGuesses.forEach((g,i)=>{
+    if(g.name==='SYSTEM')return;
+    if(!playerGuesses[g.name]) playerGuesses[g.name]={total:0,higher:0,lower:0,correct:0,guesses:[]};
+    playerGuesses[g.name].total++;
+    playerGuesses[g.name][g.result]=(playerGuesses[g.name][g.result]||0)+1;
+    playerGuesses[g.name].guesses.push({...g,num:i+1});
+  });
+
+  let summaryHTML = '';
+
+  // Top stat cards
+  summaryHTML += `<div class="stat-cards-row">
+    <div class="stat-mini-card"><div class="smc-val">${totalGuesses}</div><div class="smc-label">Total Guesses</div></div>
+    <div class="stat-mini-card"><div class="smc-val">${mins}m ${secs}s</div><div class="smc-label">Time Played</div></div>
+    <div class="stat-mini-card"><div class="smc-val">${Object.keys(playerGuesses).length}</div><div class="smc-label">Players</div></div>
+    ${specTargetNumber?`<div class="stat-mini-card"><div class="smc-val">${specTargetNumber.toFixed(2)}</div><div class="smc-label">Secret Number</div></div>`:''}
+  </div>`;
+
+  // Per player summary cards
+  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:10px">Player Performance</div>`;
+  Object.entries(playerGuesses).forEach(([name,stats])=>{
+    const accuracy = stats.correct>0?'✓ Got it!':`${Math.round((stats.lower||0)/stats.total*100)||0}% High, ${Math.round((stats.higher||0)/stats.total*100)||0}% Low`;
+    const isWinner = name===specWinnerName;
+    summaryHTML += `<div class="player-stat-card" style="${isWinner?'border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.08)':''}">
+      <div class="psc-name">${isWinner?'🏆 ':''}${name}</div>
+      <div class="psc-stats">
+        <div class="psc-stat"><div class="v">${stats.total}</div><div class="l">Guesses</div></div>
+        <div class="psc-stat"><div class="v" style="color:#fb7185">${stats.higher||0}</div><div class="l">Too Low</div></div>
+        <div class="psc-stat"><div class="v" style="color:#fbbf24">${stats.lower||0}</div><div class="l">Too High</div></div>
+      </div>
+    </div>`;
+  });
+
+  // Chronological table
+  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin:14px 0 8px">Full Guess Log</div>`;
+  summaryHTML += `<table class="summary-table"><thead><tr><th>#</th><th>Player</th><th>Result</th></tr></thead><tbody>`;
+  specAllGuesses.forEach((g,i)=>{
+    if(g.name==='SYSTEM')return;
+    const {text,cls} = dirLabel(g.result);
+    summaryHTML += `<tr><td style="color:rgba(255,255,255,.4)">${i+1}</td><td>${g.name}</td><td><span class="tag-${cls==='higher'?'higher':cls==='lower'?'lower':'correct'}">${text}</span></td></tr>`;
+  });
+  summaryHTML += '</tbody></table>';
+
+  el.innerHTML = summaryHTML;
 }
 </script>
 
