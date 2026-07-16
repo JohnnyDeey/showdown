@@ -17,24 +17,20 @@
 :root{--or:#f97316;--te:#0d9488;--ro:#f43f5e;--am:#f59e0b;--gn:#22c55e;--ink:#1c1917;--ink2:#44403c;--ink3:#78716c;--bd:#e7e5e4;--sf:#fafaf9;--wh:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow:hidden;user-select:none}
-
-/* ─── SCREENS ─── */
 .screen{display:none;flex:1;flex-direction:column}
 .screen.active{display:flex}
-
-/* ─── SHARED ─── */
 .btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s,opacity .15s}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn-or{background:linear-gradient(135deg,#f97316,#fb923c);color:#fff;box-shadow:0 4px 16px rgba(249,115,22,.3)}
 .btn-te{background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;box-shadow:0 4px 16px rgba(13,148,136,.25)}
 .btn-gn{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 16px rgba(34,197,94,.25)}
-.btn-ghost{background:var(--wh);border:1.5px solid var(--bd);color:var(--ink2);box-shadow:none}
+.btn-ghost{background:var(--wh);border:1.5px solid var(--bd);color:var(--ink2)}
+.btn-ro{background:linear-gradient(135deg,#f43f5e,#fb7185);color:#fff}
 .field{width:100%;background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--ink);outline:none;transition:border-color .15s;-webkit-appearance:none;-moz-appearance:textfield}
 .field:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(249,115,22,.1)}
 .field::placeholder{color:var(--ink3);font-weight:600}
 .field-code{text-align:center;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.2em;text-transform:uppercase}
-.field-pin{text-align:center;font-family:'JetBrains Mono',monospace;font-size:22px;letter-spacing:.3em}
 .field::-webkit-inner-spin-button{-webkit-appearance:none}
 .card{background:var(--wh);border:1.5px solid var(--bd);border-radius:18px;padding:20px}
 .clabel{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -42,116 +38,112 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .divider{display:flex;align-items:center;gap:10px;padding:4px 0}
 .divider::before,.divider::after{content:'';flex:1;height:1.5px;background:var(--bd)}
 .divider span{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em}
-.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ro);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:99px;z-index:200;white-space:nowrap;display:none}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ro);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:99px;z-index:300;white-space:nowrap;display:none;box-shadow:0 4px 16px rgba(0,0,0,.15)}
 .toast.ok{background:var(--gn)}
 .toast.show{display:block}
 
-/* ─── S1: LOBBY ─── */
+/* ── S1 LOBBY ── */
 #s1{overflow-y:auto;padding:24px 20px 40px;max-width:420px;margin:0 auto;width:100%}
-.logo-wrap{text-align:center;margin-bottom:28px;padding-top:4px}
 .logo-ring{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,#f97316,#f43f5e);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 8px 24px rgba(249,115,22,.3)}
 .logo-ring i{font-size:28px;color:#fff}
-.logo-title{font-size:26px;font-weight:900;letter-spacing:-.5px}
-.logo-title span{color:var(--or)}
-.logo-sub{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.lobby-title{font-size:26px;font-weight:900;letter-spacing:-.5px;text-align:center}
+.lobby-title span{color:var(--or)}
+.lobby-sub{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px;margin-bottom:28px;text-align:center}
 
-/* ─── S2: LOBBY GAME TYPE ─── */
-#s2{padding:32px 20px;max-width:420px;margin:0 auto;width:100%;justify-content:center;gap:16px}
-.s2-title{font-size:22px;font-weight:900;text-align:center}
-.s2-sub{font-size:12px;font-weight:600;color:var(--ink3);text-align:center;margin-bottom:8px}
-.mode-card{background:var(--wh);border:2px solid var(--bd);border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
+/* ── S2 MODE ── */
+#s2{padding:32px 20px;max-width:420px;margin:0 auto;width:100%;justify-content:center;gap:14px}
+.mode-card{background:var(--wh);border:2px solid var(--bd);border-radius:20px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
 .mode-card:active{transform:scale(.98)}
-.mode-card.selected{border-color:var(--or)}
-.mode-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px}
+.mode-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px}
 .mode-icon.or{background:#fff7ed;color:var(--or)}
 .mode-icon.te{background:#f0fdfa;color:var(--te)}
 .mode-card h3{font-size:16px;font-weight:800;margin-bottom:4px}
 .mode-card p{font-size:12px;font-weight:600;color:var(--ink3);line-height:1.5}
 
-/* ─── S3: HOST SETUP ─── */
+/* ── S3 SETUP ── */
 #s3{padding:24px 20px;max-width:420px;margin:0 auto;width:100%;overflow-y:auto}
-.s3-back{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink3);margin-bottom:20px;cursor:pointer;width:fit-content}
-.s3-back:hover{color:var(--ink)}
+.back-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink3);margin-bottom:20px;cursor:pointer;width:fit-content}
 .s-title{font-size:20px;font-weight:900;margin-bottom:4px}
 .s-sub{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:20px}
 .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .field-grid .field{text-align:center}
-.player-count-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pc-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .pc-btn{background:var(--wh);border:1.5px solid var(--bd);border-radius:10px;padding:10px 0;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--ink2);cursor:pointer;text-align:center;transition:all .15s}
-.pc-btn.selected{background:var(--or);border-color:var(--or);color:#fff}
+.pc-btn.sel{background:var(--or);border-color:var(--or);color:#fff}
 
-/* ─── S4: WAITING ROOM ─── */
-#s4{padding:0;overflow:hidden}
-.wr-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.wr-code{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--or);letter-spacing:.15em}
-.wr-body{flex:1;overflow-y:auto;padding:20px}
-.wr-share{background:var(--wh);border:1.5px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:16px;text-align:center}
-.wr-share p{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:8px}
-.wr-share .code-big{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:var(--or);letter-spacing:.2em}
-.copy-btn{margin-top:10px;background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.wr-players-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:10px}
-.player-slot{background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.player-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--sf);border:2px solid var(--bd)}
-.player-slot .pname{font-size:14px;font-weight:800}
-.player-slot .ptag{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+/* ── S4 WAITING ROOM ── */
+#s4{overflow:hidden}
+.wr-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.wr-code-big{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--or);letter-spacing:.15em}
+.wr-body{flex:1;overflow-y:auto;padding:18px 20px}
+.share-box{background:var(--wh);border:1.5px solid var(--bd);border-radius:16px;padding:18px;text-align:center;margin-bottom:16px}
+.share-box p{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:8px}
+.code-display{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;color:var(--or);letter-spacing:.2em}
+.copy-btn{margin-top:10px;background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 18px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.pl-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:10px}
+.pl-slot{background:var(--wh);border:1.5px solid var(--bd);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.pl-av{width:38px;height:38px;border-radius:50%;background:var(--sf);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pl-name{font-size:14px;font-weight:800}
+.pl-tag{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase}
 .host-badge{font-size:9px;font-weight:800;background:#fff7ed;color:var(--or);border:1px solid #fed7aa;padding:2px 8px;border-radius:99px;margin-left:auto}
 .wr-waiting{background:var(--sf);border:1.5px dashed var(--bd);border-radius:12px;padding:16px;text-align:center;margin-bottom:8px}
 .wr-waiting p{font-size:12px;font-weight:600;color:var(--ink3)}
-.wr-footer{padding:16px 20px;background:var(--wh);border-top:1.5px solid var(--bd);flex-shrink:0}
-.player-count-info{font-size:12px;font-weight:700;color:var(--ink3);text-align:center;margin-bottom:10px}
-.player-count-info span{color:var(--or);font-weight:900}
+.wr-footer{padding:14px 20px;background:var(--wh);border-top:1.5px solid var(--bd);flex-shrink:0}
+.wr-status{font-size:12px;font-weight:700;color:var(--ink3);text-align:center;margin-bottom:10px}
+.wr-status span{color:var(--or);font-weight:900}
 
-/* ─── S5: GAMEPLAY ─── */
+/* ── S5 GAMEPLAY ── */
 #s5{height:100vh;overflow:hidden}
 .gp-header{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .gp-room{display:flex;flex-direction:column}
 .gp-room span:first-child{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
-.gp-room-code{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--or);letter-spacing:.12em}
+.gp-code{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--or);letter-spacing:.12em}
+.gp-right{display:flex;align-items:center;gap:8px}
 .timer-pill{display:flex;align-items:center;gap:6px;background:#fff1f2;border:1.5px solid #fda4af;padding:6px 14px;border-radius:99px}
 .timer-pill i{color:var(--ro);font-size:12px}
 .timer-num{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--ro)}
 @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(244,63,94,.4)}70%{box-shadow:0 0 0 8px rgba(244,63,94,0)}100%{box-shadow:0 0 0 0 rgba(244,63,94,0)}}
 .timer-urgent{animation:pulse-ring .9s infinite}
-.btn-end{background:#fff1f2;border:1.5px solid #fda4af;color:var(--ro);padding:7px 12px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:5px}
+.burger-btn{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:7px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:16px;color:var(--ink2)}
+.btn-end-sm{background:#fff1f2;border:1.5px solid #fda4af;color:var(--ro);padding:7px 10px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:4px}
 
-/* Players strip */
-.players-strip{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;gap:10px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
-.players-strip::-webkit-scrollbar{display:none}
-.p-chip{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}
-.p-chip-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2.5px solid transparent;transition:all .3s;flex-shrink:0;background:var(--sf)}
-.p-chip-av.grey{background:#d4d4d4;border-color:#d4d4d4}
-.p-chip-av.active{background:linear-gradient(135deg,#16a34a,#22c55e);border-color:#16a34a;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
-.p-chip-av.me{border-color:var(--or)}
-.p-chip-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);text-align:center;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.p-chip-name.active{color:var(--gn)}
+/* Player chips */
+.chips-strip{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;gap:12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.chips-strip::-webkit-scrollbar{display:none}
+.p-chip{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:48px}
+.p-chip-av{width:38px;height:38px;border-radius:50%;background:var(--sf);border:2.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s}
+.p-chip-av.active{border-color:#16a34a;box-shadow:0 0 0 3px rgba(34,197,94,.2);background:#f0fdf4}
+.p-chip-av.me-ring{border-color:var(--or)}
+.p-chip-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);text-align:center;max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p-chip-name.active{color:#16a34a}
 
-/* Live area */
-.live-area{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;flex-direction:column;flex-shrink:0;height:30%}
-.range-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;flex-shrink:0}
-.range-box{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;text-align:center}
-.range-box .rl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
-.range-box .rv{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;margin-top:1px}
-.range-box.lo .rv{color:var(--te)}
-.range-box.hi .rv{color:var(--ro)}
+/* Live area — shows ONLY initial limits, never updates */
+.live-area{background:var(--wh);border-bottom:1.5px solid var(--bd);padding:10px 14px;display:flex;flex-direction:column;flex-shrink:0;height:28%}
+.limits-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;flex-shrink:0}
+.limit-box{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;text-align:center}
+.limit-box .ll{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
+.limit-box .lv{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;margin-top:1px}
+.limit-box.lo .lv{color:var(--te)}
+.limit-box.hi .lv{color:var(--ro)}
 .turn-row{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:7px 12px;display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0}
 .turn-row i{color:var(--or);font-size:11px}
 #turnNotice{font-size:12px;font-weight:700;color:var(--ink2);flex:1}
-#compactFeed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
-.feed-entry{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:5px 10px;animation:fadeIn .2s ease}
+
+/* Feed — private: only shows YOUR results, others see "Someone guessed…" */
+#myFeed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.feed-entry{display:flex;align-items:center;gap:8px;border-radius:8px;padding:5px 10px;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
+.feed-entry.mine{background:#fff7ed;border:1px solid #fed7aa}
+.feed-entry.theirs{background:var(--sf);border:1px solid var(--bd)}
 .feed-n{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
-.feed-n.sys{color:var(--am)}
-.feed-n.pl{color:var(--or)}
 .feed-r{font-size:11px;font-weight:700;color:var(--ink2);flex:1}
 
 /* Action panel */
 .action-panel{flex:1;background:var(--sf);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow:hidden}
 #panelWait{text-align:center}
-.wait-icon{width:56px;height:56px;border-radius:16px;background:var(--wh);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.wait-icon i{font-size:20px;color:var(--ink3)}
+.wait-icon{width:56px;height:56px;border-radius:16px;background:var(--wh);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px}
 #panelWait h3{font-size:16px;font-weight:800;margin-bottom:4px}
 #panelWait p{font-size:12px;font-weight:600;color:var(--ink3);max-width:200px;line-height:1.5;margin:0 auto}
-
 #panelTurn{width:100%;max-width:320px;display:none}
 .turn-badge{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1.5px solid #86efac;color:#16a34a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:5px 12px;border-radius:99px;margin-bottom:10px}
 .turn-badge .dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 1s infinite}
@@ -159,12 +151,16 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .turn-header{text-align:center;margin-bottom:14px}
 .turn-header h3{font-size:19px;font-weight:900}
 .turn-header p{font-size:11px;font-weight:600;color:var(--ink3);margin-top:3px}
-#rangeDisplay{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink2)}
+#guessInput{width:100%;background:var(--wh);border:2.5px solid var(--or);border-radius:16px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;text-align:center;color:var(--ink);outline:none;margin-bottom:12px;-webkit-appearance:none;-moz-appearance:textfield;transition:border-color .15s}
+#guessInput:focus{box-shadow:0 0 0 4px rgba(249,115,22,.12)}
+#guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake .35s ease}
 
-/* BIG GUESS RESULT FLASH */
-#resultFlash{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(255,255,255,.95);backdrop-filter:blur(4px)}
+/* Result flash */
+#resultFlash{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(255,255,255,.97);backdrop-filter:blur(4px)}
 #resultFlash.show{display:flex}
-.rf-icon{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:34px}
+.rf-icon{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px}
 .rf-icon.higher{background:#fef2f2;color:var(--ro)}
 .rf-icon.lower{background:#fff7ed;color:var(--or)}
 .rf-icon.correct{background:#f0fdf4;color:#16a34a}
@@ -174,24 +170,41 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .rf-text.correct{color:#16a34a}
 .rf-sub{font-size:13px;font-weight:600;color:var(--ink3)}
 
-#guessInput{width:100%;background:var(--wh);border:2.5px solid var(--or);border-radius:16px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;text-align:center;color:var(--ink);outline:none;margin-bottom:12px;-webkit-appearance:none;-moz-appearance:textfield;transition:border-color .15s}
-#guessInput:focus{border-color:var(--or);box-shadow:0 0 0 4px rgba(249,115,22,.12)}
-#guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.shake{animation:shake .35s ease}
+/* Win screen */
+#winScreen{position:fixed;inset:0;background:var(--sf);z-index:150;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#winScreen.show{display:flex}
+.win-emoji{font-size:64px;margin-bottom:8px}
+.win-title{font-size:26px;font-weight:900;text-align:center}
+.win-sub{font-size:13px;font-weight:600;color:var(--ink3);margin:6px 0 4px;text-align:center}
+.win-num{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:var(--te);margin:4px 0 8px;text-align:center}
+.win-winner{font-size:14px;font-weight:800;color:var(--or);margin-bottom:24px;text-align:center}
+.win-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px}
 
-/* ─── WIN OVERLAY ─── */
-#winOverlay{position:fixed;inset:0;background:rgba(28,25,23,.9);backdrop-filter:blur(8px);z-index:150;display:none;align-items:center;justify-content:center;padding:24px}
-#winOverlay.show{display:flex}
-.win-card{background:var(--wh);border:1.5px solid var(--bd);border-radius:24px;padding:32px 24px;text-align:center;max-width:300px;width:100%}
-.win-emoji{font-size:52px;margin-bottom:10px}
-.win-card h2{font-size:24px;font-weight:900}
-.win-sub{font-size:12px;font-weight:600;color:var(--ink3);margin:6px 0}
-.win-num{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:700;color:var(--te);margin:8px 0}
-.win-winner{font-size:13px;font-weight:800;color:var(--or);margin-bottom:18px}
-.win-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--or),#fb923c);color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;cursor:pointer}
+/* Burger / Stats panel */
+#statsPanel{position:fixed;inset:0;z-index:200;display:none;flex-direction:column}
+#statsPanel.show{display:flex}
+.stats-backdrop{position:absolute;inset:0;background:rgba(28,25,23,.5)}
+.stats-drawer{position:absolute;right:0;top:0;bottom:0;width:min(320px,90vw);background:var(--wh);display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+.stats-header{padding:20px;border-bottom:1.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.stats-header h3{font-size:17px;font-weight:900}
+.stats-close{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--ink2)}
+.stats-body{flex:1;overflow-y:auto;padding:16px}
+.stats-section{margin-bottom:20px}
+.stats-section-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.stat-row{background:var(--sf);border:1.5px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.stat-av{width:36px;height:36px;border-radius:50%;background:var(--sf);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stat-info{flex:1}
+.stat-name{font-size:13px;font-weight:800}
+.stat-detail{font-size:11px;font-weight:600;color:var(--ink3);margin-top:1px}
+.stat-count{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--or)}
+.my-result-row{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:8px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.my-result-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ink)}
+.my-result-tag{font-size:10px;font-weight:800;text-transform:uppercase}
+.my-result-tag.h{color:var(--ro)}
+.my-result-tag.l{color:var(--or)}
+.my-result-tag.c{color:#16a34a}
 
-/* ─── MODALS ─── */
+/* Modals */
 .modal-overlay{position:fixed;inset:0;background:rgba(28,25,23,.8);backdrop-filter:blur(6px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px}
 .modal-overlay.show{display:flex}
 .modal-card{background:var(--wh);border:1.5px solid var(--bd);border-radius:22px;padding:28px 22px;text-align:center;max-width:300px;width:100%}
@@ -208,172 +221,164 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 </head>
 <body>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ═══ S1: LOBBY ═══ -->
+<!-- S1: LOBBY -->
 <div id="s1" class="screen active">
-  <div class="logo-wrap">
-    <div class="logo-ring"><i class="fa-solid fa-bolt"></i></div>
-    <div class="logo-title">Family <span>Showdown</span></div>
-    <div class="logo-sub">Number Guessing · Real-Time · Multiplayer</div>
-  </div>
-
-  <div class="stack" style="margin-bottom:14px">
-    <div class="card">
-      <div class="clabel"><i class="fa-solid fa-door-open" style="color:var(--or)"></i> Join a Game</div>
-      <div class="stack">
-        <input type="text" id="joinRoomId" class="field field-code" placeholder="6-LETTER CODE" maxlength="6">
-        <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
-        <button class="btn btn-or" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
-      </div>
+  <div style="overflow-y:auto;padding:24px 20px 40px;max-width:420px;margin:0 auto;width:100%">
+    <div style="text-align:center;margin-bottom:28px;padding-top:4px">
+      <div class="logo-ring"><i class="fa-solid fa-bolt"></i></div>
+      <div class="lobby-title">Family <span>Showdown</span></div>
+      <div class="lobby-sub">Number Guessing · Real-Time · Multiplayer</div>
     </div>
-
-    <div class="divider"><span>or</span></div>
-
-    <div class="card">
-      <div class="clabel"><i class="fa-solid fa-crown" style="color:var(--am)"></i> Host New Game</div>
-      <div class="stack">
-        <input type="text" id="hostName" class="field" placeholder="Your name (host)" autocomplete="off">
-        <button class="btn btn-te" id="hostBtn"><i class="fa-solid fa-plus"></i> Host a Game</button>
+    <div class="stack">
+      <div class="card">
+        <div class="clabel"><i class="fa-solid fa-door-open" style="color:var(--or)"></i> Join a Game</div>
+        <div class="stack">
+          <input type="text" id="joinRoomId" class="field field-code" placeholder="6-LETTER CODE" maxlength="6" autocomplete="off">
+          <input type="text" id="joinName" class="field" placeholder="Your name" autocomplete="off">
+          <button class="btn btn-or" id="joinBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Game</button>
+        </div>
+      </div>
+      <div class="divider"><span>or</span></div>
+      <div class="card">
+        <div class="clabel"><i class="fa-solid fa-crown" style="color:var(--am)"></i> Host New Game</div>
+        <div class="stack">
+          <input type="text" id="hostName" class="field" placeholder="Your name (host)" autocomplete="off">
+          <button class="btn btn-te" id="hostBtn"><i class="fa-solid fa-plus"></i> Host a Game</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ S2: GAME MODE ═══ -->
+<!-- S2: MODE -->
 <div id="s2" class="screen">
-  <div style="cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:700;margin-bottom:20px" id="s2back">
-    <i class="fa-solid fa-arrow-left"></i> Back
-  </div>
-  <div class="s2-title">How do you want to play?</div>
-  <div class="s2-sub" style="margin-top:6px">Choose a game mode</div>
-  <div class="mode-card" id="modeSolo" style="margin-top:16px">
-    <div class="mode-icon or"><i class="fa-solid fa-user"></i></div>
-    <h3>Solo Mode</h3>
-    <p>Play alone — guess the secret number yourself. Great for practice or a quick challenge.</p>
-  </div>
-  <div class="mode-card" id="modeMulti" style="margin-top:12px">
-    <div class="mode-icon te"><i class="fa-solid fa-users"></i></div>
-    <h3>Multiplayer</h3>
-    <p>Invite family or friends. Take turns guessing until someone hits the number!</p>
+  <div style="padding:32px 20px;max-width:420px;margin:0 auto;width:100%">
+    <div class="back-row" id="s2back"><i class="fa-solid fa-arrow-left"></i> Back</div>
+    <div class="s-title">How do you want to play?</div>
+    <div class="s-sub" style="margin-bottom:16px">Choose a game mode</div>
+    <div class="mode-card" id="modeSolo">
+      <div class="mode-icon or"><i class="fa-solid fa-user"></i></div>
+      <h3>Solo Mode</h3>
+      <p>Play alone — guess the secret number yourself at your own pace.</p>
+    </div>
+    <div class="mode-card" id="modeMulti" style="margin-top:12px">
+      <div class="mode-icon te"><i class="fa-solid fa-users"></i></div>
+      <h3>Multiplayer</h3>
+      <p>Invite family or friends. Take turns — first to guess the number wins!</p>
+    </div>
   </div>
 </div>
 
-<!-- ═══ S3: HOST SETUP ═══ -->
+<!-- S3: SETUP -->
 <div id="s3" class="screen">
-  <div style="cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:700;margin-bottom:20px" id="s3back">
-    <i class="fa-solid fa-arrow-left"></i> Back
-  </div>
-  <div class="s-title" id="s3title">Set Up Your Game</div>
-  <div class="s-sub" id="s3sub">Configure the range and player count</div>
-
-  <div class="stack">
-    <div class="card">
-      <div class="clabel"><i class="fa-solid fa-arrows-left-right" style="color:var(--or)"></i> Number Range</div>
-      <div class="field-grid">
-        <input type="number" id="minRange" class="field" placeholder="Min (e.g. 1)">
-        <input type="number" id="maxRange" class="field" placeholder="Max (e.g. 1000)">
+  <div style="padding:24px 20px;max-width:420px;margin:0 auto;width:100%;overflow-y:auto;flex:1">
+    <div class="back-row" id="s3back"><i class="fa-solid fa-arrow-left"></i> Back</div>
+    <div class="s-title" id="s3title">Set Up Your Game</div>
+    <div class="s-sub" id="s3sub">Configure the number range</div>
+    <div class="stack">
+      <div class="card">
+        <div class="clabel"><i class="fa-solid fa-arrows-left-right" style="color:var(--or)"></i> Number Range</div>
+        <div class="field-grid">
+          <input type="number" id="minRange" class="field" placeholder="Min (e.g. 1)">
+          <input type="number" id="maxRange" class="field" placeholder="Max (e.g. 1000)">
+        </div>
       </div>
-    </div>
-
-    <div class="card" id="playerCountCard">
-      <div class="clabel"><i class="fa-solid fa-users" style="color:var(--te)"></i> Max Players (you + others)</div>
-      <div class="player-count-row">
-        <button class="pc-btn" data-n="2">2</button>
-        <button class="pc-btn" data-n="3">3</button>
-        <button class="pc-btn" data-n="4">4</button>
-        <button class="pc-btn" data-n="5">5</button>
-        <button class="pc-btn" data-n="6">6</button>
+      <div class="card" id="pcCard">
+        <div class="clabel"><i class="fa-solid fa-users" style="color:var(--te)"></i> Max Players</div>
+        <div class="pc-row">
+          <button class="pc-btn sel" data-n="2">2</button>
+          <button class="pc-btn" data-n="3">3</button>
+          <button class="pc-btn" data-n="4">4</button>
+          <button class="pc-btn" data-n="5">5</button>
+          <button class="pc-btn" data-n="6">6</button>
+        </div>
+        <p style="font-size:11px;font-weight:600;color:var(--ink3);margin-top:10px;text-align:center">Minimum 2 players needed to start</p>
       </div>
-      <p style="font-size:11px;font-weight:600;color:var(--ink3);margin-top:10px;text-align:center">You can still start with fewer people — minimum 2</p>
+      <button class="btn btn-or" id="createRoomBtn"><i class="fa-solid fa-bolt"></i> Generate Room Code</button>
     </div>
-
-    <button class="btn btn-or" id="createRoomBtn"><i class="fa-solid fa-bolt"></i> Generate Room Code</button>
   </div>
 </div>
 
-<!-- ═══ S4: WAITING ROOM ═══ -->
+<!-- S4: WAITING ROOM -->
 <div id="s4" class="screen">
   <div class="wr-header">
     <div>
       <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)">Room Code</div>
-      <div class="wr-code" id="wrCode">------</div>
+      <div class="wr-code-big" id="wrCode">------</div>
     </div>
     <div style="font-size:12px;font-weight:700;color:var(--ink3)">
       <span id="wrCount" style="color:var(--or);font-weight:900">1</span> / <span id="wrMax">?</span> joined
     </div>
   </div>
-
   <div class="wr-body">
-    <div class="wr-share">
-      <p>Share this code with friends to join</p>
-      <div class="code-big" id="wrCodeBig">------</div>
+    <div class="share-box">
+      <p>Share this code with friends</p>
+      <div class="code-display" id="wrCodeBig">------</div>
       <button class="copy-btn" id="copyCodeBtn"><i class="fa-solid fa-copy"></i> Copy Code</button>
     </div>
-
-    <div class="wr-players-label">Players in Room</div>
+    <div class="pl-label">Players in Room</div>
     <div id="wrPlayerList"></div>
-
     <div class="wr-waiting" id="wrWaiting">
-      <p>Waiting for others to join…<br>Share your room code above!</p>
+      <p>Waiting for others to join… share your code!</p>
     </div>
   </div>
-
   <div class="wr-footer">
-    <div class="player-count-info" id="wrStatusMsg">Need at least <span>2</span> players to start</div>
-    <button class="btn btn-gn" id="startGameBtn" disabled>
-      <i class="fa-solid fa-play"></i> Start Game
-    </button>
+    <div class="wr-status" id="wrStatus">Need at least <span>2</span> players to start</div>
+    <button class="btn btn-gn" id="startGameBtn" disabled><i class="fa-solid fa-play"></i> Start Game</button>
   </div>
 </div>
 
-<!-- ═══ S5: GAMEPLAY ═══ -->
+<!-- S5: GAMEPLAY -->
 <div id="s5" class="screen">
   <header class="gp-header">
     <div class="gp-room">
       <span>Room</span>
-      <span class="gp-room-code" id="activeRoomCode">------</span>
+      <span class="gp-code" id="activeRoomCode">------</span>
     </div>
     <div class="timer-pill" id="timerPill">
       <i class="fa-solid fa-stopwatch"></i>
       <span class="timer-num" id="timerLabel">60s</span>
     </div>
-    <button class="btn-end" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
+    <div class="gp-right">
+      <button class="burger-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></button>
+      <button class="btn-end-sm" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
+    </div>
   </header>
 
-  <!-- Player chips strip -->
-  <div class="players-strip" id="playersStrip"></div>
+  <!-- Player chips — everyone sees who's active -->
+  <div class="chips-strip" id="chipsStrip"></div>
 
-  <!-- Live area -->
+  <!-- Live area — shows ORIGINAL limits only, never updates range -->
   <div class="live-area">
-    <div class="range-strip">
-      <div class="range-box lo"><div class="rl">Low Limit</div><div class="rv" id="liveMin">--</div></div>
-      <div class="range-box hi"><div class="rl">High Limit</div><div class="rv" id="liveMax">--</div></div>
+    <div class="limits-strip">
+      <div class="limit-box lo"><div class="ll">Original Low</div><div class="lv" id="origMin">--</div></div>
+      <div class="limit-box hi"><div class="ll">Original High</div><div class="lv" id="origMax">--</div></div>
     </div>
     <div class="turn-row">
       <i class="fa-solid fa-arrow-pointer"></i>
       <span id="turnNotice">Connecting…</span>
     </div>
-    <div id="compactFeed">
-      <div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Game feed appears here…</div>
+    <!-- Private feed: YOU see your own results, others see only activity -->
+    <div id="myFeed">
+      <div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Your guesses appear here…</div>
     </div>
   </div>
 
   <!-- Action panel -->
   <div class="action-panel">
     <div id="panelWait">
-      <div class="wait-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+      <div class="wait-icon">⏳</div>
       <h3>Awaiting your turn…</h3>
-      <p>Watch the feed above. Your input opens when it's your move.</p>
+      <p>Your input opens when it's your move. Watch the player strip above.</p>
     </div>
-
     <div id="panelTurn">
       <div style="text-align:center;margin-bottom:12px">
         <div class="turn-badge"><span class="dot"></span> Your Turn</div>
         <div class="turn-header">
           <h3>Enter your guess</h3>
-          <p>Range: <span id="rangeDisplay">-- → --</span></p>
+          <p>Between <span id="rangeHint" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink2)">-- and --</span></p>
         </div>
       </div>
       <input type="number" step="0.01" id="guessInput" placeholder="0">
@@ -382,22 +387,48 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   </div>
 </div>
 
-<!-- RESULT FLASH (shown after each guess) -->
+<!-- RESULT FLASH (private — only shown to the guesser) -->
 <div id="resultFlash">
   <div class="rf-icon" id="rfIcon"></div>
   <div class="rf-text" id="rfText"></div>
   <div class="rf-sub" id="rfSub"></div>
 </div>
 
-<!-- WIN OVERLAY -->
-<div id="winOverlay">
-  <div class="win-card">
-    <div class="win-emoji">🎉</div>
-    <h2>Winner!</h2>
-    <p class="win-sub">The secret number was</p>
-    <div class="win-num" id="winNum">--</div>
-    <div class="win-winner" id="winnerName"></div>
-    <button class="win-btn" onclick="location.reload()">Play Again</button>
+<!-- WIN SCREEN -->
+<div id="winScreen">
+  <div class="win-emoji">🎉</div>
+  <div class="win-title" id="winTitle">Winner!</div>
+  <div class="win-sub">The secret number was</div>
+  <div class="win-num" id="winNum">--</div>
+  <div class="win-winner" id="winnerName"></div>
+  <div class="win-actions">
+    <button class="btn btn-or" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
+    <button class="btn btn-ghost" id="exitBtn"><i class="fa-solid fa-house"></i> Exit to Home</button>
+  </div>
+</div>
+
+<!-- STATS PANEL (burger menu) -->
+<div id="statsPanel">
+  <div class="stats-backdrop" id="statsBackdrop"></div>
+  <div class="stats-drawer">
+    <div class="stats-header">
+      <h3>📊 Game Stats</h3>
+      <button class="stats-close" id="statsClose">✕ Close</button>
+    </div>
+    <div class="stats-body">
+      <div class="stats-section">
+        <div class="stats-section-title"><i class="fa-solid fa-trophy" style="color:var(--am)"></i> Leaderboard</div>
+        <div id="statsLeaderboard"><p style="font-size:12px;color:var(--ink3)">No data yet…</p></div>
+      </div>
+      <div class="stats-section">
+        <div class="stats-section-title"><i class="fa-solid fa-clock" style="color:var(--te)"></i> Game Info</div>
+        <div id="statsInfo"></div>
+      </div>
+      <div class="stats-section">
+        <div class="stats-section-title"><i class="fa-solid fa-list" style="color:var(--or)"></i> My Guesses This Game</div>
+        <div id="myGuessList"><p style="font-size:12px;color:var(--ink3)">No guesses yet…</p></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -406,7 +437,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   <div class="modal-card">
     <div class="modal-icon am"><i class="fa-solid fa-person-running"></i></div>
     <h3>You're the last one!</h3>
-    <p>Your opponent timed out. Keep guessing solo to find the number, or close the room.</p>
+    <p>Your opponent timed out. Keep guessing solo or close the room.</p>
     <div class="modal-btns">
       <button class="modal-btn pr" id="soloPlayBtn"><i class="fa-solid fa-play"></i> Continue Solo</button>
       <button class="modal-btn se" id="soloExitBtn"><i class="fa-solid fa-door-open"></i> Close Room</button>
@@ -423,7 +454,6 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   </div>
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
@@ -447,12 +477,15 @@ const db  = getFirestore(app);
 const fns = getFunctions(app);
 
 // ── STATE ──
-let roomCode = "", myUserId = "", myPin = "", myName = "";
+let roomCode = "", myUserId = "", myName = "";
 let timerInterval = null, lastTimerKey = null;
-let selectedMode = null, selectedMaxPlayers = 2;
-let isSolo = false;
+let isSolo = false, selectedMaxPlayers = 2;
+let origMin = null, origMax = null; // NEVER updated after game starts
+let myGuesses = []; // local history of my own guesses
+let gameStartTime = null;
+let playerNames = {}; // uid → name map
 
-// ── SCREENS ──
+// ── SCREEN ──
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -463,8 +496,33 @@ function toast(msg, ok=false) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = 'toast show' + (ok?' ok':'');
-  setTimeout(() => { el.classList.remove('show'); }, 3000);
+  setTimeout(() => el.classList.remove('show'), 3000);
 }
+
+// ── EMOJIS ──
+const EMOJIS = ['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
+function emoji(uid) {
+  let h = 0;
+  for (let i = 0; i < uid.length; i++) h = uid.charCodeAt(i) + ((h << 5) - h);
+  return EMOJIS[Math.abs(h) % EMOJIS.length];
+}
+
+// ── ENTER KEY ──
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const active = document.querySelector('.screen.active');
+  if (!active) return;
+  if (active.id === 's1') {
+    const code = document.getElementById('joinRoomId').value.trim();
+    const jname = document.getElementById('joinName').value.trim();
+    if (code || jname) document.getElementById('joinBtn').click();
+    else document.getElementById('hostBtn').click();
+  } else if (active.id === 's3') {
+    document.getElementById('createRoomBtn').click();
+  } else if (active.id === 's5') {
+    if (document.getElementById('panelTurn').style.display !== 'none') submitGuess();
+  }
+});
 
 // ── S1: LOBBY ──
 document.getElementById('joinBtn').addEventListener('click', async () => {
@@ -472,35 +530,24 @@ document.getElementById('joinBtn').addEventListener('click', async () => {
   const name = document.getElementById('joinName').value.trim();
   if (!code || code.length !== 6) return toast('Enter the 6-letter room code.');
   if (!name) return toast('Enter your name.');
-
   myUserId = name.toLowerCase().replace(/\s+/g,'_');
-  myPin = ''; myName = name; roomCode = code;
-
+  myName = name; roomCode = code;
   const btn = document.getElementById('joinBtn');
   btn.disabled = true;
   try {
-    // Check room exists
-    const gameSnap = await getDoc(doc(db, 'games', roomCode));
-    if (!gameSnap.exists()) { toast('Room not found. Check the code.'); return; }
-    const gd = gameSnap.data();
-    if (gd.status === 'playing' || gd.status === 'won') { toast('This game has already started.'); return; }
-
-    await setDoc(doc(db,`games/${roomCode}/players`,myUserId), {
-      name, guessCount:0, lastGuess:null
-    }, { merge:true });
-
-    // Add to playerOrder if not already there
+    const snap = await getDoc(doc(db,'games',roomCode));
+    if (!snap.exists()) return toast('Room not found.');
+    const gd = snap.data();
+    if (gd.status === 'playing' || gd.status === 'won') return toast('This game has already started.');
+    await setDoc(doc(db,`games/${roomCode}/players`,myUserId), { name, guessCount:0, lastGuess:null }, { merge:true });
     const pOrder = gd.playerOrder || [];
     if (!pOrder.includes(myUserId)) {
       pOrder.push(myUserId);
       await updateDoc(doc(db,'games',roomCode), { playerOrder: pOrder });
     }
-
-    // Go to waiting room
     startWaitingRoom(gd.maxPlayers || 6, false);
-  } catch(e) {
-    toast('Could not join. Try again.');
-  } finally { btn.disabled = false; }
+  } catch(e) { toast('Could not join. Try again.'); }
+  finally { btn.disabled = false; }
 });
 
 document.getElementById('hostBtn').addEventListener('click', () => {
@@ -508,86 +555,61 @@ document.getElementById('hostBtn').addEventListener('click', () => {
   if (!name) return toast('Enter your name first.');
   myName = name;
   myUserId = name.toLowerCase().replace(/\s+/g,'_');
-  myPin = 'HOST';
   show('s2');
 });
 
-// ── S2: MODE SELECT ──
+// ── S2 ──
 document.getElementById('s2back').addEventListener('click', () => show('s1'));
 document.getElementById('modeSolo').addEventListener('click', () => {
-  selectedMode = 'solo'; isSolo = true;
-  document.getElementById('playerCountCard').style.display = 'none';
+  isSolo = true;
+  document.getElementById('pcCard').style.display = 'none';
   document.getElementById('s3title').textContent = 'Solo Game Setup';
   document.getElementById('s3sub').textContent = 'Set the number range and play alone';
   show('s3');
 });
 document.getElementById('modeMulti').addEventListener('click', () => {
-  selectedMode = 'multi'; isSolo = false;
-  document.getElementById('playerCountCard').style.display = 'block';
+  isSolo = false;
+  document.getElementById('pcCard').style.display = 'block';
   document.getElementById('s3title').textContent = 'Multiplayer Setup';
-  document.getElementById('s3sub').textContent = 'Set the range and how many players can join';
+  document.getElementById('s3sub').textContent = 'Set the range and player count';
   show('s3');
 });
 
-// ── S3: HOST SETUP ──
+// ── S3 ──
 document.getElementById('s3back').addEventListener('click', () => show('s2'));
-
-// Player count buttons
 document.querySelectorAll('.pc-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.pc-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
+    document.querySelectorAll('.pc-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
     selectedMaxPlayers = parseInt(btn.dataset.n);
   });
 });
-// Default select 2
-document.querySelector('.pc-btn[data-n="2"]').classList.add('selected');
 
 document.getElementById('createRoomBtn').addEventListener('click', async () => {
   const minVal = parseFloat(document.getElementById('minRange').value);
   const maxVal = parseFloat(document.getElementById('maxRange').value);
   if (isNaN(minVal) || isNaN(maxVal)) return toast('Set a valid min and max range.');
   if (minVal >= maxVal) return toast('Min must be less than Max.');
-
   const btn = document.getElementById('createRoomBtn');
-  btn.disabled = true; btn.textContent = 'Creating…';
-
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating…';
   try {
-    const fn  = httpsCallable(fns, 'createGameRoom');
+    const fn  = httpsCallable(fns,'createGameRoom');
     const res = await fn({ minRange: minVal, maxRange: maxVal, creatorName: myName });
     roomCode = res.data.gameId;
-
-    // Save host as player
-    await setDoc(doc(db,`games/${roomCode}/players`,myUserId), {
-      name: myName, guessCount:0, lastGuess:null
-    });
-
-    // Update max players
-    await updateDoc(doc(db,'games',roomCode), {
-      maxPlayers: isSolo ? 1 : selectedMaxPlayers,
-      status: isSolo ? 'playing' : 'waiting'
-    });
-
+    await setDoc(doc(db,`games/${roomCode}/players`,myUserId), { name: myName, guessCount:0, lastGuess:null });
+    await updateDoc(doc(db,'games',roomCode), { maxPlayers: isSolo ? 1 : selectedMaxPlayers });
     if (isSolo) {
-      // Start immediately for solo
       await updateDoc(doc(db,'games',roomCode), {
-        status: 'playing',
-        playerOrder: [myUserId],
-        activePlayerIndex: 0,
+        status:'playing', playerOrder:[myUserId], activePlayerIndex:0,
         lastActiveTimestamp: serverTimestamp()
       });
-      document.getElementById('activeRoomCode').textContent = roomCode;
-      show('s5');
-      initRoomSync();
+      launchGameplay();
     } else {
       startWaitingRoom(selectedMaxPlayers, true);
     }
-  } catch(e) {
-    toast('Could not create room. Check connection.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Room Code';
-  }
+  } catch(e) { toast('Could not create room.'); }
+  finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Room Code'; }
 });
 
 // ── S4: WAITING ROOM ──
@@ -596,220 +618,188 @@ function startWaitingRoom(maxPlayers, isHost) {
   document.getElementById('wrCodeBig').textContent = roomCode;
   document.getElementById('wrMax').textContent     = maxPlayers;
   show('s4');
-
-  // Copy code
   document.getElementById('copyCodeBtn').onclick = () => {
     navigator.clipboard.writeText(roomCode).then(() => toast('Code copied!', true));
   };
-
-  // Listen to players joining
-  const playersRef = collection(db, `games/${roomCode}/players`);
-  onSnapshot(playersRef, (snap) => {
+  const plRef = collection(db,`games/${roomCode}/players`);
+  onSnapshot(plRef, (snap) => {
     const players = [];
-    snap.forEach(d => players.push({ id: d.id, ...d.data() }));
-
+    snap.forEach(d => players.push({ id:d.id, ...d.data() }));
     document.getElementById('wrCount').textContent = players.length;
-    renderWaitingPlayers(players, isHost);
-
-    const canStart = players.length >= (isSolo ? 1 : 2);
-    const startBtn = document.getElementById('startGameBtn');
-    startBtn.disabled = !canStart;
-
-    if (isSolo || players.length >= maxPlayers) {
-      document.getElementById('wrWaiting').style.display = 'none';
-    } else {
-      document.getElementById('wrWaiting').style.display = 'block';
-    }
-
-    if (players.length >= 2) {
-      document.getElementById('wrStatusMsg').innerHTML = `<span>${players.length}</span> players ready — good to go!`;
-    } else {
-      document.getElementById('wrStatusMsg').innerHTML = `Need at least <span>2</span> players to start`;
-    }
+    // Build playerNames map
+    players.forEach(p => { playerNames[p.id] = p.name; });
+    renderWaitingPlayers(players);
+    const enough = players.length >= (isSolo ? 1 : 2);
+    document.getElementById('startGameBtn').disabled = !enough;
+    document.getElementById('wrWaiting').style.display = players.length >= maxPlayers ? 'none' : 'block';
+    document.getElementById('wrStatus').innerHTML = players.length >= 2
+      ? `<span>${players.length}</span> players ready — host can start!`
+      : `Need at least <span>2</span> players to start`;
   });
-
-  // Start button (host only)
   if (isHost) {
     document.getElementById('startGameBtn').onclick = async () => {
-      const snap = await getDoc(doc(db, 'games', roomCode));
-      const gd   = snap.data();
-      const pOrder = gd.playerOrder || [myUserId];
-
+      const snap = await getDoc(doc(db,'games',roomCode));
+      const pOrder = snap.data().playerOrder || [myUserId];
       await updateDoc(doc(db,'games',roomCode), {
-        status: 'playing',
-        playerOrder: pOrder,
-        activePlayerIndex: 0,
+        status:'playing', playerOrder: pOrder, activePlayerIndex:0,
         lastActiveTimestamp: serverTimestamp()
       });
-      document.getElementById('activeRoomCode').textContent = roomCode;
-      show('s5');
-      initRoomSync();
+      launchGameplay();
     };
   } else {
-    // Non-host: watch for game to start
-    document.getElementById('startGameBtn').textContent = 'Waiting for host…';
+    document.getElementById('startGameBtn').innerHTML = '<i class="fa-solid fa-hourglass"></i> Waiting for host…';
     document.getElementById('startGameBtn').disabled = true;
     onSnapshot(doc(db,'games',roomCode), (snap) => {
       if (!snap.exists()) return;
-      if (snap.data().status === 'playing') {
-        document.getElementById('activeRoomCode').textContent = roomCode;
-        show('s5');
-        initRoomSync();
-      }
+      if (snap.data().status === 'playing') launchGameplay();
     });
   }
 }
 
-function renderWaitingPlayers(players, isHost) {
+function renderWaitingPlayers(players) {
   const list = document.getElementById('wrPlayerList');
   list.innerHTML = '';
-  players.forEach(p => {
+  players.forEach((p, i) => {
     const div = document.createElement('div');
-    div.className = 'player-slot';
+    div.className = 'pl-slot';
     div.innerHTML = `
-      <div class="player-avatar">${getPlayerEmoji(p.id)}</div>
-      <div>
-        <div class="pname">${p.name}</div>
-        <div class="ptag">${p.id === myUserId ? 'You' : 'Player'}</div>
-      </div>
-      ${p.id === (players[0]?.id) ? '<span class="host-badge">Host</span>' : ''}
+      <div class="pl-av">${emoji(p.id)}</div>
+      <div><div class="pl-name">${p.name}</div><div class="pl-tag">${p.id === myUserId ? 'You' : 'Player'}</div></div>
+      ${i === 0 ? '<span class="host-badge">Host</span>' : ''}
     `;
     list.appendChild(div);
   });
 }
 
-// ── S5: GAME SYNC ──
+// ── LAUNCH GAMEPLAY ──
+function launchGameplay() {
+  document.getElementById('activeRoomCode').textContent = roomCode;
+  gameStartTime = Date.now();
+  show('s5');
+  initRoomSync();
+}
+
+// ── ROOM SYNC ──
 function initRoomSync() {
-  const gameRef = doc(db, 'games', roomCode);
+  const gameRef = doc(db,'games',roomCode);
+  let origMinSet = false;
 
   onSnapshot(gameRef, (snap) => {
     if (!snap.exists()) { alert('Room closed.'); location.reload(); return; }
     const data = snap.data();
 
-    const minVal = data.rangeMin ?? data.minRange ?? 0;
-    const maxVal = data.rangeMax ?? data.maxRange ?? 0;
-    document.getElementById('liveMin').textContent      = minVal.toFixed(2);
-    document.getElementById('liveMax').textContent      = maxVal.toFixed(2);
-    document.getElementById('rangeDisplay').textContent = `${minVal.toFixed(2)} → ${maxVal.toFixed(2)}`;
+    // Store original limits ONCE — never update them (no convergence hint)
+    if (!origMinSet) {
+      origMin = data.rangeMin ?? data.minRange ?? 0;
+      origMax = data.rangeMax ?? data.maxRange ?? 0;
+      document.getElementById('origMin').textContent = origMin.toFixed(2);
+      document.getElementById('origMax').textContent = origMax.toFixed(2);
+      document.getElementById('rangeHint').textContent = `${origMin.toFixed(2)} and ${origMax.toFixed(2)}`;
+      origMinSet = true;
+    }
+    // NOTE: We intentionally do NOT update origMin/origMax after this point
+    // Players only see the original range — not the narrowed range
 
     if (data.status === 'won') {
-      clearInterval(timerInterval); hideModals(); showWin(data); return;
+      clearInterval(timerInterval); hideModals(); showWinScreen(data); return;
     }
     if (data.status === 'solo_decide') {
       clearInterval(timerInterval);
-      if (data.survivorId === myUserId) {
-        document.getElementById('soloModal').classList.add('show');
-      } else {
-        document.getElementById('waitSurvivorModal').classList.add('show');
-      }
+      if (data.survivorId === myUserId) document.getElementById('soloModal').classList.add('show');
+      else document.getElementById('waitSurvivorModal').classList.add('show');
       return;
     }
 
     hideModals();
 
-    // Timer
+    // Timer: only run when it's MY turn
+    const currentId = data.playerOrder?.[data.activePlayerIndex];
+    const isMyTurn  = currentId === myUserId;
+
     if (data.lastActiveTimestamp) {
       const key = data.lastActiveTimestamp.toMillis();
       if (key !== lastTimerKey) {
         lastTimerKey = key;
-        startTimer(key, data.activePlayerIndex, data.playerOrder);
+        if (isMyTurn) {
+          startTimer(key, data.activePlayerIndex, data.playerOrder);
+        } else {
+          // Not my turn — stop timer and show 60s
+          clearInterval(timerInterval);
+          document.getElementById('timerLabel').textContent = '60s';
+          document.getElementById('timerPill').classList.remove('timer-urgent');
+        }
       }
     }
 
     // Player chips
-    renderPlayerChips(data.playerOrder || [], data.activePlayerIndex);
+    renderChips(data.playerOrder || [], data.activePlayerIndex);
 
-    // Turn
-    const currentId = data.playerOrder?.[data.activePlayerIndex];
-    if (currentId === myUserId) {
-      document.getElementById('panelWait').style.display = 'none';
-      document.getElementById('panelTurn').style.display = 'block';
+    // Turn notice
+    if (isMyTurn) {
+      document.getElementById('panelWait').style.display  = 'none';
+      document.getElementById('panelTurn').style.display  = 'block';
+      document.getElementById('turnNotice').textContent   = '⚡ Your turn — make your guess!';
       document.getElementById('guessInput').focus();
-      document.getElementById('turnNotice').textContent  = '⚡ Your turn — make your guess!';
     } else {
-      document.getElementById('panelTurn').style.display = 'none';
-      document.getElementById('panelWait').style.display = 'block';
-      document.getElementById('turnNotice').textContent  = currentId
-        ? `Waiting for ${currentId.replace(/_/g,' ')}…`
+      document.getElementById('panelTurn').style.display  = 'none';
+      document.getElementById('panelWait').style.display  = 'block';
+      document.getElementById('turnNotice').textContent   = currentId
+        ? `${(playerNames[currentId] || currentId.replace(/_/g,' '))} is guessing…`
         : 'Waiting…';
+      // Stop timer when not my turn
+      clearInterval(timerInterval);
+      document.getElementById('timerLabel').textContent = '60s';
+      document.getElementById('timerPill').classList.remove('timer-urgent');
     }
+
+    // Update stats panel player info
+    updatePlayerNames(data.playerOrder || []);
   });
 
-  // Feed
-  onSnapshot(
-    query(collection(db,`games/${roomCode}/guesses_public`), orderBy('timestamp','desc'), limit(8)),
-    (snap) => {
-      const feed = document.getElementById('compactFeed');
-      feed.innerHTML = '';
-      if (snap.empty) {
-        feed.innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Game feed appears here…</div>';
-        return;
-      }
-      snap.forEach(d => {
-        const item = d.data();
-        const isSys = item.name === 'SYSTEM';
-        const div = document.createElement('div');
-        div.className = 'feed-entry';
-        div.innerHTML = `<span class="feed-n ${isSys?'sys':'pl'}">${item.name}</span><span class="feed-r">${item.result}</span>`;
-        feed.appendChild(div);
-      });
-    }
-  );
-
-  // Players collection for chips names
+  // Listen to players for names + guess counts (for stats)
   onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
-    window._playerNames = {};
-    snap.forEach(d => { window._playerNames[d.id] = d.data().name; });
+    snap.forEach(d => { playerNames[d.id] = d.data().name; });
+    renderStatsLeaderboard();
   });
 }
 
 // ── PLAYER CHIPS ──
-function renderPlayerChips(playerOrder, activeIndex) {
-  const strip = document.getElementById('playersStrip');
+function renderChips(playerOrder, activeIndex) {
+  const strip = document.getElementById('chipsStrip');
   strip.innerHTML = '';
   playerOrder.forEach((uid, i) => {
-    const name = (window._playerNames && window._playerNames[uid]) || uid.replace(/_/g,' ');
+    const name    = playerNames[uid] || uid.replace(/_/g,' ');
     const isActive = i === activeIndex;
-    const isMe = uid === myUserId;
-    const chip = document.createElement('div');
+    const isMe    = uid === myUserId;
+    const chip    = document.createElement('div');
     chip.className = 'p-chip';
     chip.innerHTML = `
-      <div class="p-chip-av ${isActive ? 'active' : 'grey'} ${isMe ? 'me' : ''}">
-        ${getPlayerEmoji(uid)}
+      <div class="p-chip-av ${isActive?'active':''} ${isMe?'me-ring':''}">
+        ${emoji(uid)}
       </div>
-      <div class="p-chip-name ${isActive ? 'active' : ''}">${name.split(' ')[0]}</div>
+      <div class="p-chip-name ${isActive?'active':''}">${name.split(' ')[0]}</div>
     `;
     strip.appendChild(chip);
   });
 }
 
-// ── GUESS ──
+function updatePlayerNames(playerOrder) {
+  playerOrder.forEach(uid => {
+    if (!playerNames[uid]) playerNames[uid] = uid.replace(/_/g,' ');
+  });
+}
+
+// ── SUBMIT GUESS ──
 document.getElementById('submitBtn').addEventListener('click', submitGuess);
 document.getElementById('guessInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); submitGuess(); }
 });
 
-// Reset countdown on any user interaction inside gameplay
-document.getElementById('s5').addEventListener('click', resetTimerOnActivity);
-document.getElementById('guessInput').addEventListener('input', resetTimerOnActivity);
-
-let timerResetDebounce = null;
-function resetTimerOnActivity() {
-  if (!roomCode || !myUserId) return;
-  if (document.getElementById('panelTurn').style.display === 'none') return;
-  // Reset visual immediately
+// Reset timer on typing (visual only)
+document.getElementById('guessInput').addEventListener('input', () => {
   document.getElementById('timerLabel').textContent = '60s';
   document.getElementById('timerPill').classList.remove('timer-urgent');
-  // Debounce: reset server timestamp max once every 5s to avoid spamming
-  clearTimeout(timerResetDebounce);
-  timerResetDebounce = setTimeout(async () => {
-    try {
-      await updateDoc(doc(db, 'games', roomCode), {
-        lastActiveTimestamp: serverTimestamp()
-      });
-    } catch(e) {} // silent — not critical
-  }, 5000);
-}
+});
 
 async function submitGuess() {
   const input = document.getElementById('guessInput');
@@ -820,7 +810,6 @@ async function submitGuess() {
     toast('Enter a number first.');
     return;
   }
-
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
@@ -828,62 +817,82 @@ async function submitGuess() {
   input.value = '';
 
   try {
-    const fn  = httpsCallable(fns, 'submitGuess');
+    const fn  = httpsCallable(fns,'submitGuess');
     const res = await fn({ gameId: roomCode, userId: myUserId, guess: guessVal });
     const result = res.data?.result ?? 'unknown';
+
+    // Track my guesses locally
+    myGuesses.push({ val: guessVal, result });
+    renderMyFeed();
+    renderMyGuessList();
     showResultFlash(result, guessVal);
   } catch(e) {
-    const msg = e?.message || e?.code || 'Unknown error';
+    const msg = e?.message || 'Unknown error';
     toast(`Error: ${msg}`);
-    input.value = guessVal; // restore the value
+    input.value = guessVal;
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Guess';
   }
 }
 
+// ── PRIVATE FEED (only my guesses) ──
+function renderMyFeed() {
+  const feed = document.getElementById('myFeed');
+  feed.innerHTML = '';
+  if (myGuesses.length === 0) {
+    feed.innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:6px">Your guesses appear here…</div>';
+    return;
+  }
+  [...myGuesses].reverse().forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'feed-entry mine';
+    let tag = '', color = 'var(--ink2)';
+    if (g.result === 'higher') { tag = '↑ Too Low'; color = 'var(--ro)'; }
+    else if (g.result === 'lower') { tag = '↓ Too High'; color = 'var(--or)'; }
+    else if (g.result === 'won') { tag = '🎯 Correct!'; color = '#16a34a'; }
+    div.innerHTML = `
+      <span class="feed-n pl" style="font-family:'JetBrains Mono',monospace">${g.val}</span>
+      <span class="feed-r" style="color:${color};font-weight:800">${tag}</span>
+    `;
+    feed.appendChild(div);
+  });
+}
+
 // ── RESULT FLASH ──
-function showResultFlash(result, guessVal) {
+function showResultFlash(result, val) {
   const overlay = document.getElementById('resultFlash');
   const icon    = document.getElementById('rfIcon');
   const text    = document.getElementById('rfText');
   const sub     = document.getElementById('rfSub');
 
-  if (result === 'higher' || result === 'continue_higher') {
-    icon.className = 'rf-icon higher';
-    icon.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-    text.className = 'rf-text higher';
-    text.textContent = 'Too Low! ↑';
-    sub.textContent  = `${guessVal} — Aim Higher`;
-  } else if (result === 'lower' || result === 'continue_lower') {
-    icon.className = 'rf-icon lower';
-    icon.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
-    text.className = 'rf-text lower';
-    text.textContent = 'Too High! ↓';
-    sub.textContent  = `${guessVal} — Aim Lower`;
-  } else if (result === 'won' || result === 'correct') {
-    icon.className = 'rf-icon correct';
-    icon.innerHTML = '<i class="fa-solid fa-trophy"></i>';
-    text.className = 'rf-text correct';
-    text.textContent = '🎯 Correct!';
-    sub.textContent  = `${guessVal} is the number!`;
+  if (result === 'higher') {
+    icon.className = 'rf-icon higher'; icon.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+    text.className = 'rf-text higher'; text.textContent = 'Too Low! ↑';
+    sub.textContent = 'Guess higher next time';
+  } else if (result === 'lower') {
+    icon.className = 'rf-icon lower'; icon.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+    text.className = 'rf-text lower'; text.textContent = 'Too High! ↓';
+    sub.textContent = 'Guess lower next time';
+  } else if (result === 'won') {
+    icon.className = 'rf-icon correct'; icon.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+    text.className = 'rf-text correct'; text.textContent = '🎯 Correct!';
+    sub.textContent = `${val} is the number!`;
   } else {
-    // Fallback — check the feed text
-    icon.className = 'rf-icon lower';
-    icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
-    text.className = 'rf-text lower';
-    text.textContent = 'Guess Sent';
-    sub.textContent  = `${guessVal} submitted`;
+    icon.className = 'rf-icon lower'; icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+    text.className = 'rf-text lower'; text.textContent = 'Guess Sent';
+    sub.textContent = '';
   }
 
   overlay.classList.add('show');
   setTimeout(() => {
     overlay.classList.remove('show');
     document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Guess';
     document.getElementById('guessInput').focus();
   }, 2000);
 }
 
-// ── TIMER ──
+// ── TIMER (only runs on MY turn) ──
 function startTimer(serverMs, activeIndex, orderArray) {
   clearInterval(timerInterval);
   const pill  = document.getElementById('timerPill');
@@ -896,11 +905,8 @@ function startTimer(serverMs, activeIndex, orderArray) {
       clearInterval(timerInterval);
       label.textContent = '0s';
       pill.classList.add('timer-urgent');
-      if ((orderArray || [])[activeIndex] === myUserId) {
-        try {
-          const fn = httpsCallable(fns, 'handleTimeout');
-          await fn({ gameId: roomCode, userId: myUserId });
-        } catch(e){}
+      if ((orderArray||[])[activeIndex] === myUserId) {
+        try { await httpsCallable(fns,'handleTimeout')({ gameId:roomCode, userId:myUserId }); } catch(e){}
       }
     } else {
       label.textContent = `${remaining}s`;
@@ -909,75 +915,132 @@ function startTimer(serverMs, activeIndex, orderArray) {
   }, 1000);
 }
 
+// ── BURGER / STATS ──
+document.getElementById('burgerBtn').addEventListener('click', () => {
+  renderStatsLeaderboard();
+  renderMyGuessList();
+  renderStatsInfo();
+  document.getElementById('statsPanel').classList.add('show');
+});
+document.getElementById('statsClose').addEventListener('click', () => document.getElementById('statsPanel').classList.remove('show'));
+document.getElementById('statsBackdrop').addEventListener('click', () => document.getElementById('statsPanel').classList.remove('show'));
+
+function renderStatsLeaderboard() {
+  const el = document.getElementById('statsLeaderboard');
+  el.innerHTML = '';
+  // Get player guess counts from Firestore listener — playerNames is populated
+  onSnapshot(collection(db,`games/${roomCode}/players`), (snap) => {
+    el.innerHTML = '';
+    const players = [];
+    snap.forEach(d => players.push({ id:d.id, ...d.data() }));
+    players.sort((a,b) => (b.guessCount||0) - (a.guessCount||0));
+    players.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'stat-row';
+      row.innerHTML = `
+        <div class="stat-av">${emoji(p.id)}</div>
+        <div class="stat-info">
+          <div class="stat-name">${p.name} ${p.id===myUserId?'(You)':''}</div>
+          <div class="stat-detail">${i===0?'🥇 Most active':'Player'}</div>
+        </div>
+        <div class="stat-count">${p.guessCount||0}</div>
+      `;
+      el.appendChild(row);
+    });
+    if (players.length === 0) el.innerHTML = '<p style="font-size:12px;color:var(--ink3)">No data yet…</p>';
+  });
+}
+
+function renderMyGuessList() {
+  const el = document.getElementById('myGuessList');
+  el.innerHTML = '';
+  if (myGuesses.length === 0) {
+    el.innerHTML = '<p style="font-size:12px;color:var(--ink3)">No guesses yet…</p>';
+    return;
+  }
+  myGuesses.forEach((g, i) => {
+    const div = document.createElement('div');
+    div.className = 'my-result-row';
+    let tag = '', cls = '';
+    if (g.result==='higher') { tag='Too Low ↑'; cls='h'; }
+    else if (g.result==='lower') { tag='Too High ↓'; cls='l'; }
+    else { tag='✓ Correct!'; cls='c'; }
+    div.innerHTML = `
+      <span style="font-size:11px;font-weight:600;color:var(--ink3)">#${i+1}</span>
+      <span class="my-result-val">${g.val}</span>
+      <span class="my-result-tag ${cls}">${tag}</span>
+    `;
+    el.appendChild(div);
+  });
+}
+
+function renderStatsInfo() {
+  const el = document.getElementById('statsInfo');
+  const elapsed = gameStartTime ? Math.floor((Date.now()-gameStartTime)/1000) : 0;
+  const mins = Math.floor(elapsed/60), secs = elapsed%60;
+  el.innerHTML = `
+    <div class="my-result-row">
+      <span style="font-size:12px;font-weight:700;color:var(--ink3)">Room Code</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${roomCode}</span>
+    </div>
+    <div class="my-result-row">
+      <span style="font-size:12px;font-weight:700;color:var(--ink3)">Time Elapsed</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${mins}m ${secs}s</span>
+    </div>
+    <div class="my-result-row">
+      <span style="font-size:12px;font-weight:700;color:var(--ink3)">My Guesses</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--or)">${myGuesses.length}</span>
+    </div>
+    <div class="my-result-row">
+      <span style="font-size:12px;font-weight:700;color:var(--ink3)">Original Range</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${origMin??'--'} – ${origMax??'--'}</span>
+    </div>
+  `;
+}
+
 // ── MODALS ──
 function hideModals() {
   document.getElementById('soloModal').classList.remove('show');
   document.getElementById('waitSurvivorModal').classList.remove('show');
 }
-
 document.getElementById('soloPlayBtn').addEventListener('click', async () => {
   document.getElementById('soloModal').classList.remove('show');
   try { await updateDoc(doc(db,'games',roomCode), { status:'playing', lastActiveTimestamp: serverTimestamp() }); }
-  catch(e){ toast('Could not resume.'); }
+  catch(e) { toast('Could not resume.'); }
 });
-
 document.getElementById('soloExitBtn').addEventListener('click', async () => {
   document.getElementById('soloModal').classList.remove('show');
   clearInterval(timerInterval);
   try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
 });
 
+// ── END SESSION ──
 document.getElementById('endSessionBtn').addEventListener('click', async () => {
-  if (!confirm('Delete this room and end the game?')) return;
+  if (!confirm('Delete this room and end the game for everyone?')) return;
   clearInterval(timerInterval);
   try { await deleteDoc(doc(db,'games',roomCode)); } finally { location.reload(); }
 });
 
-// ── PLAYER EMOJI ──
-const EMOJIS = ['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
-function getPlayerEmoji(uid) {
-  let hash = 0;
-  for (let i = 0; i < uid.length; i++) hash = uid.charCodeAt(i) + ((hash << 5) - hash);
-  return EMOJIS[Math.abs(hash) % EMOJIS.length];
-}
+// ── EXIT ──
+document.getElementById('exitBtn').addEventListener('click', () => location.reload());
 
-// ── ENTER KEYS ON ALL INPUTS ──
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter') return;
-  const active = document.querySelector('.screen.active');
-  if (!active) return;
-  const id = active.id;
-  if (id === 's1') {
-    // If join fields have content, join; otherwise host
-    const code = document.getElementById('joinRoomId').value.trim();
-    const name = document.getElementById('joinName').value.trim();
-    if (code || name) { document.getElementById('joinBtn').click(); }
-    else { document.getElementById('hostBtn').click(); }
-  } else if (id === 's3') {
-    document.getElementById('createRoomBtn').click();
-  }
-});
-
-// ── WIN ──
-function showWin(data) {
-  document.getElementById('winNum').textContent     = data.targetNumber?.toFixed(2) ?? '🎯';
-  document.getElementById('winnerName').textContent = data.winnerId ? `🏆 ${data.winnerId.replace(/_/g,' ')}` : '';
-  document.getElementById('winOverlay').classList.add('show');
+// ── WIN SCREEN ──
+function showWinScreen(data) {
+  clearInterval(timerInterval);
+  const isWinner = data.winnerId === myUserId;
+  document.getElementById('winScreen').classList.add('show');
+  document.getElementById('winTitle').textContent = isWinner ? '🏆 You Won!' : 'Game Over!';
+  document.getElementById('winNum').textContent   = data.targetNumber?.toFixed(2) ?? '--';
+  document.getElementById('winnerName').textContent = data.winnerId
+    ? (isWinner ? 'Congratulations! 🎉' : `${(playerNames[data.winnerId]||data.winnerId.replace(/_/g,' '))} guessed it!`)
+    : '';
 }
 </script>
 
-<!-- SERVICE WORKER -->
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
-      reg.addEventListener('updatefound', () => {
-        const sw = reg.installing;
-        sw.addEventListener('statechange', () => {
-          if (sw.state==='installed' && navigator.serviceWorker.controller) location.reload();
-        });
-      });
-    });
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
 </script>
