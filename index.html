@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overscroll-behavior-y:contain">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
 <style>
 :root{--or:#f97316;--te:#0d9488;--ro:#f43f5e;--am:#f59e0b;--gn:#22c55e;--ink:#1c1917;--ink2:#44403c;--ink3:#78716c;--bd:#e7e5e4;--sf:#fafaf9;--wh:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow-y:auto;user-select:none}
+body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow-y:auto;user-select:none;overscroll-behavior-y:contain}
 .screen{display:none;flex:1;flex-direction:column}
 .screen.active{display:flex}
 
@@ -221,24 +221,24 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 .spec-tab.active{color:#fb923c;border-bottom-color:#fb923c}
 .spec-tab-panel{display:none;flex:1;overflow:hidden}
 .spec-tab-panel.active{display:flex}
-.spec-summary-area{flex:1;overflow-y:auto;padding:14px}
+.spec-summary-area{flex:1;overflow-y:auto;padding:14px;background:#fafaf9;color:#1c1917}
 .summary-table{width:100%;border-collapse:collapse;font-size:12px}
-.summary-table th{padding:8px 10px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.1)}
-.summary-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:700}
+.summary-table th{padding:8px 10px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#78716c;border-bottom:1px solid #e7e5e4}
+.summary-table td{padding:8px 10px;border-bottom:1px solid #f5f5f4;font-weight:700;color:#1c1917}
 .summary-table tr:last-child td{border-bottom:none}
 .tag-higher{background:rgba(244,63,94,.15);color:#fb7185;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
 .tag-lower{background:rgba(245,158,11,.15);color:#fbbf24;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
 .tag-correct{background:rgba(34,197,94,.2);color:#4ade80;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
 .stat-cards-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
-.stat-mini-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center}
+.stat-mini-card{background:#fff;border:1.5px solid #e7e5e4;border-radius:12px;padding:12px;text-align:center}
 .stat-mini-card .smc-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#fb923c}
-.stat-mini-card .smc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-top:4px}
-.player-stat-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-bottom:8px}
-.psc-name{font-size:14px;font-weight:800;margin-bottom:8px}
+.stat-mini-card .smc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#78716c;margin-top:4px}
+.player-stat-card{background:#fff;border:1.5px solid #e7e5e4;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.psc-name{font-size:14px;font-weight:800;margin-bottom:8px;color:#1c1917}
 .psc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .psc-stat{text-align:center}
 .psc-stat .v{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#fb923c}
-.psc-stat .l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-top:2px}
+.psc-stat .l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#78716c;margin-top:2px}
 
 /* Spectator screen (TV) */
 #specScreen{position:fixed;inset:0;overflow:hidden;background:var(--ink);color:#fff;display:none;flex-direction:column}
@@ -514,7 +514,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
 
   <div class="spec-tab-panel" id="specTabSummary">
     <div class="spec-summary-area" id="specSummaryArea">
-      <div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:40px">Game summary appears here when the game ends or you click Summary.</div>
+      <div style="color:#78716c;font-size:13px;text-align:center;padding:40px;font-weight:600">Game summary appears here when the game ends or you click Summary.</div>
     </div>
   </div>
 </div>
@@ -527,9 +527,10 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
   <div class="win-num" id="winNum">--</div>
   <div class="win-winner" id="winnerName"></div>
   <div class="win-actions">
-    <button class="btn btn-or" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
-    <button class="btn btn-ghost" onclick="location.reload()"><i class="fa-solid fa-house"></i> Exit to Home</button>
+    <button class="btn btn-or" id="playAgainBtn"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
+    <button class="btn btn-ghost" id="exitHomeBtn"><i class="fa-solid fa-house"></i> Exit to Home</button>
   </div>
+  <p style="font-size:11px;font-weight:600;color:var(--ink3);margin-top:12px;text-align:center" id="playAgainMsg"></p>
 </div>
 
 <!-- SPECTATOR SCREEN (TV) -->
@@ -578,6 +579,35 @@ body{font-family:'Nunito',sans-serif;background:var(--sf);color:var(--ink);min-h
     <div class="win-name-big" id="specWinName">Winner!</div>
     <div class="win-num-big" id="specWinNum"></div>
     <div class="win-caption">guessed the secret number!</div>
+  </div>
+</div>
+
+<!-- PLAY AGAIN MODAL -->
+<div class="modal-ov" id="playAgainModal">
+  <div class="modal-card">
+    <div class="modal-icon" style="background:#f0fdf4;color:#16a34a;border:1.5px solid #86efac;font-size:22px">🔄</div>
+    <h3>Play Again?</h3>
+    <p>Keep the same range or set a new one for the next round?</p>
+    <div id="newRangeFields" style="display:none;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <input type="number" id="newMin" class="field" placeholder="New Min">
+        <input type="number" id="newMax" class="field" placeholder="New Max">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn pr" id="sameRangeBtn"><i class="fa-solid fa-check"></i> Keep Same Range</button>
+      <button class="modal-btn se" id="newRangeBtn"><i class="fa-solid fa-pen"></i> Change Range</button>
+      <button class="modal-btn se" id="confirmNewRangeBtn" style="display:none;background:linear-gradient(135deg,#f97316,#fb923c);color:#fff"><i class="fa-solid fa-play"></i> Start New Round</button>
+    </div>
+  </div>
+</div>
+
+<!-- WAITING FOR NEW ROUND MODAL -->
+<div class="modal-ov" id="waitNewRoundModal">
+  <div class="modal-card">
+    <div class="modal-icon am"><i class="fa-solid fa-hourglass-half"></i></div>
+    <h3>New round starting…</h3>
+    <p id="waitNewRoundMsg">A player voted to play again. Waiting for the host to confirm the range.</p>
   </div>
 </div>
 
@@ -876,6 +906,7 @@ function renderWaitingPlayers(players) {
 function launchGameplay() {
   document.getElementById('activeRoomCode').textContent = roomCode;
   gameStartTime = Date.now();
+  saveSession();
   show('s5');
   initRoomSync();
 }
@@ -886,7 +917,7 @@ function initRoomSync() {
   const gameRef = doc(db,'games',roomCode);
 
   onSnapshot(gameRef, (snap) => {
-    if (!snap.exists()) { alert('Room closed.'); location.reload(); return; }
+    if (!snap.exists()) { clearSession(); alert('Room closed.'); location.reload(); return; }
     const data = snap.data();
 
     // Set original range ONCE — never update again
@@ -899,6 +930,14 @@ function initRoomSync() {
     }
 
     if (data.status === 'won') { clearInterval(timerInterval); hideModals(); showWin(data); return; }
+    // If win screen is showing but game restarted (another player hit Play Again)
+    if (document.getElementById('winScreen').classList.contains('show')) {
+      document.getElementById('winScreen').classList.remove('show');
+      document.getElementById('playAgainModal').classList.remove('show');
+      document.getElementById('waitNewRoundModal').classList.remove('show');
+      myGuesses = [];
+      toast('New round started by another player!', true);
+    }
     if (data.status === 'solo_decide') {
       clearInterval(timerInterval);
       if (data.survivorId === myUserId) document.getElementById('soloModal').classList.add('show');
@@ -1085,6 +1124,7 @@ document.getElementById('soloExitBtn').addEventListener('click', async () => {
 document.getElementById('endSessionBtn').addEventListener('click', async () => {
   if(!confirm('Delete this room and end the game for everyone?'))return;
   clearInterval(timerInterval);
+  clearSession();
   try{await deleteDoc(doc(db,'games',roomCode));}finally{location.reload();}
 });
 
@@ -1098,7 +1138,104 @@ function showWin(data) {
     ? (isWinner?'Congratulations! 🎉':(playerNames[data.winnerId]||data.winnerId.replace(/_/g,' '))+' guessed it!')
     : '';
   document.getElementById('winScreen').classList.add('show');
+  // Note: if another player starts a new round, the onSnapshot will
+  // detect status='playing' and hide the win screen automatically
 }
+
+// ── PLAY AGAIN ──
+document.getElementById('playAgainBtn')?.addEventListener('click', () => {
+  // Show the play again modal
+  document.getElementById('winScreen').classList.remove('show');
+  document.getElementById('playAgainModal').classList.add('show');
+});
+
+document.getElementById('newRangeBtn').addEventListener('click', () => {
+  document.getElementById('newRangeFields').style.display = 'block';
+  document.getElementById('confirmNewRangeBtn').style.display = 'flex';
+  document.getElementById('newRangeBtn').style.display = 'none';
+});
+
+document.getElementById('sameRangeBtn').addEventListener('click', async () => {
+  document.getElementById('playAgainModal').classList.remove('show');
+  await startNewRound(origMin, origMax);
+});
+
+document.getElementById('confirmNewRangeBtn').addEventListener('click', async () => {
+  const min = parseFloat(document.getElementById('newMin').value);
+  const max = parseFloat(document.getElementById('newMax').value);
+  if (isNaN(min) || isNaN(max) || min >= max) {
+    toast('Enter a valid min and max range.');
+    return;
+  }
+  document.getElementById('playAgainModal').classList.remove('show');
+  await startNewRound(min, max);
+});
+
+async function startNewRound(min, max) {
+  try {
+    // Generate new secret number
+    const newTarget = parseFloat((Math.random() * (max - min) + min).toFixed(2));
+    
+    // Reset the game document for a new round — same room, same players
+    const snap = await getDoc(doc(db, 'games', roomCode));
+    const gd = snap.data();
+    const pOrder = gd.playerOrder || [myUserId];
+    
+    // Shuffle player order for fairness
+    for (let i = pOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pOrder[i], pOrder[j]] = [pOrder[j], pOrder[i]];
+    }
+
+    await updateDoc(doc(db, 'games', roomCode), {
+      rangeMin:          min,
+      rangeMax:          max,
+      origMin:           min,
+      origMax:           max,
+      targetNumber:      newTarget,
+      status:            'playing',
+      winnerId:          null,
+      playerOrder:       pOrder,
+      activePlayerIndex: 0,
+      lastActiveTimestamp: serverTimestamp()
+    });
+
+    // Reset each player's guess count
+    for (const uid of pOrder) {
+      await updateDoc(doc(db, `games/${roomCode}/players`, uid), {
+        guessCount: 0, lastGuess: null
+      });
+    }
+
+    // Reset local state
+    myGuesses = [];
+    origMin = min;
+    origMax = max;
+    lastTimerKey = null;
+
+    // Hide win screen, go back to gameplay
+    document.getElementById('winScreen').classList.remove('show');
+    document.getElementById('origMinDisplay').textContent = min.toFixed(2);
+    document.getElementById('origMaxDisplay').textContent = max.toFixed(2);
+    document.getElementById('publicFeed').innerHTML = '<div style="font-size:11px;color:var(--ink3);text-align:center;padding:8px">New round started!</div>';
+    document.getElementById('myGuessList').innerHTML = '<div style="font-size:12px;color:var(--ink3);text-align:center;padding:20px">New round — your guesses appear here.</div>';
+    switchTab('board');
+    saveSession();
+    toast('New round started!', true);
+  } catch(e) {
+    toast('Error starting new round: ' + (e.message||''));
+  }
+}
+
+// Listen for game status change back to 'playing' (when another player starts a new round)
+// This is handled by the existing onSnapshot in initRoomSync — it will clear win screen automatically
+
+// ── EXIT HOME ──
+document.getElementById('exitHomeBtn')?.addEventListener('click', async () => {
+  if (!confirm('Exit to home? The room stays open for others.')) return;
+  clearSession();
+  location.reload();
+});
 
 // ── BURGER / STATS ──
 document.getElementById('burgerBtn').addEventListener('click', () => {
@@ -1111,10 +1248,14 @@ function renderStats() {
   onSnapshot(collection(db,`games/${roomCode}/players`),(snap)=>{
     const lb = document.getElementById('statsLeaderboard'); lb.innerHTML='';
     const ps=[]; snap.forEach(d=>ps.push({id:d.id,...d.data()}));
-    ps.sort((a,b)=>(b.guessCount||0)-(a.guessCount||0));
+    ps.sort((a,b)=>(a.guessCount||0)-(b.guessCount||0)); // fewest guesses = best
     ps.forEach((p,i)=>{
+      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
       const row=document.createElement('div'); row.className='stat-row';
-      row.innerHTML=`<div class="stat-av">${emoji(p.id)}</div><div class="stat-name">${p.name}${p.id===myUserId?' (You)':''}</div><div class="stat-count">${p.guessCount||0}</div>`;
+      row.style.background = p.id===myUserId?'#fff7ed':'';
+      row.innerHTML=`<div class="stat-av">${emoji(p.id)}</div>
+        <div class="stat-name" style="flex:1">${medal} ${p.name}${p.id===myUserId?' (You)':''}</div>
+        <div class="stat-count">${p.guessCount||0} guesses</div>`;
       lb.appendChild(row);
     });
     if(ps.length===0) lb.innerHTML='<p style="font-size:12px;color:var(--ink3)">No data yet…</p>';
@@ -1164,6 +1305,70 @@ let specPlayerStats = {}; // uid -> {name, guesses:[], guessCount, firstGuessTim
 let specGameStartTime = null;
 let specWinnerName = '';
 let specTargetNumber = null;
+
+// ── SESSION PERSISTENCE ──
+function saveSession() {
+  if (!roomCode || !myUserId) return;
+  sessionStorage.setItem('showdown_session', JSON.stringify({
+    roomCode, myUserId, myName, origMin, origMax, gameStartTime
+  }));
+}
+
+function clearSession() {
+  sessionStorage.removeItem('showdown_session');
+}
+
+async function restoreSession() {
+  const raw = sessionStorage.getItem('showdown_session');
+  if (!raw) return false;
+  try {
+    const s = JSON.parse(raw);
+    if (!s.roomCode || !s.myUserId) return false;
+    
+    // Check room still exists and is active
+    const snap = await getDoc(doc(db, 'games', s.roomCode));
+    if (!snap.exists()) { clearSession(); return false; }
+    const gd = snap.data();
+    if (gd.status === 'won' || gd.status === 'waiting') { clearSession(); return false; }
+    
+    // Restore state
+    roomCode      = s.roomCode;
+    myUserId      = s.myUserId;
+    myName        = s.myName || '';
+    origMin       = s.origMin;
+    origMax       = s.origMax;
+    gameStartTime = s.gameStartTime || Date.now();
+    
+    // Restore origMin/origMax display
+    if (origMin !== null) {
+      document.getElementById('origMinDisplay').textContent = origMin.toFixed(2);
+      document.getElementById('origMaxDisplay').textContent = origMax.toFixed(2);
+    }
+    
+    document.getElementById('activeRoomCode').textContent = roomCode;
+    show('s5');
+    initRoomSync();
+    toast('Session restored!', true);
+    return true;
+  } catch(e) {
+    clearSession();
+    return false;
+  }
+}
+
+// Save session whenever key state changes
+function launchGameplayWithSave() {
+  saveSession();
+  launchGameplay();
+}
+
+// ── AUTO RESTORE ON PAGE LOAD ──
+window.addEventListener('DOMContentLoaded', async () => {
+  // Small delay to let Firebase init
+  setTimeout(async () => {
+    await restoreSession();
+  }, 300);
+});
 
 // ── SPECTATOR MODE (TV) ──
 function launchSpectatorMode(gameId, specCode) {
@@ -1280,7 +1485,7 @@ function renderSpecSummary() {
   </div>`;
 
   // Per player summary cards
-  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:10px">Player Performance</div>`;
+  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#78716c;margin-bottom:10px">Player Performance</div>`;
   Object.entries(playerGuesses).forEach(([name,stats])=>{
     const accuracy = stats.correct>0?'✓ Got it!':`${Math.round((stats.lower||0)/stats.total*100)||0}% High, ${Math.round((stats.higher||0)/stats.total*100)||0}% Low`;
     const isWinner = name===specWinnerName;
@@ -1294,8 +1499,24 @@ function renderSpecSummary() {
     </div>`;
   });
 
+  // Rankings / positions
+  const playerRankings = Object.entries(playerGuesses).sort((a,b)=>a[1].total-b[1].total);
+  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#78716c;margin:14px 0 8px">Final Rankings</div>`;
+  summaryHTML += `<table class="summary-table"><thead><tr><th>Pos</th><th>Player</th><th>Guesses</th><th>Result</th></tr></thead><tbody>`;
+  playerRankings.forEach(([name,stats],i)=>{
+    const isW = name===specWinnerName;
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+    summaryHTML += `<tr style="${isW?'background:#fff7ed':''}">
+      <td style="font-weight:900;font-size:15px">${medal}</td>
+      <td style="font-weight:800">${isW?'🏆 ':''}${name}</td>
+      <td style="font-family:JetBrains Mono,monospace;font-weight:700;color:#f97316">${stats.total}</td>
+      <td><span style="font-size:11px;font-weight:700;color:${isW?'#16a34a':'#78716c'}">${isW?'Winner!':'Participant'}</span></td>
+    </tr>`;
+  });
+  summaryHTML += '</tbody></table>';
+
   // Chronological table
-  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin:14px 0 8px">Full Guess Log</div>`;
+  summaryHTML += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#78716c;margin:14px 0 8px">Full Guess Log</div>`;
   summaryHTML += `<table class="summary-table"><thead><tr><th>#</th><th>Player</th><th>Result</th></tr></thead><tbody>`;
   specAllGuesses.forEach((g,i)=>{
     if(g.name==='SYSTEM')return;
