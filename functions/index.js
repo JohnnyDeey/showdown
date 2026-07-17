@@ -214,7 +214,10 @@ exports.handleTimeout = functions.https.onCall(async (data, context) => {
       return { success: true, action: "prompt_solo" };
 
     } else {
-      tx.delete(gameRef);
+      tx.update(gameRef, {
+        status: 'closed',
+        closedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
       return { success: true, action: "session_closed" };
     }
   });
