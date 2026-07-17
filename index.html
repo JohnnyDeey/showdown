@@ -145,7 +145,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
 /* ── POPUP OVERLAY ── */
 .popup-overlay{
-  position:fixed;inset:0;z-index:100;
+  position:fixed;inset:0;z-index:200;
   background:rgba(0,0,0,.5);backdrop-filter:blur(3px);
   display:none;align-items:center;justify-content:center;
   padding:20px;
@@ -276,18 +276,28 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 /* ── GAMEPLAY SCREEN ── */
 #gameScreen{
   position:fixed;inset:0;z-index:50;
-  background:linear-gradient(180deg,#1a0533 0%,#2d1054 100%);
+  background:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 30%,#16213e 60%,#0f3460 100%);
   display:none;flex-direction:column;
 }
 #gameScreen.show{display:flex}
 
 /* Game header */
+/* Animated particles */
+@keyframes floatParticle{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:.6}
+  90%{opacity:.6}
+  100%{transform:translateY(-100px) rotate(720deg);opacity:0}
+}
+.particle{position:fixed;border-radius:50%;pointer-events:none;z-index:0;animation:floatParticle linear infinite}
+
 .game-header{
-  background:rgba(255,255,255,.06);
-  border-bottom:1px solid rgba(255,255,255,.1);
+  background:rgba(0,0,0,.4);
+  border-bottom:1px solid rgba(255,255,255,.08);
   padding:10px 14px;
   display:flex;align-items:center;justify-content:space-between;
   flex-shrink:0;
+  backdrop-filter:blur(10px);
 }
 .game-room-info{display:flex;flex-direction:column}
 .game-room-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4)}
@@ -356,8 +366,9 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 .board-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px}
 .range-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .range-card{
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);
   border-radius:12px;padding:10px;text-align:center;
+  backdrop-filter:blur(8px);
 }
 .range-card .rl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4)}
 .range-card .rv{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;margin-top:2px}
@@ -376,7 +387,8 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 .feed-item{
   display:flex;align-items:center;gap:8px;
   padding:7px 10px;border-radius:9px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);
+  backdrop-filter:blur(6px);
 }
 .fi-name{font-size:10px;font-weight:800;text-transform:uppercase;color:#FFD700;flex-shrink:0;min-width:55px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fi-result{font-size:12px;font-weight:800;flex:1;text-align:right}
@@ -402,18 +414,40 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
 /* Guess bar */
 .guess-bar{
-  background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.1);
+  background:rgba(0,0,0,.5);border-top:1px solid rgba(249,115,22,.2);
   padding:10px 12px;display:flex;gap:8px;align-items:center;flex-shrink:0;
+  backdrop-filter:blur(12px);
 }
 .guess-bar.hidden{display:none}
 #guessInput{
   flex:1;min-width:0;
-  background:rgba(255,255,255,.1);border:2px solid #FFD700;
+  background:rgba(0,0,0,.4);border:2px solid #f97316;
   border-radius:12px;padding:12px 10px;
   font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
   text-align:center;color:#fff;outline:none;
   -webkit-appearance:none;-moz-appearance:textfield;
+  backdrop-filter:blur(8px);
+  caret-color:#f97316;
 }
+#guessInput:focus{
+  border-color:#fb923c;
+  box-shadow:0 0 0 3px rgba(249,115,22,.2),0 0 20px rgba(249,115,22,.1);
+}
+@keyframes inputPulse{
+  0%,100%{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.2)}
+  50%{border-color:#fb923c;box-shadow:0 0 0 6px rgba(249,115,22,.1)}
+}
+#guessInput{animation:inputPulse 2s ease-in-out infinite}
+@keyframes inputPulse{
+  0%,100%{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.2)}
+  50%{border-color:#fb923c;box-shadow:0 0 0 6px rgba(249,115,22,.1)}
+}
+#guessInput{animation:inputPulse 2s ease-in-out infinite}
+@keyframes inputPulse{
+  0%,100%{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.2)}
+  50%{border-color:#fb923c;box-shadow:0 0 0 6px rgba(249,115,22,.1)}
+}
+#guessInput{animation:inputPulse 2s ease-in-out infinite}
 #guessInput::placeholder{color:rgba(255,255,255,.3)}
 #guessInput::-webkit-inner-spin-button{-webkit-appearance:none}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
@@ -452,7 +486,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
 /* Win screen */
 #winScreen{
-  position:fixed;inset:0;z-index:150;
+  position:fixed;inset:0;z-index:120;
   background:linear-gradient(180deg,#1a0533,#2d1054);
   display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;
 }
@@ -703,14 +737,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
         <input type="number" class="popup-field" id="minRange" placeholder="Min">
         <input type="number" class="popup-field" id="maxRange" placeholder="Max">
       </div>
-      <div class="popup-label">Max Players</div>
-      <div class="pc-row">
-        <div class="pc-btn sel" data-n="2">2</div>
-        <div class="pc-btn" data-n="3">3</div>
-        <div class="pc-btn" data-n="4">4</div>
-        <div class="pc-btn" data-n="5">5</div>
-        <div class="pc-btn" data-n="6">6</div>
-      </div>
+      <p style="font-size:12px;font-weight:600;color:#6D3D1A;text-align:center;margin-bottom:10px">Anyone with the code can join. Minimum 2 players needed to start.</p>
       <div class="spec-toggle-row" id="specToggle">
         <div>
           <div class="spec-toggle-label">📺 Spectator Screen</div>
@@ -1173,8 +1200,73 @@ let timerInterval=null, lastTimerKey=null;
 let isSolo=false, selectedMaxPlayers=2, wantSpectator=false;
 let origMin=null, origMax=null;
 let myGuesses=[];
+let currentRoundStartTime = Date.now();
 let gameStartTime=null;
 let playerNames={};
+
+// ── ENTER KEY FOR POPUPS ──
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+
+  // Don't intercept if typing in guess input
+  if(document.activeElement === document.getElementById('guessInput')) return;
+
+  // Check which popup is open and click its primary button
+  if(document.getElementById('registerPopup').classList.contains('show')){
+    document.getElementById('registerBtn').click(); return;
+  }
+  if(document.getElementById('soloPopup').classList.contains('show')){
+    document.getElementById('soloStartBtn').click(); return;
+  }
+  if(document.getElementById('createPopup').classList.contains('show')){
+    document.getElementById('createRoomBtn').click(); return;
+  }
+  if(document.getElementById('joinPopup').classList.contains('show')){
+    document.getElementById('joinBtn').click(); return;
+  }
+  if(document.getElementById('waitingPopup').classList.contains('show')){
+    const btn=document.getElementById('startGameBtn');
+    if(!btn.disabled) btn.click(); return;
+  }
+  if(document.getElementById('newRangePopup').classList.contains('show')){
+    document.getElementById('confirmNewRangeBtn').click(); return;
+  }
+  if(document.getElementById('specJoinPopup').classList.contains('show')){
+    document.getElementById('specJoinBtn').click(); return;
+  }
+});
+
+// ── BACK BUTTON HANDLER ──
+window.addEventListener('popstate', (e) => {
+  e.preventDefault();
+  // If game screen is showing — do nothing, stay in game
+  if(document.getElementById('gameScreen').classList.contains('show')){
+    history.pushState(null,'',window.location.href);
+    return;
+  }
+  // If a popup is open — close it
+  const openPopup = document.querySelector('.popup-overlay.show');
+  if(openPopup){ openPopup.classList.remove('show'); return; }
+  // If win screen showing — do nothing
+  if(document.getElementById('winScreen').classList.contains('show')) return;
+});
+
+// Push initial state so back button has somewhere to go
+history.pushState(null,'',window.location.href);
+
+// ── GAME PARTICLES ──
+function createParticles(){
+  const colors=['#f97316','#6366f1','#22c55e','#f59e0b','#ec4899','#06b6d4'];
+  const container=document.getElementById('gameScreen');
+  for(let i=0;i<15;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const size=3+Math.random()*6;
+    p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};opacity:.6;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*8}s;filter:blur(1px)`;
+    container.appendChild(p);
+  }
+}
+createParticles();
 
 // ── USER PROFILE (localStorage) ──
 const EMOJIS_LIST=['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
@@ -1378,7 +1470,7 @@ document.getElementById('createRoomBtn').addEventListener('click', async ()=>{
     roomCode=res.data.gameId;
     const specCode=res.data.spectatorCode;
     await setDoc(doc(db,`games/${roomCode}/players`,myUserId),{name,guessCount:0,lastGuess:null});
-    await updateDoc(doc(db,'games',roomCode),{maxPlayers:selectedMaxPlayers});
+    await updateDoc(doc(db,'games',roomCode),{maxPlayers:99});
     playerNames[myUserId]=name;
     closePopup('createPopup');
     startWaitingRoom(selectedMaxPlayers,true,specCode);
@@ -1420,7 +1512,9 @@ document.getElementById('soloStartBtn').addEventListener('click', async ()=>{
   if(min>=max) return toast('Min must be less than Max.');
   myName=name; myUserId=name.toLowerCase().replace(/\s+/g,'_'); isSolo=true;
   const btn=document.getElementById('soloStartBtn');
-  btn.querySelector('span').textContent='Starting…'; btn.disabled=true;
+  btn.querySelector('span').textContent='Starting…';
+  btn.querySelector('i').className='fa-solid fa-spinner fa-spin';
+  btn.disabled=true;
   try{
     const fn=httpsCallable(fns,'createGameRoom');
     const res=await fn({minRange:min,maxRange:max,creatorName:name,withSpectator:false});
@@ -1434,7 +1528,9 @@ document.getElementById('soloStartBtn').addEventListener('click', async ()=>{
     closePopup('soloPopup'); closeAllPopups();
     launchGameplay();
   }catch(e){toast('Error: '+(e.message||''));}
-  finally{btn.querySelector('span').textContent='Start Game';btn.disabled=false;}
+  finally{btn.querySelector('span').textContent='Start Game';
+  btn.querySelector('i').className='fa-solid fa-play';
+  btn.disabled=false;}
 });
 
 // ── SPECTATOR JOIN ──
@@ -1595,7 +1691,10 @@ function initRoomSync(){
       document.getElementById('turnNotice').textContent='⚡ Your turn — make your guess!';
       document.getElementById('guessBar').classList.remove('hidden');
       document.getElementById('waitPanel').style.display='none';
-      setTimeout(()=>document.getElementById('guessInput').focus(),100);
+      setTimeout(()=>{
+        const input=document.getElementById('guessInput');
+        if(input){input.focus();input.click();input.select();}
+      },300);
     } else {
       document.getElementById('guessBar').classList.add('hidden');
       document.getElementById('waitPanel').style.display='flex';
@@ -1626,10 +1725,15 @@ function initRoomSync(){
     snap.forEach(d=>{playerNames[d.id]=d.data().name;});
   });
 
-  // Private guesses
-  onSnapshot(query(collection(db,`games/${roomCode}/private_${myUserId}`),orderBy('timestamp','asc'),limit(50)),(snap)=>{
+  // Private guesses — only show current round
+  onSnapshot(query(collection(db,`games/${roomCode}/private_${myUserId}`),orderBy('timestamp','asc'),limit(200)),(snap)=>{
     myGuesses=[];
-    snap.forEach(d=>myGuesses.push({val:d.data().guess,result:d.data().result}));
+    snap.forEach(d=>{
+      const ts = d.data().timestamp?.toMillis() || 0;
+      if(ts >= currentRoundStartTime){
+        myGuesses.push({val:d.data().guess,result:d.data().result});
+      }
+    });
     renderMyGuesses();
   });
 }
@@ -1654,13 +1758,77 @@ function renderChips(playerOrder,activeIndex){
 }
 
 function renderMyGuesses(){
-  const el=document.getElementById('myGuessList'); el.innerHTML='';
-  if(myGuesses.length===0){el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">Your private guess history</div>';return;}
-  [...myGuesses].reverse().forEach((g,i)=>{
-    const {text,cls}=dirLabel(g.result);
-    const div=document.createElement('div'); div.className='my-guess-item';
-    div.innerHTML=`<span class="mg-num">${g.val}</span><span class="mg-tag ${cls}">${text}</span><span class="mg-idx">#${myGuesses.length-i}</span>`;
-    el.appendChild(div);
+  const el=document.getElementById('myGuessList'); 
+  el.innerHTML='';
+  
+  // Load all round history from localStorage
+  const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  
+  // Add current round if has guesses
+  const allRounds=[...history];
+  if(myGuesses.length>0){
+    allRounds.push({
+      round:'Current',
+      date:new Date().toLocaleDateString(),
+      min:origMin, max:origMax,
+      guesses:myGuesses,
+      current:true
+    });
+  }
+  
+  if(allRounds.length===0){
+    el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">Your guess history appears here after each round</div>';
+    return;
+  }
+  
+  // Show rounds in reverse order (newest first)
+  [...allRounds].reverse().forEach((round,i)=>{
+    const won=round.guesses.some(g=>g.result==='won');
+    const section=document.createElement('div');
+    section.style.cssText='margin-bottom:10px;';
+    
+    // Round header (accordion toggle)
+    const header=document.createElement('div');
+    header.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;cursor:pointer;';
+    header.innerHTML=`
+      <div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#FFD700">${round.current?'🟢 Current Round':'Round '+( allRounds.length-i)}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">${round.date} · Range: ${round.min}–${round.max} · ${round.guesses.length} guesses</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${won?'<span style="font-size:11px;font-weight:800;color:#22c55e">🏆 Won</span>':''}
+        <i class="fa-solid fa-chevron-down" style="color:rgba(255,255,255,.4);font-size:12px;transition:transform .2s"></i>
+      </div>
+    `;
+    
+    // Round body (guesses list)
+    const body=document.createElement('div');
+    body.style.cssText='display:none;padding:8px 4px 4px;';
+    round.guesses.forEach((g,gi)=>{
+      const {text,cls}=dirLabel(g.result);
+      const row=document.createElement('div');
+      row.className='my-guess-item';
+      row.style.marginBottom='5px';
+      row.innerHTML=`<span class="mg-num">${g.val}</span><span class="mg-tag ${cls}">${text}</span><span class="mg-idx">#${gi+1}</span>`;
+      body.appendChild(row);
+    });
+    
+    // Toggle accordion
+    header.addEventListener('click',()=>{
+      const isOpen=body.style.display!=='none';
+      body.style.display=isOpen?'none':'block';
+      header.querySelector('i').style.transform=isOpen?'':'rotate(180deg)';
+    });
+    
+    // Auto-open current round
+    if(round.current){
+      body.style.display='block';
+      header.querySelector('i').style.transform='rotate(180deg)';
+    }
+    
+    section.appendChild(header);
+    section.appendChild(body);
+    el.appendChild(section);
   });
 }
 
@@ -1674,7 +1842,10 @@ window.switchTab=function(tab){
 
 // Submit guess
 document.getElementById('submitBtn').addEventListener('click',submitGuess);
-document.getElementById('guessInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitGuess();}});
+document.getElementById('guessInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();submitGuess();}
+  if(e.key==='Backspace'){e.stopPropagation();} // prevent back navigation
+});
 document.getElementById('guessInput').addEventListener('input',()=>{
   document.getElementById('timerLabel').textContent='60s';
   document.getElementById('timerPill').classList.remove('timer-urgent');
@@ -1683,22 +1854,26 @@ document.getElementById('guessInput').addEventListener('input',()=>{
 async function submitGuess(){
   const input=document.getElementById('guessInput');
   const raw=input.value.trim(), val=parseFloat(raw);
-  if(raw===''||isNaN(val)){input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),300);return;}
-  const btn=document.getElementById('submitBtn'); btn.disabled=true;
-  const guessVal=val; input.value='';
+  if(raw===''||isNaN(val)){
+    input.classList.add('shake');
+    setTimeout(()=>input.classList.remove('shake'),300);
+    return;
+  }
+  const guessVal=val;
+  input.value='';
+  input.focus();
+  // Submit in background — don't disable input or switch tabs
   try{
     const fn=httpsCallable(fns,'submitGuess');
     const res=await fn({gameId:roomCode,userId:myUserId,guess:guessVal});
     consecutiveTimeouts=0;
     showResultToast(res.data?.result??'unknown',guessVal);
-    switchTab('mine');
-    setTimeout(()=>switchTab('board'),2500);
   }catch(e){
     toast('Error: '+(e.message||'Unknown'));
     input.value=guessVal;
   }finally{
-    btn.disabled=false;
-    setTimeout(()=>document.getElementById('guessInput').focus(),100);
+    input.focus();
+    input.select();
   }
 }
 
@@ -1843,10 +2018,6 @@ function launchConfetti(){
 
 // Play again
 document.getElementById('playAgainBtn').addEventListener('click',()=>{
-  document.getElementById('winScreen').classList.remove('show');
-  document.getElementById('newRangeFields').style.display='none';
-  document.getElementById('confirmNewRangeBtn').style.display='none';
-  document.getElementById('newRangeBtn').style.display='flex';
   openPopup('playAgainPopup');
 });
 
@@ -1937,9 +2108,25 @@ async function startNewRound(min,max,roundNum){
     for(const uid of pOrder){
       try{await updateDoc(doc(db,`games/${roomCode}/players`,uid),{guessCount:0,lastGuess:null});}catch(e){}
     }
-    myGuesses=[]; origMin=min; origMax=max; lastTimerKey=null;
+    // Save current round to history before clearing
+if(myGuesses.length>0){
+  const roundHistory=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  roundHistory.push({
+    round: document.getElementById('roundNum').textContent||'1',
+    date: new Date().toLocaleDateString(),
+    min: origMin, max: origMax,
+    guesses: myGuesses,
+    won: myGuesses.some(g=>g.result==='won')
+  });
+  localStorage.setItem('showdown_history', JSON.stringify(roundHistory));
+}
+myGuesses=[]; origMin=min; origMax=max; lastTimerKey=null;
+      currentRoundStartTime=Date.now();
       document.getElementById('origMinDisplay').textContent=min.toFixed(2);
       document.getElementById('origMaxDisplay').textContent=max.toFixed(2);
+      document.getElementById('publicFeed').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">New round started!</div>';
+      document.getElementById('myGuessList').innerHTML='';
+      renderMyGuesses();
       document.getElementById('winScreen').classList.remove('show');
       saveSession();
   }catch(e){toast('Error starting round: '+(e.message||''));}
@@ -2129,8 +2316,9 @@ async function restoreSession(){
   }catch(e){clearSession();return false;}
 }
 
-// Restore on load
-setTimeout(()=>restoreSession(),800);
+// Restore on load — multiple attempts to handle slow Firebase init
+setTimeout(()=>restoreSession(),500);
+setTimeout(()=>{ if(!roomCode) restoreSession(); },1500);
 </script>
 
 <script>
