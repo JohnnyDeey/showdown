@@ -33,12 +33,15 @@ self.addEventListener('fetch', (event) => {
   const alwaysNetwork = [
     'firestore.googleapis.com',
     'firebase.googleapis.com',
+    'googleapis.com',
     'gstatic.com',
     'tailwindcss.com',
     'cloudflare.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com',
-    'fontawesome'
+    'fontawesome',
+    'github.dev',
+    'anthropic'
   ];
 
   if (alwaysNetwork.some(d => url.href.includes(d))) {
