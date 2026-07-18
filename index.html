@@ -347,8 +347,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
 /* Player chips */
 .chips-bar{
-  background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);
-  padding:8px 12px;display:flex;gap:10px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;
+  display:none;
 }
 .chips-bar::-webkit-scrollbar{display:none}
 .p-chip{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px}
@@ -474,6 +473,36 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .wait-panel h3{font-family:'Fredoka One',cursive;font-size:20px;color:#fff;margin-bottom:6px}
 .wait-panel p{font-size:12px;font-weight:600;color:rgba(255,255,255,.5);max-width:200px;line-height:1.5}
+
+/* Blinking cursor in guess display */
+@keyframes cursorBlink{
+  0%,100%{opacity:1}
+  50%{opacity:0}
+}
+.cursor-blink::after{
+  content:'|';
+  color:#f97316;
+  font-weight:300;
+  animation:cursorBlink 1s ease-in-out infinite;
+  margin-left:2px;
+}
+
+/* Inline keypad */
+.kpad-btn{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;color:#fff;
+  font-family:'Fredoka One',cursive;font-size:22px;
+  flex:1;max-width:60px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;transition:background .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.kpad-btn:active{background:rgba(249,115,22,.5);}
+.kpad-del{background:rgba(244,63,94,.2);border-color:rgba(244,63,94,.3);}
+
+/* Result mini toast */
+
 
 /* Result mini toast */
 #resultToast{
@@ -948,15 +977,18 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 <div id="gameScreen">
   <header class="game-header">
     <div class="game-room-info">
-      <div class="game-room-label">Room</div>
-      <div class="game-room-code" id="activeRoomCode">------</div>
-      <div class="game-round" id="roundBadge" style="display:none">Round <span id="roundNum">1</span></div>
+      <div class="game-room-code" id="activeRoomCode" style="display:none">------</div>
+      <div class="game-round" id="roundBadge" style="display:block">Round <span id="roundNum">1</span></div>
     </div>
     <div class="timer-pill" id="timerPill">
       <i class="fa-solid fa-stopwatch"></i>
       <span class="timer-num" id="timerLabel">60s</span>
     </div>
     <div class="game-header-btns">
+      <div id="headerPlayerChip" style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border-radius:99px;padding:4px 10px 4px 6px">
+        <span id="headerChipEmoji" style="font-size:16px">🦁</span>
+        <span id="headerChipName" style="font-family:'Fredoka One',cursive;font-size:12px;color:#FFD700;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      </div>
       <div class="hdr-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></div>
       <button class="hdr-btn danger" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
     </div>
@@ -964,7 +996,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
   <div class="game-tabs">
     <div class="game-tab active" id="tabBoard" onclick="switchTab('board')">📊 Board</div>
-    <div class="game-tab" id="tabMine" onclick="switchTab('mine')">🔒 My Guesses</div>
+    <div class="game-tab" id="tabMine" onclick="switchTab('mine')">📜 HISTORY</div>
   </div>
 
   <div class="chips-bar" id="chipsStrip"></div>
@@ -975,18 +1007,42 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
         <div class="range-card lo"><div class="rl">Start Low</div><div class="rv" id="origMinDisplay">--</div></div>
         <div class="range-card hi"><div class="rl">Start High</div><div class="rv" id="origMaxDisplay">--</div></div>
       </div>
-      <div class="turn-bar">
-        <i class="fa-solid fa-arrow-pointer"></i>
-        <span id="turnNotice">Connecting…</span>
-      </div>
+      <div id="turnNotice" style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);padding:4px 14px;flex-shrink:0"></div>
       <div class="feed-list" id="publicFeed">
         <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>
       </div>
     </div>
     <div class="guess-bar hidden" id="guessBar">
-      <input type="number" step="0.01" id="guessInput" placeholder="Your guess…">
-      <button id="submitBtn"><i class="fa-solid fa-paper-plane"></i></button>
+  <div style="display:flex;flex-direction:column;flex:1;gap:6px">
+    <!-- Number display + send button centered together -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <div id="guessDisplay" style="background:rgba(0,0,0,.4);border:2px solid #f97316;border-radius:12px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#fff;height:42px;display:flex;align-items:center;justify-content:center;min-width:140px;">
+        <span id="guessDisplayText" style="color:rgba(255,255,255,.4)">_ _ _</span>
+      </div>
+      <button id="submitBtn" style="flex-shrink:0;width:42px;height:42px;border-radius:12px;border:none;background:linear-gradient(135deg,#f97316,#fb923c);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #c2620a;"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
+    <!-- Single line keypad -->
+    <div id="inlineKeypad" style="display:flex;flex-direction:column;gap:5px;">
+      <div style="display:flex;gap:5px;justify-content:center;">
+        <button class="kpad-btn" data-val="1">1</button>
+        <button class="kpad-btn" data-val="2">2</button>
+        <button class="kpad-btn" data-val="3">3</button>
+        <button class="kpad-btn" data-val="4">4</button>
+        <button class="kpad-btn" data-val="5">5</button>
+        <button class="kpad-btn" data-val="6">6</button>
+      </div>
+      <div style="display:flex;gap:5px;justify-content:center;">
+        <button class="kpad-btn" data-val="7">7</button>
+        <button class="kpad-btn" data-val="8">8</button>
+        <button class="kpad-btn" data-val="9">9</button>
+        <button class="kpad-btn" data-val=".">.</button>
+        <button class="kpad-btn" data-val="0">0</button>
+        <button class="kpad-btn kpad-del" id="kpadDel">⌫</button>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="guessInput" value="">
+</div>
     <div class="wait-panel" id="waitPanel" style="display:none">
       <div class="wait-emoji">⏳</div>
       <h3>Awaiting your turn…</h3>
@@ -1117,15 +1173,82 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <div class="popup-title">👋 Welcome!</div>
     </div>
     <div class="popup-body">
-      <div style="text-align:center;margin-bottom:14px">
-        <div style="font-size:48px" id="registerEmoji">🦁</div>
-        <p style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:6px">Your avatar is randomly assigned</p>
+
+      <!-- Step 1: Name -->
+      <div id="regStep1">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-size:48px" id="registerEmoji">🦁</div>
+          <p style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:6px">Your avatar is randomly assigned</p>
+        </div>
+        <div class="popup-label">Your Name</div>
+        <input type="text" class="popup-field" id="registerName" placeholder="e.g. John" autocomplete="off" maxlength="20">
+        <button class="game-btn btn-green" id="regStep1Btn">
+          <i class="fa-solid fa-arrow-right"></i><span>Continue</span>
+        </button>
+        <div style="text-align:center;margin-top:12px">
+          <span style="font-size:12px;font-weight:600;color:#6D3D1A;cursor:pointer;text-decoration:underline" id="showLoginBtn">Already have an account? Login</span>
+        </div>
       </div>
-      <div class="popup-label">Enter Your Name</div>
-      <input type="text" class="popup-field" id="registerName" placeholder="e.g. John" autocomplete="off" maxlength="20">
-      <p style="font-size:10px;font-weight:600;color:#6D3D1A;margin-bottom:12px;text-align:center">A unique username will be generated for you</p>
-      <button class="game-btn btn-green" id="registerBtn">
-        <i class="fa-solid fa-check"></i><span>Let's Play!</span>
+
+      <!-- Step 2: Show username + create PIN -->
+      <div id="regStep2" style="display:none">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-size:36px" id="registerEmoji2">🦁</div>
+          <p style="font-size:11px;font-weight:700;color:#6D3D1A;margin-top:6px">Your unique username</p>
+          <div style="background:rgba(125,60,152,.15);border-radius:10px;padding:10px;margin:8px 0">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#7D3C98" id="generatedUsername">john_4829</div>
+            <p style="font-size:10px;font-weight:600;color:#6D3D1A;margin-top:4px">⚠️ Save this — you need it to login on a new device</p>
+          </div>
+        </div>
+        <div class="popup-label">Create a 4-digit PIN</div>
+        <input type="password" inputmode="numeric" class="popup-field" id="registerPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
+        <div class="popup-label">Confirm PIN</div>
+        <input type="password" inputmode="numeric" class="popup-field" id="registerPinConfirm" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
+        <button class="game-btn btn-green" id="regStep2Btn">
+          <i class="fa-solid fa-check"></i><span>Create Account</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN POPUP -->
+<div class="popup-overlay" id="loginPopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title">🔑 Login</div>
+      <div class="popup-close" id="loginPopupClose">✕</div>
+    </div>
+    <div class="popup-body">
+      <div class="popup-label">Your Username</div>
+      <input type="text" class="popup-field" id="loginUsername" placeholder="e.g. john_4829" autocomplete="off" style="font-family:'JetBrains Mono',monospace;letter-spacing:.05em">
+      <div class="popup-label">Your PIN</div>
+      <input type="password" inputmode="numeric" class="popup-field" id="loginPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
+      <button class="game-btn btn-green" id="loginBtn">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i><span>Login</span>
+      </button>
+      <div style="text-align:center;margin-top:10px">
+        <span style="font-size:12px;font-weight:600;color:#6D3D1A;cursor:pointer;text-decoration:underline" id="showRegisterBtn">New player? Register</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PIN POPUP -->
+<div class="popup-overlay" id="forgotPinPopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title">🔓 Reset PIN</div>
+      <div class="popup-close" id="forgotPinClose">✕</div>
+    </div>
+    <div class="popup-body">
+      <div class="popup-label">Your Username</div>
+      <input type="text" class="popup-field" id="forgotUsername" placeholder="e.g. john_4829" autocomplete="off" style="font-family:'JetBrains Mono',monospace">
+      <div class="popup-label">New PIN</div>
+      <input type="password" inputmode="numeric" class="popup-field" id="forgotNewPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
+      <button class="game-btn btn-orange" id="forgotPinBtn">
+        <i class="fa-solid fa-key"></i><span>Reset PIN</span>
       </button>
     </div>
   </div>
@@ -1162,6 +1285,85 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       </button>
       <button class="game-btn btn-green" id="deadGameWait">
         <i class="fa-solid fa-clock"></i><span>Keep Waiting</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE POPUP -->
+<div class="popup-overlay" id="profilePopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title">👤 My Profile</div>
+      <div class="popup-close" id="profilePopupClose">✕</div>
+    </div>
+    <div class="popup-body">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:52px" id="profileEmoji">🦁</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:22px;color:#7D3C98;margin-top:6px" id="profileName">-</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A04000;margin-top:2px" id="profileUsername">-</div>
+      </div>
+      <!-- Medals -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px" id="profileMedals">
+        <div style="background:rgba(255,215,0,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:22px">🥇</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#f59e0b" id="profileGold">0</div>
+          <div style="font-size:9px;font-weight:700;color:#6D3D1A">GOLD</div>
+        </div>
+        <div style="background:rgba(192,192,192,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:22px">🥈</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#78716c" id="profileSilver">0</div>
+          <div style="font-size:9px;font-weight:700;color:#6D3D1A">SILVER</div>
+        </div>
+        <div style="background:rgba(180,83,9,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:22px">🥉</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#b45309" id="profileBronze">0</div>
+          <div style="font-size:9px;font-weight:700;color:#6D3D1A">BRONZE</div>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div style="background:rgba(125,60,152,.1);border-radius:12px;padding:12px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:700;color:#6D3D1A">Games Played</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileGames">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:700;color:#6D3D1A">Total Wins</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileWins">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:12px;font-weight:700;color:#6D3D1A">Total Guesses</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileGuesses">0</span>
+        </div>
+      </div>
+      <button class="game-btn btn-orange" id="changePinBtn" style="margin-bottom:8px">
+        <i class="fa-solid fa-key"></i><span>Change PIN</span>
+      </button>
+      <button class="game-btn btn-red" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS POPUP -->
+<div class="popup-overlay" id="settingsPopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title">⚙️ Settings</div>
+      <div class="popup-close" id="settingsPopupClose">✕</div>
+    </div>
+    <div class="popup-body">
+      <div style="background:rgba(255,255,255,.3);border-radius:12px;padding:12px;margin-bottom:10px">
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#7D3C98;margin-bottom:4px">Family Showdown</div>
+        <div style="font-size:11px;font-weight:600;color:#6D3D1A">Version 1.0.0</div>
+        <div style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:2px">Made by JohnnyDeey</div>
+      </div>
+      <button class="game-btn btn-orange" id="contactDevBtn" style="margin-bottom:8px">
+        <i class="fa-solid fa-envelope"></i><span>Contact Developer</span>
+      </button>
+      <button class="game-btn btn-red" id="deleteAccountBtn">
+        <i class="fa-solid fa-trash"></i><span>Delete Account</span>
       </button>
     </div>
   </div>
@@ -1275,80 +1477,284 @@ function createParticles(){
 }
 createParticles();
 
-// ── USER PROFILE (localStorage) ──
+// ── USER PROFILE (Firestore + localStorage) ──
 const EMOJIS_LIST=['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
 let currentUser = null;
 
-function loadUser(){
+function hashPin(pin){
+  // Simple hash — good enough for a game PIN
+  let hash = 0;
+  for(let i=0;i<pin.length;i++) hash = ((hash<<5)-hash)+pin.charCodeAt(i);
+  return Math.abs(hash).toString(36);
+}
+
+function generateUsername(name){
+  const clean = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const num = Math.floor(1000+Math.random()*9000);
+  return clean+'_'+num;
+}
+
+function loadUserLocal(){
   const raw = localStorage.getItem('showdown_user');
   if(!raw) return null;
   try{ return JSON.parse(raw); }catch(e){ return null; }
 }
 
-function saveUser(user){
+function saveUserLocal(user){
   localStorage.setItem('showdown_user', JSON.stringify(user));
-}
-
-function generateUsername(name){
-  const clean = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  const num = Math.floor(1000 + Math.random()*9000);
-  return clean + '_' + num;
-}
-
-function initUser(){
-  currentUser = loadUser();
-  if(!currentUser){
-    // First time — show register popup
-    const randomEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
-    document.getElementById('registerEmoji').textContent = randomEmoji;
-    openPopup('registerPopup');
-  } else {
-    showPlayerTag();
-    // Pre-fill name fields
-    prefillNameFields();
-  }
 }
 
 function showPlayerTag(){
   if(!currentUser) return;
   const tag = document.getElementById('playerTag');
-  tag.style.display = 'flex';
+  if(tag) tag.style.display='flex';
   document.getElementById('playerTagEmoji').textContent = currentUser.emoji;
   document.getElementById('playerTagName').textContent = currentUser.name;
+  const hEmoji = document.getElementById('headerChipEmoji');
+  const hName  = document.getElementById('headerChipName');
+  if(hEmoji) hEmoji.textContent = currentUser.emoji;
+  if(hName)  hName.textContent  = currentUser.name;
 }
 
 function prefillNameFields(){
   if(!currentUser) return;
-  const fields = ['soloName','createName','joinName'];
-  fields.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = currentUser.name;
+  ['soloName','createName','joinName'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value=currentUser.name;
   });
-  myName = currentUser.name;
+  myName   = currentUser.name;
   myUserId = currentUser.username;
 }
 
-// Register button
-document.getElementById('registerBtn').addEventListener('click',()=>{
+async function initUser(){
+  currentUser = loadUserLocal();
+  if(currentUser){
+    showPlayerTag();
+    prefillNameFields();
+  }
+  // No popup on load — only when they tap Play
+}
+
+// ── REGISTER STEP 1 ──
+let pendingUsername = '';
+let pendingEmoji = '';
+
+document.getElementById('regStep1Btn').addEventListener('click',()=>{
   const name = document.getElementById('registerName').value.trim();
-  if(!name) return toast('Enter your name to continue.');
-  const emoji = document.getElementById('registerEmoji').textContent;
-  const username = generateUsername(name);
-  currentUser = { name, username, emoji, medals:{gold:0,silver:0,bronze:0}, gamesPlayed:0, totalGuesses:0, createdAt: Date.now() };
-  saveUser(currentUser);
+  if(!name) return toast('Enter your name.');
+  pendingUsername = generateUsername(name);
+  pendingEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
+  document.getElementById('generatedUsername').textContent = pendingUsername;
+  document.getElementById('registerEmoji2').textContent = pendingEmoji;
+  document.getElementById('regStep1').style.display='none';
+  document.getElementById('regStep2').style.display='block';
+});
+
+// ── REGISTER STEP 2 ──
+document.getElementById('regStep2Btn').addEventListener('click', async ()=>{
+  const name    = document.getElementById('registerName').value.trim();
+  const pin     = document.getElementById('registerPin').value.trim();
+  const pinConf = document.getElementById('registerPinConfirm').value.trim();
+  if(!pin||pin.length!==4)     return toast('PIN must be 4 digits.');
+  if(pin!==pinConf)            return toast('PINs do not match.');
+  const btn = document.getElementById('regStep2Btn');
+  btn.disabled=true; btn.querySelector('span').textContent='Creating…';
+  try{
+    // Check username not taken
+    const existing = await getDoc(doc(db,'users',pendingUsername));
+    if(existing.exists()){
+      pendingUsername = generateUsername(name);
+      document.getElementById('generatedUsername').textContent = pendingUsername;
+    }
+    const userData = {
+      name, username:pendingUsername, emoji:pendingEmoji,
+      pinHash: hashPin(pin),
+      createdAt: serverTimestamp(),
+      stats:{ gamesPlayed:0, wins:0, totalGuesses:0, gold:0, silver:0, bronze:0 }
+    };
+    await setDoc(doc(db,'users',pendingUsername), userData);
+    currentUser = { name, username:pendingUsername, emoji:pendingEmoji };
+    saveUserLocal(currentUser);
+    closePopup('registerPopup');
+    showPlayerTag();
+    prefillNameFields();
+    toast('Welcome '+name+'! 🎉', true);
+    onUserReady();
+  }catch(e){
+    toast('Error: '+(e.message||'Could not create account.'));
+  }finally{
+    btn.disabled=false; btn.querySelector('span').textContent='Create Account';
+  }
+});
+
+// ── LOGIN ──
+document.getElementById('showLoginBtn').addEventListener('click',()=>{
   closePopup('registerPopup');
-  showPlayerTag();
-  prefillNameFields();
-  toast('Welcome ' + name + '! 🎉', true);
+  openPopup('loginPopup');
+});
+document.getElementById('showRegisterBtn').addEventListener('click',()=>{
+  closePopup('loginPopup');
+  openPopup('registerPopup');
+});
+document.getElementById('loginPopupClose').addEventListener('click',()=>closePopup('loginPopup'));
+
+document.getElementById('loginBtn').addEventListener('click', async ()=>{
+  const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+  const pin      = document.getElementById('loginPin').value.trim();
+  if(!username) return toast('Enter your username.');
+  if(!pin||pin.length!==4) return toast('PIN must be 4 digits.');
+  const btn = document.getElementById('loginBtn');
+  btn.disabled=true; btn.querySelector('span').textContent='Logging in…';
+  try{
+    const snap = await getDoc(doc(db,'users',username));
+    if(!snap.exists()) return toast('Username not found.');
+    const data = snap.data();
+    if(data.pinHash !== hashPin(pin)) return toast('Incorrect PIN.');
+    currentUser = { name:data.name, username, emoji:data.emoji };
+    saveUserLocal(currentUser);
+    closePopup('loginPopup');
+    showPlayerTag();
+    prefillNameFields();
+    toast('Welcome back '+data.name+'! 🎉', true);
+    onUserReady();
+  }catch(e){
+    toast('Error: '+(e.message||'Login failed.'));
+  }finally{
+    btn.disabled=false; btn.querySelector('span').textContent='Login';
+  }
 });
 
-// Player tag click — show profile (placeholder for now)
+// ── FORGOT PIN ──
+document.getElementById('forgotPinClose').addEventListener('click',()=>closePopup('forgotPinPopup'));
+document.getElementById('forgotPinBtn').addEventListener('click', async ()=>{
+  const username = document.getElementById('forgotUsername').value.trim().toLowerCase();
+  const newPin   = document.getElementById('forgotNewPin').value.trim();
+  if(!username) return toast('Enter your username.');
+  if(!newPin||newPin.length!==4) return toast('PIN must be 4 digits.');
+  try{
+    const snap = await getDoc(doc(db,'users',username));
+    if(!snap.exists()) return toast('Username not found.');
+    await updateDoc(doc(db,'users',username),{ pinHash: hashPin(newPin) });
+    closePopup('forgotPinPopup');
+    toast('PIN reset successfully!', true);
+  }catch(e){
+    toast('Error resetting PIN.');
+  }
+});
+
+// ── CHECK IF REGISTERED BEFORE PLAYING ──
+function checkUserBeforePlay(callback){
+  if(currentUser){
+    callback();
+  } else {
+    // Show register popup with step 1
+    const randomEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
+    document.getElementById('registerEmoji').textContent = randomEmoji;
+    document.getElementById('regStep1').style.display='block';
+    document.getElementById('regStep2').style.display='none';
+    openPopup('registerPopup');
+    // Store callback to run after registration
+    window._pendingPlayCallback = callback;
+  }
+}
+
+// After registration/login — run pending callback
+function onUserReady(){
+  if(window._pendingPlayCallback){
+    window._pendingPlayCallback();
+    window._pendingPlayCallback = null;
+  }
+}
+
+// ── PROFILE ──
+document.getElementById('profileBtn').addEventListener('click',()=>{
+  if(!currentUser){ checkUserBeforePlay(()=>{}); return; }
+  loadAndShowProfile();
+});
 document.getElementById('playerTag').addEventListener('click',()=>{
-  toast('Profile coming soon! 🏆');
+  if(!currentUser) return;
+  loadAndShowProfile();
+});
+document.getElementById('profilePopupClose').addEventListener('click',()=>closePopup('profilePopup'));
+
+async function loadAndShowProfile(){
+  try{
+    const snap = await getDoc(doc(db,'users',currentUser.username));
+    const data = snap.exists() ? snap.data() : {};
+    document.getElementById('profileEmoji').textContent    = currentUser.emoji;
+    document.getElementById('profileName').textContent     = currentUser.name;
+    document.getElementById('profileUsername').textContent = currentUser.username;
+    document.getElementById('profileGold').textContent     = data.stats?.gold    || 0;
+    document.getElementById('profileSilver').textContent   = data.stats?.silver  || 0;
+    document.getElementById('profileBronze').textContent   = data.stats?.bronze  || 0;
+    document.getElementById('profileGames').textContent    = data.stats?.gamesPlayed || 0;
+    document.getElementById('profileWins').textContent     = data.stats?.wins    || 0;
+    document.getElementById('profileGuesses').textContent  = data.stats?.totalGuesses || 0;
+    openPopup('profilePopup');
+  }catch(e){ toast('Could not load profile.'); }
+}
+
+document.getElementById('changePinBtn').addEventListener('click',()=>{
+  closePopup('profilePopup');
+  document.getElementById('forgotUsername').value = currentUser.username;
+  openPopup('forgotPinPopup');
 });
 
-// Init on load
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  if(!confirm('Logout? You will need your username and PIN to login again.')) return;
+  localStorage.removeItem('showdown_user');
+  currentUser = null;
+  document.getElementById('playerTag').style.display='none';
+  closePopup('profilePopup');
+  toast('Logged out successfully.', true);
+});
+
+// ── SETTINGS ──
+document.getElementById('settingsBtn').addEventListener('click',()=>openPopup('settingsPopup'));
+document.getElementById('settingsPopupClose').addEventListener('click',()=>closePopup('settingsPopup'));
+
+document.getElementById('contactDevBtn').addEventListener('click',()=>{
+  window.open('mailto:sjohndamilola92@gmail.com?subject=Family Showdown Feedback','_blank');
+});
+
+document.getElementById('deleteAccountBtn').addEventListener('click', async ()=>{
+  if(!currentUser){ toast('Not logged in.'); return; }
+  if(!confirm('Delete your account? All your data will be lost permanently.')) return;
+  try{
+    await updateDoc(doc(db,'users',currentUser.username),{ deleted:true, deletedAt: serverTimestamp() });
+    localStorage.removeItem('showdown_user');
+    currentUser = null;
+    document.getElementById('playerTag').style.display='none';
+    closePopup('settingsPopup');
+    toast('Account deleted.', true);
+  }catch(e){ toast('Error deleting account.'); }
+});
+
+// ── PLAYER TAG CLICK ──
+document.getElementById('playerTag').addEventListener('click',()=>{
+  if(currentUser) loadAndShowProfile();
+});
+
+// ── INIT ──
 initUser();
+
+// ── PLAYER TAG CLICK ──
+document.getElementById('playerTag').addEventListener('click',()=>{
+  if(currentUser) loadAndShowProfile();
+});
+
+// ── INIT ──
+initUser();
+
+// ── PLAYER TAG CLICK ──
+document.getElementById('playerTag').addEventListener('click',()=>{
+  if(currentUser) loadAndShowProfile();
+});
+
+// ── INIT ──
+initUser();
+
+
 
 // ── QUOTES ──
 const QUOTES=[
@@ -1405,8 +1811,10 @@ function closeAllPopups(){
   document.querySelectorAll('.popup-overlay').forEach(p=>p.classList.remove('show'));
 }
 
-// Home play button
-document.getElementById('playBtn').addEventListener('click',()=>openPopup('playPopup'));
+// Home play button — check registration first
+document.getElementById('playBtn').addEventListener('click',()=>{
+  checkUserBeforePlay(()=>openPopup('playPopup'));
+});
 
 // Play popup
 document.getElementById('playPopupClose').addEventListener('click',()=>closePopup('playPopup'));
@@ -1441,10 +1849,31 @@ document.getElementById('rulesBtn').addEventListener('click',()=>openPopup('rule
 document.getElementById('rulesPopupClose').addEventListener('click',()=>closePopup('rulesPopup'));
 
 // Settings (placeholder)
-document.getElementById('settingsBtn').addEventListener('click',()=>toast('Settings coming soon!'));
+// settings handled below
 
-// Profile (placeholder)
-document.getElementById('profileBtn').addEventListener('click',()=>toast('Profile coming soon!'));
+// ── PROFILE ──
+document.getElementById('profileBtn').addEventListener('click',()=>{
+  if(!currentUser){ checkUserBeforePlay(()=>{}); return; }
+  loadAndShowProfile();
+});
+document.getElementById('profilePopupClose').addEventListener('click',()=>closePopup('profilePopup'));
+
+
+
+document.getElementById('changePinBtn').addEventListener('click',()=>{
+  closePopup('profilePopup');
+  document.getElementById('forgotUsername').value = currentUser.username;
+  openPopup('forgotPinPopup');
+});
+
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  if(!confirm('Logout? You will need your username and PIN to login again.')) return;
+  localStorage.removeItem('showdown_user');
+  currentUser = null;
+  document.getElementById('playerTag').style.display='none';
+  closePopup('profilePopup');
+  toast('Logged out!', true);
+});
 
 // Player count
 document.querySelectorAll('.pc-btn').forEach(btn=>{
@@ -1698,6 +2127,8 @@ function initRoomSync(){
       document.getElementById('turnNotice').textContent='⚡ Your turn — make your guess!';
       document.getElementById('guessBar').classList.remove('hidden');
       document.getElementById('waitPanel').style.display='none';
+      resetKeypad();
+      updateGuessDisplay();
       setTimeout(()=>{
         const input=document.getElementById('guessInput');
         if(input){input.focus();input.click();input.select();}
@@ -1714,10 +2145,14 @@ function initRoomSync(){
   });
 
   // Public feed
-  onSnapshot(query(collection(db,`games/${roomCode}/guesses_public`),orderBy('timestamp','desc'),limit(12)),(snap)=>{
+  onSnapshot(query(collection(db,`games/${roomCode}/guesses_public`),orderBy('timestamp','desc'),limit(50)),(snap)=>{
     const feed=document.getElementById('publicFeed'); feed.innerHTML='';
     if(snap.empty){feed.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>';return;}
+    let count=0;
     snap.forEach(d=>{
+      const ts=d.data().timestamp?.toMillis()||0;
+      if(ts < currentRoundStartTime) return; // skip old rounds
+      count++;
       const item=d.data(),isSys=item.name==='SYSTEM';
       const {text,cls}=dirLabel(item.result);
       const displayName=isSys?'⚙️':(playerNames[item.name.toLowerCase().replace(/ /g,'_')]||item.name);
@@ -1725,6 +2160,7 @@ function initRoomSync(){
       div.innerHTML=`<span class="fi-name">${displayName}</span><span class="fi-result ${cls}">${text}</span>`;
       feed.appendChild(div);
     });
+    if(count===0) feed.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>';
   });
 
   // Players
@@ -1732,7 +2168,7 @@ function initRoomSync(){
     snap.forEach(d=>{playerNames[d.id]=d.data().name;});
   });
 
-  // Private guesses — only show current round
+  // Private guesses — only current round shown on board
   onSnapshot(query(collection(db,`games/${roomCode}/private_${myUserId}`),orderBy('timestamp','asc'),limit(200)),(snap)=>{
     myGuesses=[];
     snap.forEach(d=>{
@@ -1765,77 +2201,75 @@ function renderChips(playerOrder,activeIndex){
 }
 
 function renderMyGuesses(){
-  const el=document.getElementById('myGuessList'); 
+  const el=document.getElementById('myGuessList');
   el.innerHTML='';
-  
-  // Load all round history from localStorage
+
   const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
-  
-  // Add current round if has guesses
   const allRounds=[...history];
+
+  // Add current round
   if(myGuesses.length>0){
     allRounds.push({
-      round:'Current',
+      label:'Current Round',
       date:new Date().toLocaleDateString(),
       min:origMin, max:origMax,
-      guesses:myGuesses,
+      guesses:[...myGuesses],
       current:true
     });
   }
-  
+
   if(allRounds.length===0){
-    el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">Your guess history appears here after each round</div>';
+    el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">Your guess history appears here</div>';
     return;
   }
-  
-  // Show rounds in reverse order (newest first)
+
   [...allRounds].reverse().forEach((round,i)=>{
     const won=round.guesses.some(g=>g.result==='won');
-    const section=document.createElement('div');
-    section.style.cssText='margin-bottom:10px;';
-    
-    // Round header (accordion toggle)
-    const header=document.createElement('div');
-    header.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;cursor:pointer;';
-    header.innerHTML=`
-      <div>
-        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#FFD700">${round.current?'🟢 Current Round':'Round '+( allRounds.length-i)}</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">${round.date} · Range: ${round.min}–${round.max} · ${round.guesses.length} guesses</div>
-      </div>
+    const roundNum=allRounds.length-i;
+
+    // Header row
+    const wrap=document.createElement('div');
+    wrap.style.cssText='margin-bottom:6px;border-radius:10px;overflow:hidden;';
+
+    const hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.08);padding:8px 12px;cursor:pointer;';
+    hdr.innerHTML=`
       <div style="display:flex;align-items:center;gap:8px">
-        ${won?'<span style="font-size:11px;font-weight:800;color:#22c55e">🏆 Won</span>':''}
-        <i class="fa-solid fa-chevron-down" style="color:rgba(255,255,255,.4);font-size:12px;transition:transform .2s"></i>
+        <span style="font-size:10px;font-weight:800;color:#FFD700;font-family:'Fredoka One',cursive">${round.current?'🟢 Now':'R'+roundNum}</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.4)">${round.date} · ${round.guesses.length} guesses · ${round.min}–${round.max}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${won?'<span style="font-size:10px;color:#22c55e;font-weight:800">🏆</span>':''}
+        <i class="fa-solid fa-chevron-${round.current?'down':'right'}" style="color:rgba(255,255,255,.3);font-size:10px"></i>
       </div>
     `;
-    
-    // Round body (guesses list)
+
+    // Body
     const body=document.createElement('div');
-    body.style.cssText='display:none;padding:8px 4px 4px;';
+    body.style.cssText=`display:${round.current?'block':'none'};background:rgba(0,0,0,.2);padding:6px 8px;`;
+
     round.guesses.forEach((g,gi)=>{
       const {text,cls}=dirLabel(g.result);
       const row=document.createElement('div');
-      row.className='my-guess-item';
-      row.style.marginBottom='5px';
-      row.innerHTML=`<span class="mg-num">${g.val}</span><span class="mg-tag ${cls}">${text}</span><span class="mg-idx">#${gi+1}</span>`;
+      row.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.04);';
+      row.innerHTML=`
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#fff;min-width:50px">${g.val}</span>
+        <span class="mg-tag ${cls}" style="font-size:11px">${text}</span>
+        <span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>
+      `;
       body.appendChild(row);
     });
-    
-    // Toggle accordion
-    header.addEventListener('click',()=>{
-      const isOpen=body.style.display!=='none';
-      body.style.display=isOpen?'none':'block';
-      header.querySelector('i').style.transform=isOpen?'':'rotate(180deg)';
+
+    // Toggle
+    hdr.addEventListener('click',()=>{
+      const open=body.style.display!=='none';
+      body.style.display=open?'none':'block';
+      hdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
     });
-    
-    // Auto-open current round
-    if(round.current){
-      body.style.display='block';
-      header.querySelector('i').style.transform='rotate(180deg)';
-    }
-    
-    section.appendChild(header);
-    section.appendChild(body);
-    el.appendChild(section);
+
+    wrap.appendChild(hdr);
+    wrap.appendChild(body);
+    el.appendChild(wrap);
   });
 }
 
@@ -1847,29 +2281,89 @@ window.switchTab=function(tab){
   document.getElementById('panelMine').classList.toggle('active',tab==='mine');
 };
 
-// Submit guess
-document.getElementById('submitBtn').addEventListener('click',submitGuess);
-document.getElementById('guessInput').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){e.preventDefault();submitGuess();}
-  if(e.key==='Backspace'){e.stopPropagation();} // prevent back navigation
+// ── INLINE KEYPAD ──
+let guessValue='';
+
+function updateGuessDisplay(){
+  const el=document.getElementById('guessDisplayText');
+  if(!el) return;
+  el.className='cursor-blink';
+  if(guessValue===''){
+    el.textContent='';
+    el.style.color='rgba(255,255,255,.4)';
+  } else {
+    el.textContent=guessValue;
+    el.style.color='#fff';
+  }
+  document.getElementById('guessInput').value=guessValue;
+}
+
+function resetKeypad(){
+  guessValue='';
+  updateGuessDisplay();
+}
+
+document.querySelectorAll('.kpad-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const val=btn.dataset.val;
+    if(!val) return;
+    if(val==='.'){
+      if(guessValue.includes('.')) return;
+      guessValue+=guessValue===''?'0.':'.';
+    } else {
+      if(guessValue==='0'||guessValue==='') guessValue=val;
+      else guessValue+=val;
+    }
+    updateGuessDisplay();
+  });
 });
-document.getElementById('guessInput').addEventListener('input',()=>{
-  document.getElementById('timerLabel').textContent='60s';
-  document.getElementById('timerPill').classList.remove('timer-urgent');
+
+document.getElementById('kpadDel').addEventListener('click',()=>{
+  guessValue=guessValue.slice(0,-1);
+  updateGuessDisplay();
+});
+
+// Also support keyboard typing on desktop
+document.addEventListener('keydown',(e)=>{
+  if(document.getElementById('guessBar').classList.contains('hidden')) return;
+  if(e.repeat) return; // prevent key repeat
+  if('0123456789'.includes(e.key)){
+    if(guessValue==='') guessValue=e.key;
+    else guessValue+=e.key;
+    updateGuessDisplay();
+  } else if(e.key==='.'){
+    if(!guessValue.includes('.')){
+      guessValue+=guessValue===''?'0.':'.';
+      updateGuessDisplay();
+    }
+  } else if(e.key==='Backspace'){
+    guessValue=guessValue.slice(0,-1);
+    updateGuessDisplay();
+  } else if(e.key==='Enter'){
+    e.preventDefault();
+    submitGuess();
+  }
+});
+
+// Submit guess
+document.getElementById('submitBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  submitGuess();
 });
 
 async function submitGuess(){
-  const input=document.getElementById('guessInput');
-  const raw=input.value.trim(), val=parseFloat(raw);
+  const raw=guessValue;
+  const val=parseFloat(raw);
   if(raw===''||isNaN(val)){
-    input.classList.add('shake');
-    setTimeout(()=>input.classList.remove('shake'),300);
+    document.getElementById('guessDisplay').classList.add('shake');
+    setTimeout(()=>document.getElementById('guessDisplay').classList.remove('shake'),300);
     return;
   }
   const guessVal=val;
-  input.value='';
-  input.focus();
-  // Submit in background — don't disable input or switch tabs
+  guessValue='';
+  updateGuessDisplay();
+  // Submit in background
   try{
     const fn=httpsCallable(fns,'submitGuess');
     const res=await fn({gameId:roomCode,userId:myUserId,guess:guessVal});
@@ -1877,10 +2371,15 @@ async function submitGuess(){
     showResultToast(res.data?.result??'unknown',guessVal);
   }catch(e){
     toast('Error: '+(e.message||'Unknown'));
-    input.value=guessVal;
-  }finally{
-    input.focus();
-    input.select();
+    guessValue=String(guessVal);
+    updateGuessDisplay();
+  } finally {
+    // Blink the display to show ready for next input
+    const disp = document.getElementById('guessDisplay');
+    if(disp){
+      disp.style.borderColor='#22c55e';
+      setTimeout(()=>{ disp.style.borderColor='#f97316'; },400);
+    }
   }
 }
 
@@ -2001,6 +2500,18 @@ document.getElementById('endResetBtn').addEventListener('click',()=>{
 // Win
 function showWin(data){
   clearInterval(timerInterval);
+  // Save current round to history
+  if(myGuesses.length>0){
+    const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+    history.push({
+      label:'Round '+(history.length+1),
+      date:new Date().toLocaleDateString(),
+      min:origMin, max:origMax,
+      guesses:[...myGuesses],
+      won:myGuesses.some(g=>g.result==='won')
+    });
+    localStorage.setItem('showdown_history',JSON.stringify(history));
+  }
   const isWinner=data.winnerId===myUserId;
   document.getElementById('winTitle').textContent=isWinner?'You Won! 🏆':'Game Over!';
   document.getElementById('winNum').textContent=data.targetNumber?.toFixed(2)??'--';
@@ -2330,7 +2841,7 @@ setTimeout(()=>{ if(!roomCode) restoreSession(); },1500);
 
 <script>
 if('serviceWorker'in navigator){
-  const isReal=!location.hostname.includes('claudeusercontent')&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1';
+  const isReal=!location.hostname.includes('claudeusercontent')&&!location.hostname.includes('github.dev')&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1';
   if(isReal){
     window.addEventListener('load',async()=>{
       try{
