@@ -1478,6 +1478,30 @@ document.querySelectorAll('.popup-overlay').forEach(overlay=>{
   });
 });
 
+// ── SWIPE TO SWITCH TABS ──
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.getElementById('gameScreen').addEventListener('touchstart',(e)=>{
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+},{passive:true});
+
+document.getElementById('gameScreen').addEventListener('touchend',(e)=>{
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  // Only trigger if horizontal swipe is dominant and long enough
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)){
+    if(dx < 0){
+      // Swipe left — go to History
+      switchTab('mine');
+    } else {
+      // Swipe right — go to Board
+      switchTab('board');
+    }
+  }
+},{passive:true});
+
 // ── BACK BUTTON HANDLER ──
 window.addEventListener('popstate', (e) => {
   e.preventDefault();
