@@ -1173,82 +1173,15 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <div class="popup-title">👋 Welcome!</div>
     </div>
     <div class="popup-body">
-
-      <!-- Step 1: Name -->
-      <div id="regStep1">
-        <div style="text-align:center;margin-bottom:14px">
-          <div style="font-size:48px" id="registerEmoji">🦁</div>
-          <p style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:6px">Your avatar is randomly assigned</p>
-        </div>
-        <div class="popup-label">Your Name</div>
-        <input type="text" class="popup-field" id="registerName" placeholder="e.g. John" autocomplete="off" maxlength="20">
-        <button class="game-btn btn-green" id="regStep1Btn">
-          <i class="fa-solid fa-arrow-right"></i><span>Continue</span>
-        </button>
-        <div style="text-align:center;margin-top:12px">
-          <span style="font-size:12px;font-weight:600;color:#6D3D1A;cursor:pointer;text-decoration:underline" id="showLoginBtn">Already have an account? Login</span>
-        </div>
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:48px" id="registerEmoji">🦁</div>
+        <p style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:6px">Your avatar is randomly assigned</p>
       </div>
-
-      <!-- Step 2: Show username + create PIN -->
-      <div id="regStep2" style="display:none">
-        <div style="text-align:center;margin-bottom:14px">
-          <div style="font-size:36px" id="registerEmoji2">🦁</div>
-          <p style="font-size:11px;font-weight:700;color:#6D3D1A;margin-top:6px">Your unique username</p>
-          <div style="background:rgba(125,60,152,.15);border-radius:10px;padding:10px;margin:8px 0">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#7D3C98" id="generatedUsername">john_4829</div>
-            <p style="font-size:10px;font-weight:600;color:#6D3D1A;margin-top:4px">⚠️ Save this — you need it to login on a new device</p>
-          </div>
-        </div>
-        <div class="popup-label">Create a 4-digit PIN</div>
-        <input type="password" inputmode="numeric" class="popup-field" id="registerPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
-        <div class="popup-label">Confirm PIN</div>
-        <input type="password" inputmode="numeric" class="popup-field" id="registerPinConfirm" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
-        <button class="game-btn btn-green" id="regStep2Btn">
-          <i class="fa-solid fa-check"></i><span>Create Account</span>
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- LOGIN POPUP -->
-<div class="popup-overlay" id="loginPopup">
-  <div class="popup-card">
-    <div class="popup-title-bar">
-      <div class="popup-title">🔑 Login</div>
-      <div class="popup-close" id="loginPopupClose">✕</div>
-    </div>
-    <div class="popup-body">
-      <div class="popup-label">Your Username</div>
-      <input type="text" class="popup-field" id="loginUsername" placeholder="e.g. john_4829" autocomplete="off" style="font-family:'JetBrains Mono',monospace;letter-spacing:.05em">
-      <div class="popup-label">Your PIN</div>
-      <input type="password" inputmode="numeric" class="popup-field" id="loginPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
-      <button class="game-btn btn-green" id="loginBtn">
-        <i class="fa-solid fa-arrow-right-to-bracket"></i><span>Login</span>
-      </button>
-      <div style="text-align:center;margin-top:10px">
-        <span style="font-size:12px;font-weight:600;color:#6D3D1A;cursor:pointer;text-decoration:underline" id="showRegisterBtn">New player? Register</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FORGOT PIN POPUP -->
-<div class="popup-overlay" id="forgotPinPopup">
-  <div class="popup-card">
-    <div class="popup-title-bar">
-      <div class="popup-title">🔓 Reset PIN</div>
-      <div class="popup-close" id="forgotPinClose">✕</div>
-    </div>
-    <div class="popup-body">
-      <div class="popup-label">Your Username</div>
-      <input type="text" class="popup-field" id="forgotUsername" placeholder="e.g. john_4829" autocomplete="off" style="font-family:'JetBrains Mono',monospace">
-      <div class="popup-label">New PIN</div>
-      <input type="password" inputmode="numeric" class="popup-field" id="forgotNewPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
-      <button class="game-btn btn-orange" id="forgotPinBtn">
-        <i class="fa-solid fa-key"></i><span>Reset PIN</span>
+      <div class="popup-label">Enter Your Name</div>
+      <input type="text" class="popup-field" id="registerName" placeholder="e.g. John" autocomplete="off" maxlength="20">
+      <p style="font-size:10px;font-weight:600;color:#6D3D1A;margin-bottom:12px;text-align:center">A unique username will be generated for you</p>
+      <button class="game-btn btn-green" id="registerBtn">
+        <i class="fa-solid fa-check"></i><span>Let's Play!</span>
       </button>
     </div>
   </div>
@@ -1285,85 +1218,6 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       </button>
       <button class="game-btn btn-green" id="deadGameWait">
         <i class="fa-solid fa-clock"></i><span>Keep Waiting</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- PROFILE POPUP -->
-<div class="popup-overlay" id="profilePopup">
-  <div class="popup-card">
-    <div class="popup-title-bar">
-      <div class="popup-title">👤 My Profile</div>
-      <div class="popup-close" id="profilePopupClose">✕</div>
-    </div>
-    <div class="popup-body">
-      <div style="text-align:center;margin-bottom:16px">
-        <div style="font-size:52px" id="profileEmoji">🦁</div>
-        <div style="font-family:'Fredoka One',cursive;font-size:22px;color:#7D3C98;margin-top:6px" id="profileName">-</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A04000;margin-top:2px" id="profileUsername">-</div>
-      </div>
-      <!-- Medals -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px" id="profileMedals">
-        <div style="background:rgba(255,215,0,.15);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:22px">🥇</div>
-          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#f59e0b" id="profileGold">0</div>
-          <div style="font-size:9px;font-weight:700;color:#6D3D1A">GOLD</div>
-        </div>
-        <div style="background:rgba(192,192,192,.15);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:22px">🥈</div>
-          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#78716c" id="profileSilver">0</div>
-          <div style="font-size:9px;font-weight:700;color:#6D3D1A">SILVER</div>
-        </div>
-        <div style="background:rgba(180,83,9,.15);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:22px">🥉</div>
-          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#b45309" id="profileBronze">0</div>
-          <div style="font-size:9px;font-weight:700;color:#6D3D1A">BRONZE</div>
-        </div>
-      </div>
-      <!-- Stats -->
-      <div style="background:rgba(125,60,152,.1);border-radius:12px;padding:12px;margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:12px;font-weight:700;color:#6D3D1A">Games Played</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileGames">0</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:12px;font-weight:700;color:#6D3D1A">Total Wins</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileWins">0</span>
-        </div>
-        <div style="display:flex;justify-content:space-between">
-          <span style="font-size:12px;font-weight:700;color:#6D3D1A">Total Guesses</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileGuesses">0</span>
-        </div>
-      </div>
-      <button class="game-btn btn-orange" id="changePinBtn" style="margin-bottom:8px">
-        <i class="fa-solid fa-key"></i><span>Change PIN</span>
-      </button>
-      <button class="game-btn btn-red" id="logoutBtn">
-        <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- SETTINGS POPUP -->
-<div class="popup-overlay" id="settingsPopup">
-  <div class="popup-card">
-    <div class="popup-title-bar">
-      <div class="popup-title">⚙️ Settings</div>
-      <div class="popup-close" id="settingsPopupClose">✕</div>
-    </div>
-    <div class="popup-body">
-      <div style="background:rgba(255,255,255,.3);border-radius:12px;padding:12px;margin-bottom:10px">
-        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#7D3C98;margin-bottom:4px">Family Showdown</div>
-        <div style="font-size:11px;font-weight:600;color:#6D3D1A">Version 1.0.0</div>
-        <div style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:2px">Made by JohnnyDeey</div>
-      </div>
-      <button class="game-btn btn-orange" id="contactDevBtn" style="margin-bottom:8px">
-        <i class="fa-solid fa-envelope"></i><span>Contact Developer</span>
-      </button>
-      <button class="game-btn btn-red" id="deleteAccountBtn">
-        <i class="fa-solid fa-trash"></i><span>Delete Account</span>
       </button>
     </div>
   </div>
@@ -1477,284 +1331,85 @@ function createParticles(){
 }
 createParticles();
 
-// ── USER PROFILE (Firestore + localStorage) ──
+// ── USER PROFILE (localStorage) ──
 const EMOJIS_LIST=['🦁','🐯','🦊','🐻','🐼','🦋','🦅','🦉','🐬','🦄','🐸','🦖'];
 let currentUser = null;
 
-function hashPin(pin){
-  // Simple hash — good enough for a game PIN
-  let hash = 0;
-  for(let i=0;i<pin.length;i++) hash = ((hash<<5)-hash)+pin.charCodeAt(i);
-  return Math.abs(hash).toString(36);
-}
-
-function generateUsername(name){
-  const clean = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  const num = Math.floor(1000+Math.random()*9000);
-  return clean+'_'+num;
-}
-
-function loadUserLocal(){
+function loadUser(){
   const raw = localStorage.getItem('showdown_user');
   if(!raw) return null;
   try{ return JSON.parse(raw); }catch(e){ return null; }
 }
 
-function saveUserLocal(user){
+function saveUser(user){
   localStorage.setItem('showdown_user', JSON.stringify(user));
+}
+
+function generateUsername(name){
+  const clean = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const num = Math.floor(1000 + Math.random()*9000);
+  return clean + '_' + num;
+}
+
+function initUser(){
+  currentUser = loadUser();
+  if(!currentUser){
+    // First time — show register popup
+    const randomEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
+    document.getElementById('registerEmoji').textContent = randomEmoji;
+    openPopup('registerPopup');
+  } else {
+    showPlayerTag();
+    // Pre-fill name fields
+    prefillNameFields();
+  }
 }
 
 function showPlayerTag(){
   if(!currentUser) return;
   const tag = document.getElementById('playerTag');
-  if(tag) tag.style.display='flex';
+  if(tag) tag.style.display = 'flex';
   document.getElementById('playerTagEmoji').textContent = currentUser.emoji;
   document.getElementById('playerTagName').textContent = currentUser.name;
+  // Also update header chip
   const hEmoji = document.getElementById('headerChipEmoji');
-  const hName  = document.getElementById('headerChipName');
+  const hName = document.getElementById('headerChipName');
   if(hEmoji) hEmoji.textContent = currentUser.emoji;
-  if(hName)  hName.textContent  = currentUser.name;
+  if(hName) hName.textContent = currentUser.name;
 }
 
 function prefillNameFields(){
   if(!currentUser) return;
-  ['soloName','createName','joinName'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.value=currentUser.name;
+  const fields = ['soloName','createName','joinName'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = currentUser.name;
   });
-  myName   = currentUser.name;
+  myName = currentUser.name;
   myUserId = currentUser.username;
 }
 
-async function initUser(){
-  currentUser = loadUserLocal();
-  if(currentUser){
-    showPlayerTag();
-    prefillNameFields();
-  }
-  // No popup on load — only when they tap Play
-}
-
-// ── REGISTER STEP 1 ──
-let pendingUsername = '';
-let pendingEmoji = '';
-
-document.getElementById('regStep1Btn').addEventListener('click',()=>{
+// Register button
+document.getElementById('registerBtn').addEventListener('click',()=>{
   const name = document.getElementById('registerName').value.trim();
-  if(!name) return toast('Enter your name.');
-  pendingUsername = generateUsername(name);
-  pendingEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
-  document.getElementById('generatedUsername').textContent = pendingUsername;
-  document.getElementById('registerEmoji2').textContent = pendingEmoji;
-  document.getElementById('regStep1').style.display='none';
-  document.getElementById('regStep2').style.display='block';
-});
-
-// ── REGISTER STEP 2 ──
-document.getElementById('regStep2Btn').addEventListener('click', async ()=>{
-  const name    = document.getElementById('registerName').value.trim();
-  const pin     = document.getElementById('registerPin').value.trim();
-  const pinConf = document.getElementById('registerPinConfirm').value.trim();
-  if(!pin||pin.length!==4)     return toast('PIN must be 4 digits.');
-  if(pin!==pinConf)            return toast('PINs do not match.');
-  const btn = document.getElementById('regStep2Btn');
-  btn.disabled=true; btn.querySelector('span').textContent='Creating…';
-  try{
-    // Check username not taken
-    const existing = await getDoc(doc(db,'users',pendingUsername));
-    if(existing.exists()){
-      pendingUsername = generateUsername(name);
-      document.getElementById('generatedUsername').textContent = pendingUsername;
-    }
-    const userData = {
-      name, username:pendingUsername, emoji:pendingEmoji,
-      pinHash: hashPin(pin),
-      createdAt: serverTimestamp(),
-      stats:{ gamesPlayed:0, wins:0, totalGuesses:0, gold:0, silver:0, bronze:0 }
-    };
-    await setDoc(doc(db,'users',pendingUsername), userData);
-    currentUser = { name, username:pendingUsername, emoji:pendingEmoji };
-    saveUserLocal(currentUser);
-    closePopup('registerPopup');
-    showPlayerTag();
-    prefillNameFields();
-    toast('Welcome '+name+'! 🎉', true);
-    onUserReady();
-  }catch(e){
-    toast('Error: '+(e.message||'Could not create account.'));
-  }finally{
-    btn.disabled=false; btn.querySelector('span').textContent='Create Account';
-  }
-});
-
-// ── LOGIN ──
-document.getElementById('showLoginBtn').addEventListener('click',()=>{
+  if(!name) return toast('Enter your name to continue.');
+  const emoji = document.getElementById('registerEmoji').textContent;
+  const username = generateUsername(name);
+  currentUser = { name, username, emoji, medals:{gold:0,silver:0,bronze:0}, gamesPlayed:0, totalGuesses:0, createdAt: Date.now() };
+  saveUser(currentUser);
   closePopup('registerPopup');
-  openPopup('loginPopup');
-});
-document.getElementById('showRegisterBtn').addEventListener('click',()=>{
-  closePopup('loginPopup');
-  openPopup('registerPopup');
-});
-document.getElementById('loginPopupClose').addEventListener('click',()=>closePopup('loginPopup'));
-
-document.getElementById('loginBtn').addEventListener('click', async ()=>{
-  const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-  const pin      = document.getElementById('loginPin').value.trim();
-  if(!username) return toast('Enter your username.');
-  if(!pin||pin.length!==4) return toast('PIN must be 4 digits.');
-  const btn = document.getElementById('loginBtn');
-  btn.disabled=true; btn.querySelector('span').textContent='Logging in…';
-  try{
-    const snap = await getDoc(doc(db,'users',username));
-    if(!snap.exists()) return toast('Username not found.');
-    const data = snap.data();
-    if(data.pinHash !== hashPin(pin)) return toast('Incorrect PIN.');
-    currentUser = { name:data.name, username, emoji:data.emoji };
-    saveUserLocal(currentUser);
-    closePopup('loginPopup');
-    showPlayerTag();
-    prefillNameFields();
-    toast('Welcome back '+data.name+'! 🎉', true);
-    onUserReady();
-  }catch(e){
-    toast('Error: '+(e.message||'Login failed.'));
-  }finally{
-    btn.disabled=false; btn.querySelector('span').textContent='Login';
-  }
+  showPlayerTag();
+  prefillNameFields();
+  toast('Welcome ' + name + '! 🎉', true);
 });
 
-// ── FORGOT PIN ──
-document.getElementById('forgotPinClose').addEventListener('click',()=>closePopup('forgotPinPopup'));
-document.getElementById('forgotPinBtn').addEventListener('click', async ()=>{
-  const username = document.getElementById('forgotUsername').value.trim().toLowerCase();
-  const newPin   = document.getElementById('forgotNewPin').value.trim();
-  if(!username) return toast('Enter your username.');
-  if(!newPin||newPin.length!==4) return toast('PIN must be 4 digits.');
-  try{
-    const snap = await getDoc(doc(db,'users',username));
-    if(!snap.exists()) return toast('Username not found.');
-    await updateDoc(doc(db,'users',username),{ pinHash: hashPin(newPin) });
-    closePopup('forgotPinPopup');
-    toast('PIN reset successfully!', true);
-  }catch(e){
-    toast('Error resetting PIN.');
-  }
-});
-
-// ── CHECK IF REGISTERED BEFORE PLAYING ──
-function checkUserBeforePlay(callback){
-  if(currentUser){
-    callback();
-  } else {
-    // Show register popup with step 1
-    const randomEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
-    document.getElementById('registerEmoji').textContent = randomEmoji;
-    document.getElementById('regStep1').style.display='block';
-    document.getElementById('regStep2').style.display='none';
-    openPopup('registerPopup');
-    // Store callback to run after registration
-    window._pendingPlayCallback = callback;
-  }
-}
-
-// After registration/login — run pending callback
-function onUserReady(){
-  if(window._pendingPlayCallback){
-    window._pendingPlayCallback();
-    window._pendingPlayCallback = null;
-  }
-}
-
-// ── PROFILE ──
-document.getElementById('profileBtn').addEventListener('click',()=>{
-  if(!currentUser){ checkUserBeforePlay(()=>{}); return; }
-  loadAndShowProfile();
-});
+// Player tag click — show profile (placeholder for now)
 document.getElementById('playerTag').addEventListener('click',()=>{
-  if(!currentUser) return;
-  loadAndShowProfile();
-});
-document.getElementById('profilePopupClose').addEventListener('click',()=>closePopup('profilePopup'));
-
-async function loadAndShowProfile(){
-  try{
-    const snap = await getDoc(doc(db,'users',currentUser.username));
-    const data = snap.exists() ? snap.data() : {};
-    document.getElementById('profileEmoji').textContent    = currentUser.emoji;
-    document.getElementById('profileName').textContent     = currentUser.name;
-    document.getElementById('profileUsername').textContent = currentUser.username;
-    document.getElementById('profileGold').textContent     = data.stats?.gold    || 0;
-    document.getElementById('profileSilver').textContent   = data.stats?.silver  || 0;
-    document.getElementById('profileBronze').textContent   = data.stats?.bronze  || 0;
-    document.getElementById('profileGames').textContent    = data.stats?.gamesPlayed || 0;
-    document.getElementById('profileWins').textContent     = data.stats?.wins    || 0;
-    document.getElementById('profileGuesses').textContent  = data.stats?.totalGuesses || 0;
-    openPopup('profilePopup');
-  }catch(e){ toast('Could not load profile.'); }
-}
-
-document.getElementById('changePinBtn').addEventListener('click',()=>{
-  closePopup('profilePopup');
-  document.getElementById('forgotUsername').value = currentUser.username;
-  openPopup('forgotPinPopup');
+  toast('Profile coming soon! 🏆');
 });
 
-document.getElementById('logoutBtn').addEventListener('click',()=>{
-  if(!confirm('Logout? You will need your username and PIN to login again.')) return;
-  localStorage.removeItem('showdown_user');
-  currentUser = null;
-  document.getElementById('playerTag').style.display='none';
-  closePopup('profilePopup');
-  toast('Logged out successfully.', true);
-});
-
-// ── SETTINGS ──
-document.getElementById('settingsBtn').addEventListener('click',()=>openPopup('settingsPopup'));
-document.getElementById('settingsPopupClose').addEventListener('click',()=>closePopup('settingsPopup'));
-
-document.getElementById('contactDevBtn').addEventListener('click',()=>{
-  window.open('mailto:sjohndamilola92@gmail.com?subject=Family Showdown Feedback','_blank');
-});
-
-document.getElementById('deleteAccountBtn').addEventListener('click', async ()=>{
-  if(!currentUser){ toast('Not logged in.'); return; }
-  if(!confirm('Delete your account? All your data will be lost permanently.')) return;
-  try{
-    await updateDoc(doc(db,'users',currentUser.username),{ deleted:true, deletedAt: serverTimestamp() });
-    localStorage.removeItem('showdown_user');
-    currentUser = null;
-    document.getElementById('playerTag').style.display='none';
-    closePopup('settingsPopup');
-    toast('Account deleted.', true);
-  }catch(e){ toast('Error deleting account.'); }
-});
-
-// ── PLAYER TAG CLICK ──
-document.getElementById('playerTag').addEventListener('click',()=>{
-  if(currentUser) loadAndShowProfile();
-});
-
-// ── INIT ──
+// Init on load
 initUser();
-
-// ── PLAYER TAG CLICK ──
-document.getElementById('playerTag').addEventListener('click',()=>{
-  if(currentUser) loadAndShowProfile();
-});
-
-// ── INIT ──
-initUser();
-
-// ── PLAYER TAG CLICK ──
-document.getElementById('playerTag').addEventListener('click',()=>{
-  if(currentUser) loadAndShowProfile();
-});
-
-// ── INIT ──
-initUser();
-
-
 
 // ── QUOTES ──
 const QUOTES=[
@@ -1811,10 +1466,8 @@ function closeAllPopups(){
   document.querySelectorAll('.popup-overlay').forEach(p=>p.classList.remove('show'));
 }
 
-// Home play button — check registration first
-document.getElementById('playBtn').addEventListener('click',()=>{
-  checkUserBeforePlay(()=>openPopup('playPopup'));
-});
+// Home play button
+document.getElementById('playBtn').addEventListener('click',()=>openPopup('playPopup'));
 
 // Play popup
 document.getElementById('playPopupClose').addEventListener('click',()=>closePopup('playPopup'));
@@ -1849,31 +1502,10 @@ document.getElementById('rulesBtn').addEventListener('click',()=>openPopup('rule
 document.getElementById('rulesPopupClose').addEventListener('click',()=>closePopup('rulesPopup'));
 
 // Settings (placeholder)
-// settings handled below
+document.getElementById('settingsBtn').addEventListener('click',()=>toast('Settings coming soon!'));
 
-// ── PROFILE ──
-document.getElementById('profileBtn').addEventListener('click',()=>{
-  if(!currentUser){ checkUserBeforePlay(()=>{}); return; }
-  loadAndShowProfile();
-});
-document.getElementById('profilePopupClose').addEventListener('click',()=>closePopup('profilePopup'));
-
-
-
-document.getElementById('changePinBtn').addEventListener('click',()=>{
-  closePopup('profilePopup');
-  document.getElementById('forgotUsername').value = currentUser.username;
-  openPopup('forgotPinPopup');
-});
-
-document.getElementById('logoutBtn').addEventListener('click',()=>{
-  if(!confirm('Logout? You will need your username and PIN to login again.')) return;
-  localStorage.removeItem('showdown_user');
-  currentUser = null;
-  document.getElementById('playerTag').style.display='none';
-  closePopup('profilePopup');
-  toast('Logged out!', true);
-});
+// Profile (placeholder)
+document.getElementById('profileBtn').addEventListener('click',()=>toast('Profile coming soon!'));
 
 // Player count
 document.querySelectorAll('.pc-btn').forEach(btn=>{
