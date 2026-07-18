@@ -936,23 +936,39 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
           <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">🎯 The Goal</div>
-          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Be the first to guess the secret number exactly. The number has 2 decimal places.</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Be the first to guess a secret number with 2 decimal places. The host sets the range — for example 1 to 1000. The system picks a random number inside that range.</div>
         </div>
         <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
           <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">🔄 Taking Turns</div>
-          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Players take turns guessing. After each guess you are told if it is Too High or Too Low.</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Players take turns guessing one number at a time. After each guess the system tells YOU privately if your guess is Too High or Too Low. Other players only see that you guessed — not your number or result.</div>
         </div>
         <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
-          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">🔒 Privacy</div>
-          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">You only see your own guess results. Opponents only see that you guessed — not what you guessed or whether it was high or low.</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">🔒 Privacy is Key</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Your guess results are completely private. Check the 📊 Board tab to see what others are doing. Check the 📜 History tab to see your own guess history. Nobody else can see your numbers!</div>
+        </div>
+        <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">⌨️ How to Guess</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Use the number keypad at the bottom of the screen. Tap the numbers to build your guess, then tap the orange send button. On laptop you can also type with your keyboard and press Enter.</div>
         </div>
         <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
           <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">⏱ Timer</div>
-          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">You have 60 seconds per turn. If you run out of time you are skipped.</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">You have 60 seconds per turn. If your time runs out in solo mode, you will be asked if you want to continue. In multiplayer, your turn is skipped and passed to the next player.</div>
         </div>
         <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
           <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">🏆 Winning</div>
-          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">The player who guesses the exact number wins the round!</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">The first player to guess the exact number wins the round! A celebration screen appears with confetti. The secret number is revealed to everyone.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">🔄 Play Again</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">After a round ends, click Play Again. You can keep the same number range or set a new one. In multiplayer, all players must accept before the new round starts.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">📺 Spectator / TV Screen</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">When creating a multiplayer game, enable the Spectator Screen option. This generates a separate TV code. Anyone who enters the TV code can watch the game live on a big screen without playing.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">👤 Your Profile</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Register once with your name and a 4-digit PIN. Your username is generated automatically. Your game history and medals are saved permanently. Login with your username and PIN on any device to access your stats.</div>
         </div>
       </div>
     </div>
@@ -1177,6 +1193,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
   <div class="popup-card">
     <div class="popup-title-bar">
       <div class="popup-title">👋 Welcome!</div>
+      <div class="popup-close" id="registerPopupClose">✕</div>
     </div>
     <div class="popup-body">
 
@@ -1454,6 +1471,13 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// ── CLICK OUTSIDE POPUP TO CLOSE ──
+document.querySelectorAll('.popup-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',(e)=>{
+    if(e.target===overlay) closePopup(overlay.id);
+  });
+});
+
 // ── BACK BUTTON HANDLER ──
 window.addEventListener('popstate', (e) => {
   e.preventDefault();
@@ -1544,7 +1568,7 @@ async function initUser(){
   // No popup on load — only when they tap Play
 }
 
-// ── REGISTER STEP 1 ──
+document.getElementById('registerPopupClose').addEventListener('click',()=>closePopup('registerPopup'));
 let pendingUsername = '';
 let pendingEmoji = '';
 
@@ -1721,7 +1745,7 @@ function openStatsView(){
       <i class="fa-solid fa-play"></i> Start a Game
     </button>
   `;
-  switchTab('mine');
+  switchTab('board');
   renderMyGuesses();
 }
 
