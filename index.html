@@ -347,8 +347,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
 /* Player chips */
 .chips-bar{
-  background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);
-  padding:8px 12px;display:flex;gap:10px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;
+  display:none;
 }
 .chips-bar::-webkit-scrollbar{display:none}
 .p-chip{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px}
@@ -474,6 +473,36 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .wait-panel h3{font-family:'Fredoka One',cursive;font-size:20px;color:#fff;margin-bottom:6px}
 .wait-panel p{font-size:12px;font-weight:600;color:rgba(255,255,255,.5);max-width:200px;line-height:1.5}
+
+/* Blinking cursor in guess display */
+@keyframes cursorBlink{
+  0%,100%{opacity:1}
+  50%{opacity:0}
+}
+.cursor-blink::after{
+  content:'|';
+  color:#f97316;
+  font-weight:300;
+  animation:cursorBlink 1s ease-in-out infinite;
+  margin-left:2px;
+}
+
+/* Inline keypad */
+.kpad-btn{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;color:#fff;
+  font-family:'Fredoka One',cursive;font-size:22px;
+  flex:1;max-width:60px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;transition:background .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.kpad-btn:active{background:rgba(249,115,22,.5);}
+.kpad-del{background:rgba(244,63,94,.2);border-color:rgba(244,63,94,.3);}
+
+/* Result mini toast */
+
 
 /* Result mini toast */
 #resultToast{
@@ -948,15 +977,18 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 <div id="gameScreen">
   <header class="game-header">
     <div class="game-room-info">
-      <div class="game-room-label">Room</div>
-      <div class="game-room-code" id="activeRoomCode">------</div>
-      <div class="game-round" id="roundBadge" style="display:none">Round <span id="roundNum">1</span></div>
+      <div class="game-room-code" id="activeRoomCode" style="display:none">------</div>
+      <div class="game-round" id="roundBadge" style="display:block">Round <span id="roundNum">1</span></div>
     </div>
     <div class="timer-pill" id="timerPill">
       <i class="fa-solid fa-stopwatch"></i>
       <span class="timer-num" id="timerLabel">60s</span>
     </div>
     <div class="game-header-btns">
+      <div id="headerPlayerChip" style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border-radius:99px;padding:4px 10px 4px 6px">
+        <span id="headerChipEmoji" style="font-size:16px">🦁</span>
+        <span id="headerChipName" style="font-family:'Fredoka One',cursive;font-size:12px;color:#FFD700;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      </div>
       <div class="hdr-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></div>
       <button class="hdr-btn danger" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
     </div>
@@ -964,7 +996,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
   <div class="game-tabs">
     <div class="game-tab active" id="tabBoard" onclick="switchTab('board')">📊 Board</div>
-    <div class="game-tab" id="tabMine" onclick="switchTab('mine')">🔒 My Guesses</div>
+    <div class="game-tab" id="tabMine" onclick="switchTab('mine')">📜 HISTORY</div>
   </div>
 
   <div class="chips-bar" id="chipsStrip"></div>
@@ -975,18 +1007,42 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
         <div class="range-card lo"><div class="rl">Start Low</div><div class="rv" id="origMinDisplay">--</div></div>
         <div class="range-card hi"><div class="rl">Start High</div><div class="rv" id="origMaxDisplay">--</div></div>
       </div>
-      <div class="turn-bar">
-        <i class="fa-solid fa-arrow-pointer"></i>
-        <span id="turnNotice">Connecting…</span>
-      </div>
+      <div id="turnNotice" style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);padding:4px 14px;flex-shrink:0"></div>
       <div class="feed-list" id="publicFeed">
         <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>
       </div>
     </div>
     <div class="guess-bar hidden" id="guessBar">
-      <input type="number" step="0.01" id="guessInput" placeholder="Your guess…">
-      <button id="submitBtn"><i class="fa-solid fa-paper-plane"></i></button>
+  <div style="display:flex;flex-direction:column;flex:1;gap:6px">
+    <!-- Number display + send button centered together -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <div id="guessDisplay" style="background:rgba(0,0,0,.4);border:2px solid #f97316;border-radius:12px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#fff;height:42px;display:flex;align-items:center;justify-content:center;min-width:140px;">
+        <span id="guessDisplayText" style="color:rgba(255,255,255,.4)">_ _ _</span>
+      </div>
+      <button id="submitBtn" style="flex-shrink:0;width:42px;height:42px;border-radius:12px;border:none;background:linear-gradient(135deg,#f97316,#fb923c);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #c2620a;"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
+    <!-- Single line keypad -->
+    <div id="inlineKeypad" style="display:flex;flex-direction:column;gap:5px;">
+      <div style="display:flex;gap:5px;justify-content:center;">
+        <button class="kpad-btn" data-val="1">1</button>
+        <button class="kpad-btn" data-val="2">2</button>
+        <button class="kpad-btn" data-val="3">3</button>
+        <button class="kpad-btn" data-val="4">4</button>
+        <button class="kpad-btn" data-val="5">5</button>
+        <button class="kpad-btn" data-val="6">6</button>
+      </div>
+      <div style="display:flex;gap:5px;justify-content:center;">
+        <button class="kpad-btn" data-val="7">7</button>
+        <button class="kpad-btn" data-val="8">8</button>
+        <button class="kpad-btn" data-val="9">9</button>
+        <button class="kpad-btn" data-val=".">.</button>
+        <button class="kpad-btn" data-val="0">0</button>
+        <button class="kpad-btn kpad-del" id="kpadDel">⌫</button>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="guessInput" value="">
+</div>
     <div class="wait-panel" id="waitPanel" style="display:none">
       <div class="wait-emoji">⏳</div>
       <h3>Awaiting your turn…</h3>
@@ -1312,9 +1368,14 @@ function initUser(){
 function showPlayerTag(){
   if(!currentUser) return;
   const tag = document.getElementById('playerTag');
-  tag.style.display = 'flex';
+  if(tag) tag.style.display = 'flex';
   document.getElementById('playerTagEmoji').textContent = currentUser.emoji;
   document.getElementById('playerTagName').textContent = currentUser.name;
+  // Also update header chip
+  const hEmoji = document.getElementById('headerChipEmoji');
+  const hName = document.getElementById('headerChipName');
+  if(hEmoji) hEmoji.textContent = currentUser.emoji;
+  if(hName) hName.textContent = currentUser.name;
 }
 
 function prefillNameFields(){
@@ -1698,6 +1759,8 @@ function initRoomSync(){
       document.getElementById('turnNotice').textContent='⚡ Your turn — make your guess!';
       document.getElementById('guessBar').classList.remove('hidden');
       document.getElementById('waitPanel').style.display='none';
+      resetKeypad();
+      updateGuessDisplay();
       setTimeout(()=>{
         const input=document.getElementById('guessInput');
         if(input){input.focus();input.click();input.select();}
@@ -1714,10 +1777,14 @@ function initRoomSync(){
   });
 
   // Public feed
-  onSnapshot(query(collection(db,`games/${roomCode}/guesses_public`),orderBy('timestamp','desc'),limit(12)),(snap)=>{
+  onSnapshot(query(collection(db,`games/${roomCode}/guesses_public`),orderBy('timestamp','desc'),limit(50)),(snap)=>{
     const feed=document.getElementById('publicFeed'); feed.innerHTML='';
     if(snap.empty){feed.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>';return;}
+    let count=0;
     snap.forEach(d=>{
+      const ts=d.data().timestamp?.toMillis()||0;
+      if(ts < currentRoundStartTime) return; // skip old rounds
+      count++;
       const item=d.data(),isSys=item.name==='SYSTEM';
       const {text,cls}=dirLabel(item.result);
       const displayName=isSys?'⚙️':(playerNames[item.name.toLowerCase().replace(/ /g,'_')]||item.name);
@@ -1725,6 +1792,7 @@ function initRoomSync(){
       div.innerHTML=`<span class="fi-name">${displayName}</span><span class="fi-result ${cls}">${text}</span>`;
       feed.appendChild(div);
     });
+    if(count===0) feed.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>';
   });
 
   // Players
@@ -1732,7 +1800,7 @@ function initRoomSync(){
     snap.forEach(d=>{playerNames[d.id]=d.data().name;});
   });
 
-  // Private guesses — only show current round
+  // Private guesses — only current round shown on board
   onSnapshot(query(collection(db,`games/${roomCode}/private_${myUserId}`),orderBy('timestamp','asc'),limit(200)),(snap)=>{
     myGuesses=[];
     snap.forEach(d=>{
@@ -1765,77 +1833,75 @@ function renderChips(playerOrder,activeIndex){
 }
 
 function renderMyGuesses(){
-  const el=document.getElementById('myGuessList'); 
+  const el=document.getElementById('myGuessList');
   el.innerHTML='';
-  
-  // Load all round history from localStorage
+
   const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
-  
-  // Add current round if has guesses
   const allRounds=[...history];
+
+  // Add current round
   if(myGuesses.length>0){
     allRounds.push({
-      round:'Current',
+      label:'Current Round',
       date:new Date().toLocaleDateString(),
       min:origMin, max:origMax,
-      guesses:myGuesses,
+      guesses:[...myGuesses],
       current:true
     });
   }
-  
+
   if(allRounds.length===0){
-    el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">Your guess history appears here after each round</div>';
+    el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">Your guess history appears here</div>';
     return;
   }
-  
-  // Show rounds in reverse order (newest first)
+
   [...allRounds].reverse().forEach((round,i)=>{
     const won=round.guesses.some(g=>g.result==='won');
-    const section=document.createElement('div');
-    section.style.cssText='margin-bottom:10px;';
-    
-    // Round header (accordion toggle)
-    const header=document.createElement('div');
-    header.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;cursor:pointer;';
-    header.innerHTML=`
-      <div>
-        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#FFD700">${round.current?'🟢 Current Round':'Round '+( allRounds.length-i)}</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">${round.date} · Range: ${round.min}–${round.max} · ${round.guesses.length} guesses</div>
-      </div>
+    const roundNum=allRounds.length-i;
+
+    // Header row
+    const wrap=document.createElement('div');
+    wrap.style.cssText='margin-bottom:6px;border-radius:10px;overflow:hidden;';
+
+    const hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.08);padding:8px 12px;cursor:pointer;';
+    hdr.innerHTML=`
       <div style="display:flex;align-items:center;gap:8px">
-        ${won?'<span style="font-size:11px;font-weight:800;color:#22c55e">🏆 Won</span>':''}
-        <i class="fa-solid fa-chevron-down" style="color:rgba(255,255,255,.4);font-size:12px;transition:transform .2s"></i>
+        <span style="font-size:10px;font-weight:800;color:#FFD700;font-family:'Fredoka One',cursive">${round.current?'🟢 Now':'R'+roundNum}</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.4)">${round.date} · ${round.guesses.length} guesses · ${round.min}–${round.max}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${won?'<span style="font-size:10px;color:#22c55e;font-weight:800">🏆</span>':''}
+        <i class="fa-solid fa-chevron-${round.current?'down':'right'}" style="color:rgba(255,255,255,.3);font-size:10px"></i>
       </div>
     `;
-    
-    // Round body (guesses list)
+
+    // Body
     const body=document.createElement('div');
-    body.style.cssText='display:none;padding:8px 4px 4px;';
+    body.style.cssText=`display:${round.current?'block':'none'};background:rgba(0,0,0,.2);padding:6px 8px;`;
+
     round.guesses.forEach((g,gi)=>{
       const {text,cls}=dirLabel(g.result);
       const row=document.createElement('div');
-      row.className='my-guess-item';
-      row.style.marginBottom='5px';
-      row.innerHTML=`<span class="mg-num">${g.val}</span><span class="mg-tag ${cls}">${text}</span><span class="mg-idx">#${gi+1}</span>`;
+      row.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.04);';
+      row.innerHTML=`
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#fff;min-width:50px">${g.val}</span>
+        <span class="mg-tag ${cls}" style="font-size:11px">${text}</span>
+        <span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>
+      `;
       body.appendChild(row);
     });
-    
-    // Toggle accordion
-    header.addEventListener('click',()=>{
-      const isOpen=body.style.display!=='none';
-      body.style.display=isOpen?'none':'block';
-      header.querySelector('i').style.transform=isOpen?'':'rotate(180deg)';
+
+    // Toggle
+    hdr.addEventListener('click',()=>{
+      const open=body.style.display!=='none';
+      body.style.display=open?'none':'block';
+      hdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
     });
-    
-    // Auto-open current round
-    if(round.current){
-      body.style.display='block';
-      header.querySelector('i').style.transform='rotate(180deg)';
-    }
-    
-    section.appendChild(header);
-    section.appendChild(body);
-    el.appendChild(section);
+
+    wrap.appendChild(hdr);
+    wrap.appendChild(body);
+    el.appendChild(wrap);
   });
 }
 
@@ -1847,29 +1913,89 @@ window.switchTab=function(tab){
   document.getElementById('panelMine').classList.toggle('active',tab==='mine');
 };
 
-// Submit guess
-document.getElementById('submitBtn').addEventListener('click',submitGuess);
-document.getElementById('guessInput').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){e.preventDefault();submitGuess();}
-  if(e.key==='Backspace'){e.stopPropagation();} // prevent back navigation
+// ── INLINE KEYPAD ──
+let guessValue='';
+
+function updateGuessDisplay(){
+  const el=document.getElementById('guessDisplayText');
+  if(!el) return;
+  el.className='cursor-blink';
+  if(guessValue===''){
+    el.textContent='';
+    el.style.color='rgba(255,255,255,.4)';
+  } else {
+    el.textContent=guessValue;
+    el.style.color='#fff';
+  }
+  document.getElementById('guessInput').value=guessValue;
+}
+
+function resetKeypad(){
+  guessValue='';
+  updateGuessDisplay();
+}
+
+document.querySelectorAll('.kpad-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const val=btn.dataset.val;
+    if(!val) return;
+    if(val==='.'){
+      if(guessValue.includes('.')) return;
+      guessValue+=guessValue===''?'0.':'.';
+    } else {
+      if(guessValue==='0'||guessValue==='') guessValue=val;
+      else guessValue+=val;
+    }
+    updateGuessDisplay();
+  });
 });
-document.getElementById('guessInput').addEventListener('input',()=>{
-  document.getElementById('timerLabel').textContent='60s';
-  document.getElementById('timerPill').classList.remove('timer-urgent');
+
+document.getElementById('kpadDel').addEventListener('click',()=>{
+  guessValue=guessValue.slice(0,-1);
+  updateGuessDisplay();
+});
+
+// Also support keyboard typing on desktop
+document.addEventListener('keydown',(e)=>{
+  if(document.getElementById('guessBar').classList.contains('hidden')) return;
+  if(e.repeat) return; // prevent key repeat
+  if('0123456789'.includes(e.key)){
+    if(guessValue==='') guessValue=e.key;
+    else guessValue+=e.key;
+    updateGuessDisplay();
+  } else if(e.key==='.'){
+    if(!guessValue.includes('.')){
+      guessValue+=guessValue===''?'0.':'.';
+      updateGuessDisplay();
+    }
+  } else if(e.key==='Backspace'){
+    guessValue=guessValue.slice(0,-1);
+    updateGuessDisplay();
+  } else if(e.key==='Enter'){
+    e.preventDefault();
+    submitGuess();
+  }
+});
+
+// Submit guess
+document.getElementById('submitBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  submitGuess();
 });
 
 async function submitGuess(){
-  const input=document.getElementById('guessInput');
-  const raw=input.value.trim(), val=parseFloat(raw);
+  const raw=guessValue;
+  const val=parseFloat(raw);
   if(raw===''||isNaN(val)){
-    input.classList.add('shake');
-    setTimeout(()=>input.classList.remove('shake'),300);
+    document.getElementById('guessDisplay').classList.add('shake');
+    setTimeout(()=>document.getElementById('guessDisplay').classList.remove('shake'),300);
     return;
   }
   const guessVal=val;
-  input.value='';
-  input.focus();
-  // Submit in background — don't disable input or switch tabs
+  guessValue='';
+  updateGuessDisplay();
+  // Submit in background
   try{
     const fn=httpsCallable(fns,'submitGuess');
     const res=await fn({gameId:roomCode,userId:myUserId,guess:guessVal});
@@ -1877,10 +2003,15 @@ async function submitGuess(){
     showResultToast(res.data?.result??'unknown',guessVal);
   }catch(e){
     toast('Error: '+(e.message||'Unknown'));
-    input.value=guessVal;
-  }finally{
-    input.focus();
-    input.select();
+    guessValue=String(guessVal);
+    updateGuessDisplay();
+  } finally {
+    // Blink the display to show ready for next input
+    const disp = document.getElementById('guessDisplay');
+    if(disp){
+      disp.style.borderColor='#22c55e';
+      setTimeout(()=>{ disp.style.borderColor='#f97316'; },400);
+    }
   }
 }
 
@@ -2001,6 +2132,18 @@ document.getElementById('endResetBtn').addEventListener('click',()=>{
 // Win
 function showWin(data){
   clearInterval(timerInterval);
+  // Save current round to history
+  if(myGuesses.length>0){
+    const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+    history.push({
+      label:'Round '+(history.length+1),
+      date:new Date().toLocaleDateString(),
+      min:origMin, max:origMax,
+      guesses:[...myGuesses],
+      won:myGuesses.some(g=>g.result==='won')
+    });
+    localStorage.setItem('showdown_history',JSON.stringify(history));
+  }
   const isWinner=data.winnerId===myUserId;
   document.getElementById('winTitle').textContent=isWinner?'You Won! 🏆':'Game Over!';
   document.getElementById('winNum').textContent=data.targetNumber?.toFixed(2)??'--';
@@ -2330,7 +2473,7 @@ setTimeout(()=>{ if(!roomCode) restoreSession(); },1500);
 
 <script>
 if('serviceWorker'in navigator){
-  const isReal=!location.hostname.includes('claudeusercontent')&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1';
+  const isReal=!location.hostname.includes('claudeusercontent')&&!location.hostname.includes('github.dev')&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1';
   if(isReal){
     window.addEventListener('load',async()=>{
       try{
