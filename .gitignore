@@ -13,3 +13,4 @@ Thumbs.db
 
 # Secrets — NEVER commit real firebase config
 # Replace placeholders in index.html before deploying
+sounds/*.wav

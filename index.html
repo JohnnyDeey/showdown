@@ -639,26 +639,26 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 #specStats{display:flex;flex-direction:column;gap:5px}
 .spec-stat-row{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:rgba(255,255,255,.04);border-radius:7px}
 .spec-stat-name{font-size:12px;font-weight:700;color:#fff}
-.spec-stat-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.4)}
+.spec-stat-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(13, 0, 0, 0.4)}
 .spec-stat-count strong{color:#FFD700}
 
 /* Spec summary — light */
-#specTabSummary{background:#fafaf9!important;color:#1c1917;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#specTabSummary{background:linear-gradient(160deg,#022b466c 0%,#2196c4 40%,#032e39 100%)!important;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .spec-summary-area{padding:14px}
 .sum-stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.sum-stat-card{background:#fff;border:1.5px solid #e7e5e4;border-radius:12px;padding:12px;text-align:center}
+.sum-stat-card{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:12px;text-align:center;backdrop-filter:blur(6px)}
 .sum-stat-card .sv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#f97316}
-.sum-stat-card .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#78716c;margin-top:3px}
-.sum-sec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#78716c;margin:12px 0 8px}
-.sum-player-card{background:#fff;border:1.5px solid #e7e5e4;border-radius:12px;padding:12px 14px;margin-bottom:8px}
-.sum-player-name{font-size:14px;font-weight:800;color:#1c1917;margin-bottom:8px}
+.sum-stat-card .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.7);margin-top:3px}
+.sum-sec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.7);margin:12px 0 8px}
+.sum-player-card{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:12px 14px;margin-bottom:8px;backdrop-filter:blur(6px)}
+.sum-player-name{font-size:14px;font-weight:800;color:#fff;margin-bottom:8px}
 .sum-player-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .sum-ps{text-align:center}
 .sum-ps .v{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#f97316}
-.sum-ps .l{font-size:9px;font-weight:700;text-transform:uppercase;color:#78716c;margin-top:1px}
+.sum-ps .l{font-size:9px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,.7);margin-top:1px}
 .sum-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-.sum-table th{padding:7px 8px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#78716c;border-bottom:1px solid #e7e5e4}
-.sum-table td{padding:7px 8px;border-bottom:1px solid #f5f5f4;font-weight:700;color:#1c1917}
+.sum-table th{padding:7px 8px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);border-bottom:1px solid rgba(255,255,255,.2)}
+.sum-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.1);font-weight:700;color:#fff}
 .tag-h{background:#fff1f2;color:#f43f5e;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
 .tag-l{background:#fff7ed;color:#f97316;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
 .tag-c{background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
@@ -713,11 +713,19 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
     <div class="title-sub">Family Edition</div>
   </div>
 
-  <div class="play-btn-wrap">
-    <div class="play-btn" id="playBtn">
-      <i class="fa-solid fa-play"></i>
+  <div class="play-btn-wrap" style="display:flex;flex-direction:row;gap:30px;align-items:center">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div class="play-btn" id="playBtn">
+        <i class="fa-solid fa-play"></i>
+      </div>
+      <div class="play-label">TAP TO PLAY</div>
     </div>
-    <div class="play-label">TAP TO PLAY</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div class="play-btn" id="watchBtn" style="background:radial-gradient(circle at 35% 35%,#0d9488,#065f46);box-shadow:0 0 0 4px rgba(13,148,136,.4),0 8px 24px rgba(0,0,0,.4)">
+        <i class="fa-solid fa-tv"></i>
+      </div>
+      <div class="play-label">WATCH LIVE</div>
+    </div>
   </div>
 
   <div class="bottom-icons">
@@ -737,10 +745,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 </div>
 
 <div class="builder-tag">Made by JohnnyDeey</div>
-<div id="playerTag" style="display:none;position:fixed;top:16px;right:16px;z-index:20;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.3);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:6px 12px 6px 8px;cursor:pointer" id="playerTagBtn">
-  <span id="playerTagEmoji" style="font-size:20px">🦁</span>
-  <span id="playerTagName" style="font-family:'Fredoka One',cursive;font-size:13px;color:#fff;letter-spacing:.04em">Player</span>
-</div>
+<div id="playerTag" style="display:none"></div>
 <div id="resultToast"></div>
 
 <!-- ══ POPUP: PLAY OPTIONS ══ -->
@@ -757,9 +762,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <button class="game-btn btn-blue" id="multiPlayBtn">
         <i class="fa-solid fa-users"></i><span>Multiplayer</span>
       </button>
-      <button class="game-btn btn-purple" id="specPlayBtn">
-        <i class="fa-solid fa-tv"></i><span>Spectator / TV</span>
-      </button>
+      <!-- Spectator moved to home screen Watch Live button -->
     </div>
   </div>
 </div>
@@ -854,19 +857,22 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
   </div>
 </div>
 
-<!-- ══ POPUP: SPECTATOR JOIN ══ -->
+<!-- ══ POPUP: WATCH LIVE ══ -->
 <div class="popup-overlay" id="specJoinPopup">
   <div class="popup-card">
     <div class="popup-title-bar">
-      <div class="popup-title">📺 Spectator</div>
+      <div class="popup-title">📺 Watch Live</div>
       <div class="popup-close" id="specJoinPopupClose">✕</div>
     </div>
     <div class="popup-body">
-      <div class="popup-back" id="backToPlay3"><i class="fa-solid fa-arrow-left"></i> Back</div>
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:40px">📺</div>
+        <p style="font-size:12px;font-weight:600;color:#6D3D1A;margin-top:6px">Enter the spectator code from the host to watch the game live on this screen</p>
+      </div>
       <div class="popup-label">Spectator Code</div>
       <input type="text" class="popup-field popup-field-code" id="specJoinCode" placeholder="XXXXXX" maxlength="6" autocomplete="off">
-      <button class="game-btn btn-purple" id="specJoinBtn">
-        <i class="fa-solid fa-eye"></i><span>View Game</span>
+      <button class="game-btn btn-teal" id="specJoinBtn">
+        <i class="fa-solid fa-tv"></i><span>Watch Game</span>
       </button>
     </div>
   </div>
@@ -1030,6 +1036,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
         <span id="headerChipEmoji" style="font-size:16px">🦁</span>
         <span id="headerChipName" style="font-family:'Fredoka One',cursive;font-size:12px;color:#FFD700;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
       </div>
+      <div class="hdr-btn" id="refreshBtn"><i class="fa-solid fa-rotate-right"></i></div>
       <div class="hdr-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></div>
       <button class="hdr-btn danger" id="endSessionBtn"><i class="fa-solid fa-xmark"></i> End</button>
     </div>
@@ -1057,6 +1064,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
   <div style="display:flex;flex-direction:column;flex:1;gap:6px">
     <!-- Number display + send button centered together -->
     <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <button id="hideKeypadBtn" style="width:42px;height:42px;border-radius:12px;border:none;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-keyboard"></i></button>
       <div id="guessDisplay" style="background:rgba(0,0,0,.4);border:2px solid #f97316;border-radius:12px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#fff;height:42px;display:flex;align-items:center;justify-content:center;min-width:140px;">
         <span id="guessDisplayText" style="color:rgba(255,255,255,.4)">_ _ _</span>
       </div>
@@ -1135,7 +1143,11 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <div class="spec-title">🎯 Family Showdown — Live</div>
       <div style="font-size:10px;color:rgba(255,255,255,.4);font-family:'JetBrains Mono',monospace" id="specHeaderCode"></div>
     </div>
-    <div style="font-size:10px;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace" id="specRoomCodeDisplay"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="font-size:10px;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace" id="specRoomCodeDisplay"></div>
+      <button id="specRefreshBtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:5px 10px;color:#fff;cursor:pointer;font-size:13px"><i class="fa-solid fa-rotate-right"></i></button>
+      <button id="specHomeBtn" style="background:rgba(231,76,60,.2);border:1px solid rgba(231,76,60,.3);border-radius:8px;padding:5px 10px;color:#E74C3C;cursor:pointer;font-size:13px"><i class="fa-solid fa-house"></i></button>
+    </div>
   </div>
   <div class="spec-tabs">
     <div class="spec-tab active" onclick="switchSpecTab('live')">⚡ Live</div>
@@ -1246,7 +1258,30 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
         <input type="password" inputmode="numeric" class="popup-field" id="registerPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
         <div class="popup-label">Confirm PIN</div>
         <input type="password" inputmode="numeric" class="popup-field" id="registerPinConfirm" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
-        <button class="game-btn btn-green" id="regStep2Btn">
+        <button class="game-btn btn-orange" id="regStep2Btn">
+          <i class="fa-solid fa-arrow-right"></i><span>Continue</span>
+        </button>
+      </div>
+
+      <!-- Step 3: Security Question -->
+      <div id="regStep3" style="display:none">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-size:30px">🔐</div>
+          <p style="font-size:12px;font-weight:700;color:#6D3D1A;margin-top:6px">Set a security question in case you forget your PIN</p>
+        </div>
+        <div class="popup-label">Choose a Security Question</div>
+        <select class="popup-field" id="registerSecQ" style="cursor:pointer">
+          <option value="">-- Select a question --</option>
+          <option value="q1">What is your mother's maiden name?</option>
+          <option value="q2">What was the name of your first pet?</option>
+          <option value="q3">What city were you born in?</option>
+          <option value="q4">What is your favourite food?</option>
+          <option value="q5">What was the name of your primary school?</option>
+        </select>
+        <div class="popup-label">Your Answer</div>
+        <input type="text" class="popup-field" id="registerSecA" placeholder="Your answer" autocomplete="off">
+        <p style="font-size:10px;font-weight:600;color:#6D3D1A;margin-bottom:12px">⚠️ Remember this answer — it's used to recover your PIN</p>
+        <button class="game-btn btn-green" id="regStep3Btn">
           <i class="fa-solid fa-check"></i><span>Create Account</span>
         </button>
       </div>
@@ -1285,13 +1320,40 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <div class="popup-close" id="forgotPinClose">✕</div>
     </div>
     <div class="popup-body">
-      <div class="popup-label">Your Username</div>
-      <input type="text" class="popup-field" id="forgotUsername" placeholder="e.g. john_4829" autocomplete="off" style="font-family:'JetBrains Mono',monospace">
-      <div class="popup-label">New PIN</div>
-      <input type="password" inputmode="numeric" class="popup-field" id="forgotNewPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
-      <button class="game-btn btn-orange" id="forgotPinBtn">
-        <i class="fa-solid fa-key"></i><span>Reset PIN</span>
-      </button>
+      <!-- Step 1: Enter username -->
+      <div id="forgotStep1">
+        <div class="popup-label">Your Username</div>
+        <input type="text" class="popup-field" id="forgotUsername" placeholder="e.g. john_4829" autocomplete="off" style="font-family:'JetBrains Mono',monospace">
+        <button class="game-btn btn-orange" id="forgotStep1Btn">
+          <i class="fa-solid fa-arrow-right"></i><span>Continue</span>
+        </button>
+      </div>
+      <!-- Step 2: Answer security question -->
+      <div id="forgotStep2" style="display:none">
+        <div style="background:rgba(125,60,152,.1);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center">
+          <p style="font-size:12px;font-weight:700;color:#7D3C98" id="forgotSecQuestion">Security question appears here</p>
+        </div>
+        <div class="popup-label">Your Answer</div>
+        <input type="text" class="popup-field" id="forgotSecAnswer" placeholder="Your answer" autocomplete="off">
+        <button class="game-btn btn-orange" id="forgotStep2Btn">
+          <i class="fa-solid fa-arrow-right"></i><span>Verify</span>
+        </button>
+      </div>
+      <!-- Step 3: Set new PIN -->
+      <div id="forgotStep3" style="display:none">
+        <div class="popup-label">New PIN</div>
+        <input type="password" inputmode="numeric" class="popup-field" id="forgotNewPin" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
+        <div class="popup-label">Confirm New PIN</div>
+        <input type="password" inputmode="numeric" class="popup-field" id="forgotNewPinConfirm" placeholder="••••" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.3em">
+        <button class="game-btn btn-green" id="forgotStep3Btn">
+          <i class="fa-solid fa-key"></i><span>Reset PIN</span>
+        </button>
+      </div>
+      <!-- Contact developer fallback -->
+      <div style="text-align:center;margin-top:12px">
+        <span style="font-size:11px;font-weight:600;color:#6D3D1A">Forgot your username or security answer? </span>
+        <span style="font-size:11px;font-weight:800;color:#7D3C98;cursor:pointer;text-decoration:underline" id="contactDevForgot">Contact Developer</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1381,6 +1443,9 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
           <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileGuesses">0</span>
         </div>
       </div>
+      <button class="game-btn btn-green" id="backupHistoryBtn" style="margin-bottom:8px">
+        <i class="fa-solid fa-cloud-arrow-up"></i><span>Backup My History</span>
+      </button>
       <button class="game-btn btn-orange" id="changePinBtn" style="margin-bottom:8px">
         <i class="fa-solid fa-key"></i><span>Change PIN</span>
       </button>
@@ -1399,16 +1464,70 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
       <div class="popup-close" id="settingsPopupClose">✕</div>
     </div>
     <div class="popup-body">
-      <div style="background:rgba(255,255,255,.3);border-radius:12px;padding:12px;margin-bottom:10px">
+      <!-- App Info -->
+      <div style="background:rgba(255,255,255,.3);border-radius:12px;padding:12px;margin-bottom:12px">
         <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#7D3C98;margin-bottom:4px">Family Showdown</div>
-        <div style="font-size:11px;font-weight:600;color:#6D3D1A">Version 1.0.0</div>
-        <div style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:2px">Made by JohnnyDeey</div>
+        <div style="font-size:11px;font-weight:600;color:#6D3D1A">Version 1.0.0 · Made by JohnnyDeey</div>
+      </div>
+      <!-- Music Settings -->
+      <div class="popup-label">🎵 Music & Sound</div>
+      <div style="background:rgba(255,255,255,.3);border-radius:12px;padding:4px;margin-bottom:12px">
+        <!-- Home Music -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08)">
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#7D3C98">🏠 Home Music</div>
+            <div style="font-size:10px;font-weight:600;color:#6D3D1A">Plays on the home screen</div>
+          </div>
+          <div class="toggle-sw" id="toggleHomeMusic" onclick="toggleMusic('home')"></div>
+        </div>
+        <!-- Game Music -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08)">
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#7D3C98">🎮 Game Music</div>
+            <div style="font-size:10px;font-weight:600;color:#6D3D1A">Plays during gameplay</div>
+          </div>
+          <div class="toggle-sw" id="toggleGameMusic" onclick="toggleMusic('game')"></div>
+        </div>
+        <!-- Spectator Music -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08)">
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#7D3C98">📺 Spectator Music</div>
+            <div style="font-size:10px;font-weight:600;color:#6D3D1A">Plays on the TV screen</div>
+          </div>
+          <div class="toggle-sw" id="toggleSpecMusic" onclick="toggleMusic('spec')"></div>
+        </div>
+        <!-- Sound Effects -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#7D3C98">🔊 Sound Effects</div>
+            <div style="font-size:10px;font-weight:600;color:#6D3D1A">Keypad clicks and result sounds</div>
+          </div>
+          <div class="toggle-sw" id="toggleSfx" onclick="toggleMusic('sfx')"></div>
+        </div>
       </div>
       <button class="game-btn btn-orange" id="contactDevBtn" style="margin-bottom:8px">
         <i class="fa-solid fa-envelope"></i><span>Contact Developer</span>
       </button>
       <button class="game-btn btn-red" id="deleteAccountBtn">
         <i class="fa-solid fa-trash"></i><span>Delete Account</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM POPUP -->
+<div class="popup-overlay" id="confirmPopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title" id="confirmTitle">Are you sure?</div>
+    </div>
+    <div class="popup-body">
+      <p style="font-size:13px;font-weight:600;color:#6D3D1A;margin-bottom:16px;text-align:center" id="confirmMsg"></p>
+      <button class="game-btn btn-red" id="confirmYesBtn">
+        <i class="fa-solid fa-check"></i><span id="confirmYesLabel">Yes</span>
+      </button>
+      <button class="game-btn btn-ghost" id="confirmNoBtn" style="background:rgba(255,255,255,.5);border:1.5px solid #A04000">
+        <i class="fa-solid fa-xmark"></i><span>Cancel</span>
       </button>
     </div>
   </div>
@@ -1496,6 +1615,195 @@ document.querySelectorAll('.popup-overlay').forEach(overlay=>{
     if(e.target===overlay) closePopup(overlay.id);
   });
 });
+
+// ── REUSABLE CONFIRM POPUP ──
+let confirmCallback = null;
+document.getElementById('confirmYesBtn').addEventListener('click',()=>{
+  closePopup('confirmPopup');
+  if(confirmCallback) confirmCallback();
+  confirmCallback = null;
+});
+document.getElementById('confirmNoBtn').addEventListener('click',()=>{
+  closePopup('confirmPopup');
+  confirmCallback = null;
+});
+
+function showConfirm(title, msg, yesLabel, callback){
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmYesLabel').textContent = yesLabel || 'Yes';
+  confirmCallback = callback;
+  openPopup('confirmPopup');
+}
+
+// ── REFRESH BUTTON ──
+document.getElementById('refreshBtn').addEventListener('click',()=>{
+  saveSession();
+  location.reload();
+});
+
+// ── HIDE/SHOW KEYPAD ──
+let keypadVisible = true;
+document.getElementById('hideKeypadBtn').addEventListener('click',()=>{
+  keypadVisible = !keypadVisible;
+  document.getElementById('inlineKeypad').style.display = keypadVisible ? 'flex' : 'none';
+});
+
+// ── SOUND EFFECTS ──
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function getAudio(){
+  if(!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playTone(freq, duration, type='sine', vol=0.3){
+  try{
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  }catch(e){}
+}
+
+function soundKey(){ if(musicSettings.sfx) playTone(600, 0.05, 'sine', 0.15); }
+
+function soundTooHigh(){
+  if(!musicSettings.sfx) return;
+  playTone(523, 0.12, 'sine', 0.3);
+  setTimeout(()=>playTone(392, 0.18, 'sine', 0.3), 130);
+}
+
+function soundTooLow(){
+  if(!musicSettings.sfx) return;
+  playTone(392, 0.12, 'sine', 0.3);
+  setTimeout(()=>playTone(523, 0.18, 'sine', 0.3), 130);
+}
+
+function soundWin(){
+  stopAllMusic();
+  try{
+    winAudio = new Audio('sounds/win.mp3');
+    winAudio.loop = true;
+    winAudio.volume = 0.8;
+    winAudio.play().catch(()=>{
+      const notes=[523,659,784,1047,1319];
+      notes.forEach((n,i)=>setTimeout(()=>playTone(n,0.4,'sine',0.5),i*180));
+    });
+  }catch(e){}
+}
+
+function stopWinSound(){ stopAllMusic(); }
+
+// ── AUDIO MANAGER ──
+let homeAudio = null;
+let bgAudio = null;
+let winAudio = null;
+const bgTracks = ['sounds/bgmusic1.mp3','sounds/bgmusic3.mp3','sounds/bgmusic4.mp3'];
+const specBgTracks = ['sounds/specbg1.mp3','sounds/specbg2.mp3'];
+let specBgIndex = 0;
+let specBgAudio = null;
+
+function playSpecBgMusic(){
+  if(!musicSettings.spec) return;
+  stopAllMusic();
+  if(specBgAudio){ specBgAudio.pause(); specBgAudio=null; }
+  specBgIndex = Math.floor(Math.random()*specBgTracks.length);
+  playNextSpecBg();
+}
+
+function playNextSpecBg(){
+  try{
+    specBgAudio = new Audio(specBgTracks[specBgIndex]);
+    specBgAudio.volume = 0.35;
+    specBgAudio.play().catch(()=>{});
+    specBgAudio.onended = ()=>{
+      specBgIndex = (specBgIndex+1) % specBgTracks.length;
+      playNextSpecBg();
+    };
+  }catch(e){}
+}
+
+function stopSpecBgMusic(){
+  if(specBgAudio){ specBgAudio.pause(); specBgAudio=null; }
+}
+let bgTrackIndex = 0;
+
+function stopAllMusic(){
+  if(homeAudio){ homeAudio.pause(); homeAudio.currentTime=0; homeAudio=null; }
+  if(bgAudio){ bgAudio.pause(); bgAudio.currentTime=0; bgAudio=null; }
+  if(winAudio){ winAudio.pause(); winAudio.currentTime=0; winAudio=null; }
+}
+
+function playHomeMusic(){
+  if(!musicSettings.home) return;
+  stopAllMusic();
+  try{
+    homeAudio = new Audio('sounds/home.mp3');
+    homeAudio.loop = true;
+    homeAudio.volume = 0.4;
+    homeAudio.play().catch(()=>{});
+  }catch(e){}
+}
+
+function playBgMusic(){
+  if(!musicSettings.game) return;
+  stopAllMusic();
+  bgTrackIndex = Math.floor(Math.random()*bgTracks.length);
+  playNextBgTrack();
+}
+
+function playNextBgTrack(){
+  try{
+    if(bgAudio){ bgAudio.pause(); bgAudio=null; }
+    bgAudio = new Audio(bgTracks[bgTrackIndex]);
+    bgAudio.volume = 0.35;
+    bgAudio.play().catch(()=>{});
+    bgAudio.onended = ()=>{
+      bgTrackIndex = (bgTrackIndex+1) % bgTracks.length;
+      playNextBgTrack();
+    };
+  }catch(e){}
+}
+
+// Spectator header buttons
+document.getElementById('specRefreshBtn').addEventListener('click',()=>{
+  saveSession();
+  location.reload();
+});
+document.getElementById('specHomeBtn').addEventListener('click',()=>{
+  localStorage.removeItem('showdown_spec_session');
+  document.getElementById('specScreen').classList.remove('show');
+  stopSpecBgMusic();
+  stopAllMusic();
+  playHomeMusic();
+});
+
+// ── SWIPE ON SPECTATOR SCREEN ──
+let specTouchStartX = 0;
+let specTouchStartY = 0;
+
+document.getElementById('specScreen').addEventListener('touchstart',(e)=>{
+  specTouchStartX = e.touches[0].clientX;
+  specTouchStartY = e.touches[0].clientY;
+},{passive:true});
+
+document.getElementById('specScreen').addEventListener('touchend',(e)=>{
+  const dx = e.changedTouches[0].clientX - specTouchStartX;
+  const dy = e.changedTouches[0].clientY - specTouchStartY;
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)){
+    if(dx < 0) switchSpecTab('summary');
+    else switchSpecTab('live');
+  }
+},{passive:true});
 
 // ── SWIPE TO SWITCH TABS ──
 let touchStartX = 0;
@@ -1607,6 +1915,7 @@ async function initUser(){
   if(currentUser){
     showPlayerTag();
     prefillNameFields();
+    syncHistoryFromFirestore();
   }
   // No popup on load — only when they tap Play
 }
@@ -1626,17 +1935,27 @@ document.getElementById('regStep1Btn').addEventListener('click',()=>{
   document.getElementById('regStep2').style.display='block';
 });
 
-// ── REGISTER STEP 2 ──
-document.getElementById('regStep2Btn').addEventListener('click', async ()=>{
-  const name    = document.getElementById('registerName').value.trim();
+// ── REGISTER STEP 2 — just validate PIN and go to step 3 ──
+document.getElementById('regStep2Btn').addEventListener('click', ()=>{
   const pin     = document.getElementById('registerPin').value.trim();
   const pinConf = document.getElementById('registerPinConfirm').value.trim();
-  if(!pin||pin.length!==4)     return toast('PIN must be 4 digits.');
-  if(pin!==pinConf)            return toast('PINs do not match.');
-  const btn = document.getElementById('regStep2Btn');
+  if(!pin||pin.length!==4)  return toast('PIN must be 4 digits.');
+  if(pin!==pinConf)         return toast('PINs do not match.');
+  document.getElementById('regStep2').style.display='none';
+  document.getElementById('regStep3').style.display='block';
+});
+
+// ── REGISTER STEP 3 — security question + create account ──
+document.getElementById('regStep3Btn').addEventListener('click', async ()=>{
+  const name    = document.getElementById('registerName').value.trim();
+  const pin     = document.getElementById('registerPin').value.trim();
+  const secQ    = document.getElementById('registerSecQ').value;
+  const secA    = document.getElementById('registerSecA').value.trim().toLowerCase();
+  if(!secQ)  return toast('Please select a security question.');
+  if(!secA)  return toast('Please enter your answer.');
+  const btn = document.getElementById('regStep3Btn');
   btn.disabled=true; btn.querySelector('span').textContent='Creating…';
   try{
-    // Check username not taken
     const existing = await getDoc(doc(db,'users',pendingUsername));
     if(existing.exists()){
       pendingUsername = generateUsername(name);
@@ -1645,6 +1964,8 @@ document.getElementById('regStep2Btn').addEventListener('click', async ()=>{
     const userData = {
       name, username:pendingUsername, emoji:pendingEmoji,
       pinHash: hashPin(pin),
+      securityQuestion: secQ,
+      securityAnswerHash: hashPin(secA),
       createdAt: serverTimestamp(),
       stats:{ gamesPlayed:0, wins:0, totalGuesses:0, gold:0, silver:0, bronze:0 }
     };
@@ -1692,6 +2013,7 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
     showPlayerTag();
     prefillNameFields();
     toast('Welcome back '+data.name+'! 🎉', true);
+    syncHistoryFromFirestore();
     onUserReady();
   }catch(e){
     toast('Error: '+(e.message||'Login failed.'));
@@ -1701,21 +2023,84 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
 });
 
 // ── FORGOT PIN ──
-document.getElementById('forgotPinClose').addEventListener('click',()=>closePopup('forgotPinPopup'));
-document.getElementById('forgotPinBtn').addEventListener('click', async ()=>{
+document.getElementById('forgotPinClose').addEventListener('click',()=>{
+  closePopup('forgotPinPopup');
+  // Reset steps
+  document.getElementById('forgotStep1').style.display='block';
+  document.getElementById('forgotStep2').style.display='none';
+  document.getElementById('forgotStep3').style.display='none';
+});
+
+document.getElementById('contactDevForgot').addEventListener('click',()=>{
+  window.open('mailto:sjohndamilola92@gmail.com?subject=Family Showdown PIN Recovery','_blank');
+});
+
+let forgotUsernameCache = '';
+
+// Step 1 — verify username exists
+document.getElementById('forgotStep1Btn').addEventListener('click', async ()=>{
   const username = document.getElementById('forgotUsername').value.trim().toLowerCase();
-  const newPin   = document.getElementById('forgotNewPin').value.trim();
   if(!username) return toast('Enter your username.');
-  if(!newPin||newPin.length!==4) return toast('PIN must be 4 digits.');
+  const btn = document.getElementById('forgotStep1Btn');
+  btn.disabled=true; btn.querySelector('span').textContent='Checking…';
   try{
     const snap = await getDoc(doc(db,'users',username));
-    if(!snap.exists()) return toast('Username not found.');
-    await updateDoc(doc(db,'users',username),{ pinHash: hashPin(newPin) });
+    if(!snap.exists()) return toast('Username not found. Contact developer if you need help.');
+    const data = snap.data();
+    forgotUsernameCache = username;
+    // Show security question
+    const questions = {
+      q1:"What is your mother's maiden name?",
+      q2:"What was the name of your first pet?",
+      q3:"What city were you born in?",
+      q4:"What is your favourite food?",
+      q5:"What was the name of your primary school?"
+    };
+    const q = questions[data.securityQuestion] || 'Security question not set — contact developer.';
+    document.getElementById('forgotSecQuestion').textContent = q;
+    document.getElementById('forgotStep1').style.display='none';
+    document.getElementById('forgotStep2').style.display='block';
+  }catch(e){ toast('Error. Try again.'); }
+  finally{ btn.disabled=false; btn.querySelector('span').textContent='Continue'; }
+});
+
+// Step 2 — verify security answer
+document.getElementById('forgotStep2Btn').addEventListener('click', async ()=>{
+  const answer = document.getElementById('forgotSecAnswer').value.trim().toLowerCase();
+  if(!answer) return toast('Enter your answer.');
+  const btn = document.getElementById('forgotStep2Btn');
+  btn.disabled=true; btn.querySelector('span').textContent='Verifying…';
+  try{
+    const snap = await getDoc(doc(db,'users',forgotUsernameCache));
+    const data = snap.data();
+    if(data.securityAnswerHash !== hashPin(answer)){
+      toast('Wrong answer. Try again or contact developer.');
+      return;
+    }
+    document.getElementById('forgotStep2').style.display='none';
+    document.getElementById('forgotStep3').style.display='block';
+  }catch(e){ toast('Error. Try again.'); }
+  finally{ btn.disabled=false; btn.querySelector('span').textContent='Verify'; }
+});
+
+// Step 3 — set new PIN
+document.getElementById('forgotStep3Btn').addEventListener('click', async ()=>{
+  const newPin  = document.getElementById('forgotNewPin').value.trim();
+  const confirm = document.getElementById('forgotNewPinConfirm').value.trim();
+  if(!newPin||newPin.length!==4) return toast('PIN must be 4 digits.');
+  if(newPin!==confirm) return toast('PINs do not match.');
+  const btn = document.getElementById('forgotStep3Btn');
+  btn.disabled=true; btn.querySelector('span').textContent='Saving…';
+  try{
+    await updateDoc(doc(db,'users',forgotUsernameCache),{ pinHash: hashPin(newPin) });
     closePopup('forgotPinPopup');
-    toast('PIN reset successfully!', true);
-  }catch(e){
-    toast('Error resetting PIN.');
-  }
+    // Reset steps for next time
+    document.getElementById('forgotStep1').style.display='block';
+    document.getElementById('forgotStep2').style.display='none';
+    document.getElementById('forgotStep3').style.display='none';
+    toast('PIN reset successfully! Login with your new PIN.', true);
+  }catch(e){ toast('Error resetting PIN.'); }
+  finally{ btn.disabled=false; btn.querySelector('span').textContent='Reset PIN'; }
 });
 
 // ── CHECK IF REGISTERED BEFORE PLAYING ──
@@ -1761,14 +2146,50 @@ document.getElementById('changePinBtn').addEventListener('click',()=>{
   openPopup('forgotPinPopup');
 });
 
-document.getElementById('logoutBtn').addEventListener('click',()=>{
-  if(!confirm('Logout? You will need your username and PIN to login again.')) return;
-  localStorage.removeItem('showdown_user');
-  currentUser = null;
-  document.getElementById('playerTag').style.display='none';
-  closePopup('profilePopup');
-  toast('Logged out successfully.', true);
+// One-time backup button
+document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=>{
+  if(!currentUser) return;
+  const history = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  if(history.length===0){ toast('No history to backup.'); return; }
+  try{
+    for(let i=0;i<history.length;i++){
+      const round = history[i];
+      await setDoc(doc(db,`users/${currentUser.username}/gameHistory/round_${i+1}`),{
+        date: round.date,
+        min: round.min,
+        max: round.max,
+        guesses: round.guesses,
+        won: round.won||false,
+        roundNumber: i+1,
+        backedUpAt: serverTimestamp()
+      });
+    }
+    toast('History backed up! '+history.length+' rounds saved.', true);
+  }catch(e){ toast('Backup failed: '+(e.message||'')); }
 });
+
+// One-time backup button
+document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=>{
+  if(!currentUser) return;
+  const history = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  if(history.length===0){ toast('No history to backup.'); return; }
+  try{
+    for(let i=0;i<history.length;i++){
+      const round = history[i];
+      await setDoc(doc(db,`users/${currentUser.username}/gameHistory/round_${i+1}`),{
+        date: round.date,
+        min: round.min,
+        max: round.max,
+        guesses: round.guesses,
+        won: round.won||false,
+        roundNumber: i+1,
+        backedUpAt: serverTimestamp()
+      });
+    }
+    toast('History backed up! '+history.length+' rounds saved.', true);
+  }catch(e){ toast('Backup failed: '+(e.message||'')); }
+});
+
 
 // ── STATS VIEW ──
 function openStatsView(){
@@ -1833,39 +2254,104 @@ document.getElementById('statsBtn').addEventListener('click',()=>{
   openStatsView();
 });
 
+// ── MUSIC SETTINGS ──
+const musicSettings = JSON.parse(localStorage.getItem('showdown_music')||'{"home":true,"game":true,"spec":true,"sfx":true}');
+
+function saveMusicSettings(){ localStorage.setItem('showdown_music', JSON.stringify(musicSettings)); }
+
+function initMusicToggles(){
+  Object.keys(musicSettings).forEach(key=>{
+    const el = document.getElementById('toggle'+key.charAt(0).toUpperCase()+key.slice(1)+'Music') ||
+               document.getElementById('toggleSfx');
+    const toggleId = key==='sfx' ? 'toggleSfx' : 'toggle'+key.charAt(0).toUpperCase()+key.slice(1)+'Music';
+    const toggle = document.getElementById(toggleId);
+    if(toggle && musicSettings[key]) toggle.classList.add('on');
+  });
+}
+
+window.toggleMusic = function(type){
+  musicSettings[type] = !musicSettings[type];
+  const toggleId = type==='sfx'?'toggleSfx':'toggle'+type.charAt(0).toUpperCase()+type.slice(1)+'Music';
+  const toggle = document.getElementById(toggleId);
+  if(toggle) toggle.classList.toggle('on', musicSettings[type]);
+  saveMusicSettings();
+  // Apply immediately
+  if(type==='home'){
+    if(!musicSettings.home && homeAudio){ homeAudio.pause(); }
+    else if(musicSettings.home) playHomeMusic();
+  }
+  if(type==='game'){
+    if(!musicSettings.game && bgAudio){ bgAudio.pause(); }
+    else if(musicSettings.game && document.getElementById('gameScreen').classList.contains('show')) playBgMusic();
+  }
+  if(type==='spec'){
+    if(!musicSettings.spec && specBgAudio){ specBgAudio.pause(); }
+    else if(musicSettings.spec && document.getElementById('specScreen').classList.contains('show')) playSpecBgMusic();
+  }
+  toast(type.charAt(0).toUpperCase()+type.slice(1)+' '+(musicSettings[type]?'ON':'OFF'), musicSettings[type]);
+};
+
+// Respect music settings in playHomeMusic
+const _origPlayHome = playHomeMusic;
+
 // ── SETTINGS ──
-document.getElementById('settingsBtn').addEventListener('click',()=>openPopup('settingsPopup'));
+document.getElementById('settingsBtn').addEventListener('click',()=>{
+  initMusicToggles();
+  openPopup('settingsPopup');
+});
 document.getElementById('settingsPopupClose').addEventListener('click',()=>closePopup('settingsPopup'));
 
 document.getElementById('contactDevBtn').addEventListener('click',()=>{
   window.open('mailto:sjohndamilola92@gmail.com?subject=Family Showdown Feedback','_blank');
 });
 
-document.getElementById('deleteAccountBtn').addEventListener('click', async ()=>{
+document.getElementById('deleteAccountBtn').addEventListener('click',()=>{
   if(!currentUser){ toast('Not logged in.'); return; }
-  if(!confirm('Delete your account? All your data will be lost permanently.')) return;
+  showConfirm('Delete Account','All your data will be permanently lost. This cannot be undone.','Delete', async()=>{
+    try{
+      await updateDoc(doc(db,'users',currentUser.username),{ deleted:true, deletedAt: serverTimestamp() });
+      localStorage.removeItem('showdown_user');
+      currentUser = null;
+      document.getElementById('playerTag').style.display='none';
+      closePopup('settingsPopup');
+      toast('Account deleted.', true);
+    }catch(e){ toast('Error deleting account.'); }
+  });
+});
+
+// ── PLAYER TAG CLICK ──
+document.getElementById('playerTag').addEventListener('click',()=>{
+  if(currentUser) loadAndShowProfile();
+});
+
+// ── PLAYER TAG CLICK ──
+document.getElementById('playerTag').addEventListener('click',()=>{
+  if(currentUser) loadAndShowProfile();
+});
+
+// Start home music on first interaction
+document.getElementById('playBtn').addEventListener('click',()=>{
+  playHomeMusic();
+},{once:true});
+
+// ── SYNC HISTORY FROM FIRESTORE TO LOCALSTORAGE ──
+async function syncHistoryFromFirestore(){
+  if(!currentUser) return;
   try{
-    await updateDoc(doc(db,'users',currentUser.username),{ deleted:true, deletedAt: serverTimestamp() });
-    localStorage.removeItem('showdown_user');
-    currentUser = null;
-    document.getElementById('playerTag').style.display='none';
-    closePopup('settingsPopup');
-    toast('Account deleted.', true);
-  }catch(e){ toast('Error deleting account.'); }
-});
-
-// ── PLAYER TAG CLICK ──
-document.getElementById('playerTag').addEventListener('click',()=>{
-  if(currentUser) loadAndShowProfile();
-});
-
-// ── INIT ──
-initUser();
-
-// ── PLAYER TAG CLICK ──
-document.getElementById('playerTag').addEventListener('click',()=>{
-  if(currentUser) loadAndShowProfile();
-});
+    const snap = await getDocs(collection(db,`users/${currentUser.username}/gameHistory`));
+    if(snap.empty) return;
+    const firestoreRounds = [];
+    snap.forEach(d=> firestoreRounds.push(d.data()));
+    // Sort by round number
+    firestoreRounds.sort((a,b)=>(a.roundNumber||0)-(b.roundNumber||0));
+    // Only sync if Firestore has more rounds than localStorage
+    const localHistory = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+    if(firestoreRounds.length > localHistory.length){
+      localStorage.setItem('showdown_history', JSON.stringify(firestoreRounds));
+      toast('History synced from cloud!', true);
+    }
+  }catch(e){ console.log('Sync error:', e); }
+}
 
 // ── INIT ──
 initUser();
@@ -1932,11 +2418,12 @@ document.getElementById('playBtn').addEventListener('click',()=>{
   checkUserBeforePlay(()=>openPopup('playPopup'));
 });
 
-// Play popup
-document.getElementById('playPopupClose').addEventListener('click',()=>closePopup('playPopup'));
+// Watch Live button
+document.getElementById('watchBtn').addEventListener('click',()=>{
+  openPopup('specJoinPopup');
+});
 document.getElementById('soloPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('soloPopup');});
 document.getElementById('multiPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('multiPopup');});
-document.getElementById('specPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('specJoinPopup');});
 
 // Multi popup
 document.getElementById('multiPopupClose').addEventListener('click',()=>{closePopup('multiPopup');openPopup('playPopup');});
@@ -1957,8 +2444,7 @@ document.getElementById('soloPopupClose').addEventListener('click',()=>{closePop
 document.getElementById('backToPlay2').addEventListener('click',()=>{closePopup('soloPopup');openPopup('playPopup');});
 
 // Spec join popup
-document.getElementById('specJoinPopupClose').addEventListener('click',()=>{closePopup('specJoinPopup');openPopup('playPopup');});
-document.getElementById('backToPlay3').addEventListener('click',()=>{closePopup('specJoinPopup');openPopup('playPopup');});
+document.getElementById('specJoinPopupClose').addEventListener('click',()=>{closePopup('specJoinPopup');});
 
 // Rules
 document.getElementById('rulesBtn').addEventListener('click',()=>openPopup('rulesPopup'));
@@ -2008,18 +2494,14 @@ document.getElementById('profileNameBtn').addEventListener('touchend',(e)=>{
   openStatsView();
 });
 
-document.getElementById('changePinBtn').addEventListener('click',()=>{
-  closePopup('profilePopup');
-  document.getElementById('forgotUsername').value = currentUser.username;
-  openPopup('forgotPinPopup');
-});
+
 
 document.getElementById('logoutBtn').addEventListener('click',()=>{
-  if(!confirm('Logout? You will need your username and PIN to login again.')) return;
   localStorage.removeItem('showdown_user');
   currentUser = null;
   document.getElementById('playerTag').style.display='none';
   closePopup('profilePopup');
+  playHomeMusic();
   toast('Logged out!', true);
 });
 
@@ -2190,6 +2672,7 @@ function launchGameplay(){
   document.getElementById('activeRoomCode').textContent=roomCode;
   gameStartTime=Date.now();
   saveSession();
+  playBgMusic();
   document.getElementById('gameScreen').classList.add('show');
   initRoomSync();
 }
@@ -2302,11 +2785,18 @@ function initRoomSync(){
       if(ts < currentRoundStartTime) return; // skip old rounds
       count++;
       const item=d.data(),isSys=item.name==='SYSTEM';
-      const {text,cls}=dirLabel(item.result);
+      const {text,cls}=dirLabel(item.result, item.leftPlayer);
       const displayName=isSys?'⚙️':(playerNames[item.name.toLowerCase().replace(/ /g,'_')]||item.name);
       const div=document.createElement('div'); div.className='feed-item';
       div.innerHTML=`<span class="fi-name">${displayName}</span><span class="fi-result ${cls}">${text}</span>`;
       feed.appendChild(div);
+      
+      // Show "Continue without X?" prompt to remaining players
+      if(item.result==='player_left' && item.leftPlayer && item.leftPlayer !== myUserId.replace(/_/g,' ')){
+        openPopup('deadGamePopup');
+        document.querySelector('#deadGamePopup h3').textContent = item.leftPlayer+' has left';
+        document.querySelector('#deadGamePopup p').textContent = 'Do you want to continue playing without them?';
+      }
     });
     if(count===0) feed.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:8px">Guesses appear here…</div>';
   });
@@ -2329,11 +2819,12 @@ function initRoomSync(){
   });
 }
 
-function dirLabel(r){
+function dirLabel(r,extra){
   if(r==='higher') return {text:'↑ Too Low',cls:'higher'};
   if(r==='lower')  return {text:'↓ Too High',cls:'lower'};
   if(r==='correct'||r==='won') return {text:'🎯 Correct!',cls:'correct'};
   if(r==='timeout') return {text:'⏱ Timed out',cls:'sys'};
+  if(r==='player_left') return {text:'🚪 '+(extra||'Player')+' left',cls:'sys'};
   return {text:'🎲 Guessed',cls:'sys'};
 }
 
@@ -2355,14 +2846,16 @@ function renderMyGuesses(){
   const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
   const allRounds=[...history];
 
-  // Add current round
+  // Add current round at top
   if(myGuesses.length>0){
     allRounds.push({
       label:'Current Round',
       date:new Date().toLocaleDateString(),
       min:origMin, max:origMax,
       guesses:[...myGuesses],
-      current:true
+      current:true,
+      won:myGuesses.some(g=>g.result==='won'),
+      rawDate: new Date()
     });
   }
 
@@ -2371,53 +2864,151 @@ function renderMyGuesses(){
     return;
   }
 
-  [...allRounds].reverse().forEach((round,i)=>{
-    const won=round.guesses.some(g=>g.result==='won');
-    const roundNum=allRounds.length-i;
-
-    // Header row
-    const wrap=document.createElement('div');
-    wrap.style.cssText='margin-bottom:6px;border-radius:10px;overflow:hidden;';
-
-    const hdr=document.createElement('div');
-    hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.08);padding:8px 12px;cursor:pointer;';
+  // Show current round at top separately
+  const currentRound = allRounds.find(r=>r.current);
+  if(currentRound){
+    const wrap = document.createElement('div');
+    wrap.style.cssText='margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid rgba(34,197,94,.3)';
+    const hdr = document.createElement('div');
+    hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(34,197,94,.1);padding:8px 12px;cursor:pointer;';
     hdr.innerHTML=`
       <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:10px;font-weight:800;color:#FFD700;font-family:'Fredoka One',cursive">${round.current?'🟢 Now':'R'+roundNum}</span>
-        <span style="font-size:10px;color:rgba(255,255,255,.4)">${round.date} · ${round.guesses.length} guesses · ${round.min}–${round.max}</span>
+        <span style="font-size:11px;font-weight:800;color:#22c55e;font-family:'Fredoka One',cursive">🟢 Current Round</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.4)">${currentRound.guesses.length} guesses · ${currentRound.min}–${currentRound.max}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        ${won?'<span style="font-size:10px;color:#22c55e;font-weight:800">🏆</span>':''}
-        <i class="fa-solid fa-chevron-${round.current?'down':'right'}" style="color:rgba(255,255,255,.3);font-size:10px"></i>
-      </div>
+      <i class="fa-solid fa-chevron-down" style="color:rgba(255,255,255,.3);font-size:10px"></i>
     `;
-
-    // Body
-    const body=document.createElement('div');
-    body.style.cssText=`display:${round.current?'block':'none'};background:rgba(0,0,0,.2);padding:6px 8px;`;
-
-    round.guesses.forEach((g,gi)=>{
+    const body = document.createElement('div');
+    body.style.cssText='display:block;background:rgba(0,0,0,.2);padding:6px 8px;';
+    currentRound.guesses.forEach((g,gi)=>{
       const {text,cls}=dirLabel(g.result);
       const row=document.createElement('div');
       row.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.04);';
-      row.innerHTML=`
-        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#fff;min-width:50px">${g.val}</span>
-        <span class="mg-tag ${cls}" style="font-size:11px">${text}</span>
-        <span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>
-      `;
+      row.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#fff;min-width:50px">${g.val}</span><span class="mg-tag ${cls}" style="font-size:11px">${text}</span><span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>`;
       body.appendChild(row);
     });
-
-    // Toggle
     hdr.addEventListener('click',()=>{
       const open=body.style.display!=='none';
       body.style.display=open?'none':'block';
       hdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
     });
-
-    wrap.appendChild(hdr);
-    wrap.appendChild(body);
+    wrap.appendChild(hdr); wrap.appendChild(body);
     el.appendChild(wrap);
+  }
+
+  // Group past rounds by Year → Month → Day
+  const pastRounds = allRounds.filter(r=>!r.current);
+  if(pastRounds.length===0) return;
+
+  // Build tree: {year: {month: {day: [rounds]}}}
+  const tree = {};
+  pastRounds.forEach(round=>{
+    const d = new Date(round.date);
+    const year = d.getFullYear() || new Date().getFullYear();
+    const month = d.toLocaleString('default',{month:'long'}) || 'Unknown';
+    const day = d.getDate() || 1;
+    if(!tree[year]) tree[year]={};
+    if(!tree[year][month]) tree[year][month]={};
+    if(!tree[year][month][day]) tree[year][month][day]=[];
+    tree[year][month][day].push(round);
+  });
+
+  // Render tree
+  Object.keys(tree).sort((a,b)=>b-a).forEach(year=>{
+    // Year accordion
+    const yearWrap=document.createElement('div');
+    yearWrap.style.cssText='margin-bottom:6px;';
+    const yearHdr=document.createElement('div');
+    yearHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);border-radius:10px;padding:9px 12px;cursor:pointer;';
+    yearHdr.innerHTML=`<span style="font-family:'Fredoka One',cursive;font-size:14px;color:#FFD700">${year}</span><i class="fa-solid fa-chevron-right" style="color:rgba(255,255,255,.3);font-size:10px"></i>`;
+    const yearBody=document.createElement('div');
+    yearBody.style.display='none';
+    yearBody.style.paddingLeft='8px';
+    yearBody.style.marginTop='4px';
+
+    Object.keys(tree[year]).forEach(month=>{
+      // Month accordion
+      const monWrap=document.createElement('div');
+      monWrap.style.cssText='margin-bottom:4px;';
+      const monHdr=document.createElement('div');
+      monHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border-radius:8px;padding:7px 10px;cursor:pointer;';
+      monHdr.innerHTML=`<span style="font-size:12px;font-weight:800;color:rgba(255,255,255,.7)">${month}</span><i class="fa-solid fa-chevron-right" style="color:rgba(255,255,255,.3);font-size:10px"></i>`;
+      const monBody=document.createElement('div');
+      monBody.style.display='none';
+      monBody.style.paddingLeft='8px';
+      monBody.style.marginTop='4px';
+
+      Object.keys(tree[year][month]).sort((a,b)=>b-a).forEach(day=>{
+        // Day accordion
+        const dayRounds=tree[year][month][day];
+        const dayWrap=document.createElement('div');
+        dayWrap.style.cssText='margin-bottom:4px;';
+        const dayHdr=document.createElement('div');
+        dayHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:8px;padding:6px 10px;cursor:pointer;';
+        dayHdr.innerHTML=`<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5)">${month} ${day}</span><span style="font-size:10px;color:rgba(255,255,255,.3)">${dayRounds.length} round${dayRounds.length>1?'s':''}</span><i class="fa-solid fa-chevron-right" style="color:rgba(255,255,255,.3);font-size:10px;margin-left:6px"></i>`;
+        const dayBody=document.createElement('div');
+        dayBody.style.display='none';
+        dayBody.style.paddingLeft='8px';
+        dayBody.style.marginTop='4px';
+
+        dayRounds.forEach((round,ri)=>{
+          const won=round.guesses.some(g=>g.result==='won');
+          const rWrap=document.createElement('div');
+          rWrap.style.cssText='margin-bottom:4px;border-radius:8px;overflow:hidden;';
+          const rHdr=document.createElement('div');
+          rHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);padding:6px 10px;cursor:pointer;';
+          rHdr.innerHTML=`
+            <span style="font-size:10px;font-weight:800;color:#FFD700">Round ${ri+1}</span>
+            <span style="font-size:10px;color:rgba(255,255,255,.3)">${round.guesses.length} guesses · ${round.min}–${round.max}</span>
+            ${won?'<span style="font-size:10px;color:#22c55e">🏆</span>':''}
+            <i class="fa-solid fa-chevron-right" style="color:rgba(255,255,255,.3);font-size:9px;margin-left:4px"></i>
+          `;
+          const rBody=document.createElement('div');
+          rBody.style.display='none';
+          rBody.style.background='rgba(0,0,0,.2)';
+          rBody.style.padding='6px 8px';
+          round.guesses.forEach((g,gi)=>{
+            const {text,cls}=dirLabel(g.result);
+            const row=document.createElement('div');
+            row.style.cssText='display:flex;align-items:center;gap:8px;padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.03);';
+            row.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#fff;min-width:46px">${g.val}</span><span class="mg-tag ${cls}" style="font-size:10px">${text}</span><span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>`;
+            rBody.appendChild(row);
+          });
+          rHdr.addEventListener('click',()=>{
+            const open=rBody.style.display!=='none';
+            rBody.style.display=open?'none':'block';
+            rHdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
+          });
+          rWrap.appendChild(rHdr); rWrap.appendChild(rBody);
+          dayBody.appendChild(rWrap);
+        });
+
+        dayHdr.addEventListener('click',()=>{
+          const open=dayBody.style.display!=='none';
+          dayBody.style.display=open?'none':'block';
+          dayHdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
+        });
+        dayWrap.appendChild(dayHdr); dayWrap.appendChild(dayBody);
+        monBody.appendChild(dayWrap);
+      });
+
+      monHdr.addEventListener('click',()=>{
+        const open=monBody.style.display!=='none';
+        monBody.style.display=open?'none':'block';
+        monHdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
+      });
+      monWrap.appendChild(monHdr); monWrap.appendChild(monBody);
+      yearBody.appendChild(monWrap);
+    });
+
+    yearHdr.addEventListener('click',()=>{
+      const open=yearBody.style.display!=='none';
+      yearBody.style.display=open?'none':'block';
+      yearHdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
+    });
+    yearWrap.appendChild(yearHdr); yearWrap.appendChild(yearBody);
+    el.appendChild(yearWrap);
+
   });
 }
 
@@ -2453,6 +3044,7 @@ function resetKeypad(){
 
 document.querySelectorAll('.kpad-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
+    soundKey();
     const val=btn.dataset.val;
     if(!val) return;
     if(val==='.'){
@@ -2467,6 +3059,7 @@ document.querySelectorAll('.kpad-btn').forEach(btn=>{
 });
 
 document.getElementById('kpadDel').addEventListener('click',()=>{
+  soundKey();
   guessValue=guessValue.slice(0,-1);
   updateGuessDisplay();
 });
@@ -2474,17 +3067,20 @@ document.getElementById('kpadDel').addEventListener('click',()=>{
 // Also support keyboard typing on desktop
 document.addEventListener('keydown',(e)=>{
   if(document.getElementById('guessBar').classList.contains('hidden')) return;
-  if(e.repeat) return; // prevent key repeat
+  if(e.repeat) return;
   if('0123456789'.includes(e.key)){
+    soundKey();
     if(guessValue==='') guessValue=e.key;
     else guessValue+=e.key;
     updateGuessDisplay();
-  } else if(e.key==='.'){
+  } else if(e.key==='.' || e.key==='*'){
+    // * on TV remote = decimal point
     if(!guessValue.includes('.')){
       guessValue+=guessValue===''?'0.':'.';
       updateGuessDisplay();
     }
-  } else if(e.key==='Backspace'){
+  } else if(e.key==='Backspace' || e.key==='Delete'){
+    soundKey();
     guessValue=guessValue.slice(0,-1);
     updateGuessDisplay();
   } else if(e.key==='Enter'){
@@ -2516,7 +3112,11 @@ async function submitGuess(){
     const fn=httpsCallable(fns,'submitGuess');
     const res=await fn({gameId:roomCode,userId:myUserId,guess:guessVal});
     consecutiveTimeouts=0;
-    showResultToast(res.data?.result??'unknown',guessVal);
+    const result=res.data?.result??'unknown';
+    if(result==='won') soundWin();
+    else if(result==='higher') soundTooLow();
+    else if(result==='lower') soundTooHigh();
+    showResultToast(result, guessVal);
   }catch(e){
     toast('Error: '+(e.message||'Unknown'));
     guessValue=String(guessVal);
@@ -2544,32 +3144,53 @@ function showResultToast(result,val){
 
 // Timer
 let consecutiveTimeouts = 0;
+let autoHomeTimeout = null;
+
 function startTimer(serverMs,activeIndex,orderArray){
   clearInterval(timerInterval);
+  if(autoHomeTimeout){ clearTimeout(autoHomeTimeout); autoHomeTimeout=null; }
   const pill=document.getElementById('timerPill'),label=document.getElementById('timerLabel');
+  
   timerInterval=setInterval(async()=>{
     const remaining=60-Math.floor((Date.now()-serverMs)/1000);
     if(remaining<=0){
-      clearInterval(timerInterval); label.textContent='0s'; pill.classList.add('timer-urgent');
+      clearInterval(timerInterval);
+      label.textContent='0s';
+      pill.classList.add('timer-urgent');
       const activeUser=(orderArray||[])[activeIndex];
+      
       if(activeUser===myUserId){
-        if(isSolo){
-          // Solo — ask if still there
-          openPopup('soloTimeoutPopup');
-        } else {
-          // Multiplayer — skip turn silently
+        // Show "Still There?" popup for both solo and multiplayer
+        openPopup('soloTimeoutPopup');
+        
+        // Auto-trigger Go Home after 120 seconds of no response
+        autoHomeTimeout = setTimeout(async()=>{
+          closePopup('soloTimeoutPopup');
+          // Auto go home
+          clearInterval(timerInterval);
+          if(!isSolo){
+            // Notify others via Firestore
+            try{
+              await httpsCallable(fns,'handleTimeout')({gameId:roomCode,userId:myUserId});
+            }catch(e){}
+          }
+          stopAllMusic();
+          playHomeMusic();
+          clearSession();
+          document.getElementById('gameScreen').classList.remove('show');
+          toast('You were inactive and have been removed from the game.');
+        }, 120000);
+      } else {
+        // Not my turn — check if active player has been skipped
+        if(!isSolo){
           try{
-            await httpsCallable(fns,'handleTimeout')({gameId:roomCode,userId:myUserId});
-            consecutiveTimeouts++;
-            if(consecutiveTimeouts>=2){
-              // Dead game detected
-              openPopup('deadGamePopup');
-            }
+            await httpsCallable(fns,'handleTimeout')({gameId:roomCode,userId:(orderArray||[])[activeIndex]});
           }catch(e){}
         }
       }
     } else {
-      label.textContent=remaining+'s'; pill.classList.toggle('timer-urgent',remaining<=10);
+      label.textContent=remaining+'s';
+      pill.classList.toggle('timer-urgent',remaining<=10);
     }
   },1000);
 }
@@ -2577,7 +3198,7 @@ function startTimer(serverMs,activeIndex,orderArray){
 // Solo timeout buttons
 document.getElementById('soloTimeoutContinue').addEventListener('click',async()=>{
   closePopup('soloTimeoutPopup');
-  // Reset timer by updating lastActiveTimestamp
+  if(autoHomeTimeout){ clearTimeout(autoHomeTimeout); autoHomeTimeout=null; }
   try{
     await updateDoc(doc(db,'games',roomCode),{
       lastActiveTimestamp:serverTimestamp()
@@ -2588,9 +3209,15 @@ document.getElementById('soloTimeoutContinue').addEventListener('click',async()=
 document.getElementById('soloTimeoutExit').addEventListener('click',async()=>{
   closePopup('soloTimeoutPopup');
   clearInterval(timerInterval);
-  // Mark as closed — never delete
+  if(autoHomeTimeout){ clearTimeout(autoHomeTimeout); autoHomeTimeout=null; }
+  stopAllMusic();
+  playHomeMusic();
   try{
-    await updateDoc(doc(db,'games',roomCode),{status:'closed'});
+    if(isSolo){
+      await updateDoc(doc(db,'games',roomCode),{status:'closed'});
+    } else {
+      await httpsCallable(fns,'handleTimeout')({gameId:roomCode,userId:myUserId});
+    }
   }catch(e){}
   clearSession();
   document.getElementById('gameScreen').classList.remove('show');
@@ -2625,8 +3252,12 @@ document.getElementById('soloContBtn').addEventListener('click',async()=>{
 });
 document.getElementById('soloQuitBtn').addEventListener('click',async()=>{
   document.getElementById('soloModal').classList.remove('show');
-  clearInterval(timerInterval); clearSession();
-  try{await deleteDoc(doc(db,'games',roomCode));}finally{location.reload();}
+  clearInterval(timerInterval);
+  stopAllMusic();
+  playHomeMusic();
+  clearSession();
+  try{await updateDoc(doc(db,'games',roomCode),{status:'closed'});}catch(e){}
+  document.getElementById('gameScreen').classList.remove('show');
 });
 
 // End session — just leave, don't delete
@@ -2636,7 +3267,10 @@ document.getElementById('endSessionBtn').addEventListener('click',()=>{
 document.getElementById('endConfirmClose').addEventListener('click',()=>closePopup('endConfirmPopup'));
 document.getElementById('endGoHomeBtn').addEventListener('click',()=>{
   closePopup('endConfirmPopup');
-  clearInterval(timerInterval); saveSession();
+  clearInterval(timerInterval);
+  saveSession();
+  stopAllMusic();
+  playHomeMusic();
   document.getElementById('gameScreen').classList.remove('show');
 });
 document.getElementById('endResetBtn').addEventListener('click',()=>{
@@ -2684,6 +3318,7 @@ function launchConfetti(){
 
 // Play again
 document.getElementById('playAgainBtn').addEventListener('click',()=>{
+  stopWinSound();
   openPopup('playAgainPopup');
 });
 
@@ -2795,12 +3430,17 @@ myGuesses=[]; origMin=min; origMax=max; lastTimerKey=null;
       renderMyGuesses();
       document.getElementById('winScreen').classList.remove('show');
       saveSession();
+      playBgMusic();
   }catch(e){toast('Error starting round: '+(e.message||''));}
 }
 
 // Exit home
 document.getElementById('exitHomeBtn').addEventListener('click',()=>{
-  clearInterval(timerInterval); saveSession();
+  stopWinSound();
+  stopAllMusic();
+  playHomeMusic();
+  clearInterval(timerInterval);
+  saveSession();
   document.getElementById('winScreen').classList.remove('show');
   document.getElementById('gameScreen').classList.remove('show');
 });
@@ -2854,6 +3494,8 @@ function launchSpectatorMode(gameId,specCode){
   document.getElementById('specRoomCodeDisplay').textContent='Game: '+gameId;
   document.getElementById('specScreen').classList.add('show');
   specGameStartTime=Date.now();
+  localStorage.setItem('showdown_spec_session',JSON.stringify({gameId,specCode}));
+  playSpecBgMusic();
   let origSet=false,wonShown=false;
 
   onSnapshot(doc(db,'games',gameId),(snap)=>{
@@ -2880,6 +3522,8 @@ function launchSpectatorMode(gameId,specCode){
         document.getElementById('specWinName').textContent=wName;
         document.getElementById('specWinNum').textContent='🎯 '+data.targetNumber?.toFixed(2);
         document.getElementById('specWinOverlay').classList.add('show');
+        stopSpecBgMusic();
+        soundWin();
         launchConfetti();
         setTimeout(()=>{document.getElementById('specWinOverlay').classList.remove('show');switchSpecTab('summary');},6000);
       });
@@ -2913,8 +3557,32 @@ function launchSpectatorMode(gameId,specCode){
   });
 }
 
+function makeAccordion(title, icon, content, openByDefault=false){
+  const wrap = document.createElement('div');
+  wrap.style.cssText='margin-bottom:10px;border-radius:12px;overflow:hidden;';
+  const hdr = document.createElement('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);padding:10px 14px;cursor:pointer;';
+  hdr.innerHTML=`<span style="font-family:Fredoka One,cursive;font-size:15px;color:#fff">${icon} ${title}</span><i class="fa-solid fa-chevron-${openByDefault?'down':'right'}" style="color:rgba(255,255,255,.7);font-size:12px"></i>`;
+  const body = document.createElement('div');
+  body.style.display = openByDefault?'block':'none';
+  body.style.background = 'rgba(0,0,0,.15)';
+  body.style.padding = '12px';
+  body.innerHTML = content;
+  hdr.addEventListener('click',()=>{
+    const open = body.style.display!=='none';
+    body.style.display = open?'none':'block';
+    hdr.querySelector('i').className=`fa-solid fa-chevron-${open?'right':'down'}`;
+  });
+  wrap.appendChild(hdr);
+  wrap.appendChild(body);
+  return wrap;
+}
+
 function renderSpecSummary(){
   const el=document.getElementById('specSummaryArea');
+  if(!el) return;
+  el.innerHTML='';
+
   const total=specAllGuesses.filter(g=>g.name!=='SYSTEM').length;
   const elapsed=specGameStartTime?Math.floor((Date.now()-specGameStartTime)/1000):0;
   const playerGuesses={};
@@ -2924,18 +3592,23 @@ function renderSpecSummary(){
     playerGuesses[g.name].total++;
     playerGuesses[g.name][g.result]=(playerGuesses[g.name][g.result]||0)+1;
   });
-  let html=`<div class="sum-stat-cards">
+
+  // ── Game Stats (open by default) ──
+  const statsHtml=`<div class="sum-stat-cards">
     <div class="sum-stat-card"><div class="sv">${total}</div><div class="sl">Total Guesses</div></div>
     <div class="sum-stat-card"><div class="sv">${Math.floor(elapsed/60)}m ${elapsed%60}s</div><div class="sl">Time</div></div>
     <div class="sum-stat-card"><div class="sv">${Object.keys(playerGuesses).length}</div><div class="sl">Players</div></div>
     ${specTargetNumber?`<div class="sum-stat-card"><div class="sv">${specTargetNumber.toFixed(2)}</div><div class="sl">The Number</div></div>`:''}
   </div>`;
-  html+=`<div class="sum-sec-title">Rankings</div>`;
+  el.appendChild(makeAccordion('Game Stats','📊',statsHtml,true));
+
+  // ── Rankings ──
   const ranked=Object.entries(playerGuesses).sort((a,b)=>a[1].total-b[1].total);
+  let rankHtml='';
   ranked.forEach(([name,stats],i)=>{
     const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
     const isW=name===specWinnerName;
-    html+=`<div class="sum-player-card" style="${isW?'border-color:#fed7aa;background:#fff7ed':''}">
+    rankHtml+=`<div class="sum-player-card" style="${isW?'border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.1)':''}">
       <div class="sum-player-name">${medal} ${isW?'🏆 ':''}${name}</div>
       <div class="sum-player-stats">
         <div class="sum-ps"><div class="v">${stats.total}</div><div class="l">Guesses</div></div>
@@ -2944,16 +3617,18 @@ function renderSpecSummary(){
       </div>
     </div>`;
   });
-  html+=`<div class="sum-sec-title">Full Guess Log</div>
-  <table class="sum-table"><thead><tr><th>#</th><th>Player</th><th>Result</th></tr></thead><tbody>`;
+  el.appendChild(makeAccordion('Rankings','🏆',rankHtml,true));
+
+  // ── Full Guess Log ──
+  let logHtml='<table class="sum-table"><thead><tr><th>#</th><th>Player</th><th>Result</th></tr></thead><tbody>';
   specAllGuesses.forEach((g,i)=>{
     if(g.name==='SYSTEM')return;
     const {text}=dirLabel(g.result);
     const cls=g.result==='higher'?'tag-h':g.result==='lower'?'tag-l':'tag-c';
-    html+=`<tr><td style="color:#78716c">${i+1}</td><td>${g.name}</td><td><span class="${cls}">${text}</span></td></tr>`;
+    logHtml+=`<tr><td style="color:rgba(255,255,255,.5)">${i+1}</td><td>${g.name}</td><td><span class="${cls}">${text}</span></td></tr>`;
   });
-  html+='</tbody></table>';
-  el.innerHTML=html;
+  logHtml+='</tbody></table>';
+  el.appendChild(makeAccordion('Full Guess Log','📋',logHtml,false));
 }
 
 // Session persistence
@@ -2981,13 +3656,40 @@ async function restoreSession(){
     document.getElementById('activeRoomCode').textContent=roomCode;
     document.getElementById('gameScreen').classList.add('show');
     initRoomSync();
-    toast('Welcome back!',true);
+    // Session restored silently
     return true;
   }catch(e){clearSession();return false;}
 }
 
 // Restore on load — multiple attempts to handle slow Firebase init
-setTimeout(()=>restoreSession(),500);
+// Auto-restore spectator session
+async function tryRestoreSpec(){
+  const raw = localStorage.getItem('showdown_spec_session');
+  if(!raw) return false;
+  try{
+    const s = JSON.parse(raw);
+    if(!s.gameId||!s.specCode) return false;
+    const snap = await getDoc(doc(db,'games',s.gameId));
+    if(!snap.exists()){ localStorage.removeItem('showdown_spec_session'); return false; }
+    launchSpectatorMode(s.gameId, s.specCode);
+    return true;
+  }catch(e){ localStorage.removeItem('showdown_spec_session'); return false; }
+}
+
+// Show loading overlay during restore
+const loadOverlay = document.createElement('div');
+loadOverlay.style.cssText='position:fixed;inset:0;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center;';
+loadOverlay.innerHTML='<div style="font-family:Fredoka One,cursive;font-size:24px;color:#f97316;animation:titleBounce 1s ease-in-out infinite">⚡ Loading...</div>';
+document.body.appendChild(loadOverlay);
+
+setTimeout(async()=>{
+  const specRestored = await tryRestoreSpec();
+  if(!specRestored) await restoreSession();
+  // Remove overlay
+  loadOverlay.style.transition='opacity .3s';
+  loadOverlay.style.opacity='0';
+  setTimeout(()=>loadOverlay.remove(),300);
+},600);
 setTimeout(()=>{ if(!roomCode) restoreSession(); },1500);
 </script>
 

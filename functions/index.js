@@ -83,7 +83,7 @@ exports.handleTimeout = functions.https.onCall(async (data, context) => {
     const cleanName = userId.replace(/_/g," ");
     if (playerOrder.length >= 2) {
       const nextIndex = activeIndex % playerOrder.length;
-      tx.set(logRef,{name:"SYSTEM",result:"timeout",timestamp:admin.firestore.FieldValue.serverTimestamp()});
+      tx.set(logRef,{name:"SYSTEM",result:"player_left",leftPlayer:cleanName,timestamp:admin.firestore.FieldValue.serverTimestamp()});
       tx.update(gameRef,{playerOrder,activePlayerIndex:nextIndex,lastActiveTimestamp:admin.firestore.FieldValue.serverTimestamp()});
       return {success:true, action:"skipped"};
     } else if (playerOrder.length === 1) {
