@@ -5,13 +5,15 @@
   "start_url": "/",
   "id": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#f97316",
   "theme_color": "#f97316",
   "lang": "en",
   "scope": "/",
   "prefer_related_applications": false,
+"display_override": ["fullscreen", "standalone"],
   "categories": ["games", "entertainment"],
+"iarc_rating_id": "",
   "screenshots": [
     {
       "src": "icons/icon-512x512.png",
