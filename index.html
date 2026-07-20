@@ -749,7 +749,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 </div>
 
 <div class="builder-tag">Made by JohnnyDeey</div>
-<div id="muteBtn" style="position:fixed;top:16px;right:16px;z-index:20;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;" onclick="toggleMuteAll()">🔊</div>
+<div id="muteBtn" style="position:fixed;top:16px;right:16px;z-index:20;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;">🔊</div>
 <div id="playerTag" style="display:none"></div>
 <div id="resultToast"></div>
 
@@ -2239,13 +2239,12 @@ function openStatsView(){
   document.getElementById('origMaxDisplay').textContent='--';
   // Show a "Start Game" button in the wait panel
   document.getElementById('waitPanel').style.display='flex';
-  document.getElementById('waitPanel').innerHTML=`
-    <button onclick="document.getElementById('gameScreen').classList.remove('show');openPopup('playPopup');" 
-      style="margin-top:16px;background:linear-gradient(135deg,#f97316,#fb923c);border:none;border-radius:50px;padding:14px 32px;font-family:'Fredoka One',cursive;font-size:18px;color:#fff;cursor:pointer;box-shadow:0 4px 0 #c2410c;">
-      <i class="fa-solid fa-play"></i> Start a Game
-    </button>
-  `;
-  switchTab('board');
+  const _sb=document.createElement("button");
+  _sb.style.cssText="margin-top:16px;background:linear-gradient(135deg,#f97316,#fb923c);border:none;border-radius:50px;padding:14px 32px;font-family:Fredoka One,cursive;font-size:18px;color:#fff;cursor:pointer;box-shadow:0 4px 0 #c2410c;";
+  _sb.innerHTML="<i class=\"fa-solid fa-play\"></i> Start a Game";
+  _sb.addEventListener("click",()=>{document.getElementById("gameScreen").classList.remove("show");openPopup("playPopup");});
+  document.getElementById("waitPanel").innerHTML="";
+  document.getElementById("waitPanel").appendChild(_sb);
   renderMyGuesses();
 }
 
@@ -2315,6 +2314,7 @@ if(savedMute==='true'){
   globalMuted=true;
   document.getElementById('muteBtn').textContent='🔇';
 }
+document.getElementById("muteBtn").addEventListener("click",toggleMuteAll);
 
 // ── MUSIC SETTINGS ──
 const musicSettings = JSON.parse(localStorage.getItem('showdown_music')||'{"home":true,"game":true,"spec":true,"sfx":true}');
