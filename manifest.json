@@ -3,13 +3,24 @@
   "short_name": "Showdown",
   "description": "Real-time family number guessing game. Create a room, share the code, and outwit your family.",
   "start_url": "/",
+  "id": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fafaf9",
+  "background_color": "#f97316",
   "theme_color": "#f97316",
   "lang": "en",
   "scope": "/",
+  "prefer_related_applications": false,
   "categories": ["games", "entertainment"],
+  "screenshots": [
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Family Showdown Home Screen"
+    }
+  ],
   "icons": [
     { "src": "icons/icon-72x72.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-96x96.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any" },
