@@ -749,6 +749,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 </div>
 
 <div class="builder-tag">Made by JohnnyDeey</div>
+<div id="muteBtn" style="position:fixed;top:16px;right:16px;z-index:20;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;" onclick="toggleMuteAll()">🔊</div>
 <div id="playerTag" style="display:none"></div>
 <div id="resultToast"></div>
 
@@ -1400,20 +1401,19 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 
 <!-- PROFILE POPUP -->
 <div class="popup-overlay" id="profilePopup">
-  <div class="popup-card">
-    <div class="popup-title-bar">
-      <div class="popup-title">👤 My Profile</div>
-      <div class="popup-close" id="profilePopupClose">✕</div>
+  <div class="popup-card" style="max-height:90vh;overflow-y:auto;">
+    <div class="popup-title-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <button id="profileNameBtn" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;flex:1">
+        <div style="font-size:32px;flex-shrink:0" id="profileEmoji">🦁</div>
+        <div>
+          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#fff" id="profileName">-</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.8)" id="profileUsername">-</div>
+        </div>
+      </button>
+      <div class="popup-close" id="profilePopupClose" style="position:static;flex-shrink:0">✕</div>
     </div>
-    <div class="popup-body">
-      <div style="text-align:center;margin-bottom:16px">
-        <div style="font-size:52px" id="profileEmoji">🦁</div>
-        <button id="profileNameBtn" style="background:linear-gradient(135deg,#7C3AED,#9B59B6);border:none;border-radius:12px;padding:10px 20px;cursor:pointer;margin-top:6px;width:100%;pointer-events:all;">
-  <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#fff;pointer-events:none" id="profileName">-</div>
-  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.7);margin-top:2px;pointer-events:none" id="profileUsername">-</div>
-</button>
-        
-      </div>
+    <div class="popup-body" style="padding-top:8px">
+
       <!-- Medals -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px" id="profileMedals">
         <div style="background:rgba(255,215,0,.15);border-radius:10px;padding:10px;text-align:center">
@@ -1574,7 +1574,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import {
   getFirestore, doc, setDoc, getDoc, onSnapshot,
   collection, query, orderBy, limit, getDocs,
-  deleteDoc, updateDoc, serverTimestamp
+  deleteDoc, updateDoc, serverTimestamp, increment
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
 
@@ -2290,6 +2290,32 @@ document.getElementById('statsBtn').addEventListener('click',()=>{
   openStatsView();
 });
 
+// ── GLOBAL MUTE ──
+let globalMuted = false;
+window.toggleMuteAll = function(){
+  globalMuted = !globalMuted;
+  document.getElementById('muteBtn').textContent = globalMuted ? '🔇' : '🔊';
+  if(globalMuted){
+    if(homeAudio) homeAudio.volume=0;
+    if(bgAudio) bgAudio.volume=0;
+    if(specBgAudio) specBgAudio.volume=0;
+    if(winAudio) winAudio.volume=0;
+  } else {
+    if(homeAudio) homeAudio.volume=0.4;
+    if(bgAudio) bgAudio.volume=0.35;
+    if(specBgAudio) specBgAudio.volume=0.35;
+    if(winAudio) winAudio.volume=0.8;
+  }
+  localStorage.setItem('showdown_muted', globalMuted);
+};
+
+// Restore mute state on load
+const savedMute = localStorage.getItem('showdown_muted');
+if(savedMute==='true'){
+  globalMuted=true;
+  document.getElementById('muteBtn').textContent='🔇';
+}
+
 // ── MUSIC SETTINGS ──
 const musicSettings = JSON.parse(localStorage.getItem('showdown_music')||'{"home":true,"game":true,"spec":true,"sfx":true}');
 
@@ -2600,7 +2626,20 @@ document.getElementById('joinBtn').addEventListener('click', async ()=>{
     const snap=await getDoc(doc(db,'games',roomCode));
     if(!snap.exists()) return toast('Room not found.');
     const gd=snap.data();
-    if(gd.status==='playing'||gd.status==='won') return toast('Game already started.');
+    if(gd.status==='won'||gd.status==='closed') return toast('This game has ended.');
+// Allow rejoining active games
+if(gd.status==='playing'){
+  // Check if already a player
+  const existingPlayer = await getDoc(doc(db,`games/${roomCode}/players`,myUserId));
+  if(!existingPlayer.exists()){
+    // Add as new player
+    await setDoc(doc(db,`games/${roomCode}/players`,myUserId),{name,guessCount:0,lastGuess:null},{merge:true});
+  }
+  playerNames[myUserId]=name;
+  closePopup('joinPopup');
+  launchGameplay();
+  return;
+}
     await setDoc(doc(db,`games/${roomCode}/players`,myUserId),{name,guessCount:0,lastGuess:null},{merge:true});
     const pOrder=gd.playerOrder||[];
     if(!pOrder.includes(myUserId)){pOrder.push(myUserId);await updateDoc(doc(db,'games',roomCode),{playerOrder:pOrder});}
@@ -3323,7 +3362,7 @@ document.getElementById('endResetBtn').addEventListener('click',()=>{
 });
 
 // Win
-function showWin(data){
+async function showWin(data){
   clearInterval(timerInterval);
   // Save current round to history
   if(myGuesses.length>0){
@@ -3343,7 +3382,31 @@ function showWin(data){
   document.getElementById('winnerName').textContent=data.winnerId
     ?(isWinner?'Congratulations! 🎉':(playerNames[data.winnerId]||data.winnerId.replace(/_/g,' '))+' guessed it!'):'';
   document.getElementById('winScreen').classList.add('show');
-  if(isWinner) launchConfetti();
+  if(isWinner){
+    launchConfetti();
+    soundWin();
+    // Award gold medal to winner only
+    if(currentUser){
+      try{
+        await updateDoc(doc(db,'users',currentUser.username),{
+          'stats.gold': increment(1),
+          'stats.wins': increment(1),
+          'stats.gamesPlayed': increment(1),
+          'stats.totalGuesses': increment(myGuesses.length)
+        });
+      }catch(e){}
+    }
+  } else {
+    // Non-winner — just update games played and guesses
+    if(currentUser){
+      try{
+        await updateDoc(doc(db,'users',currentUser.username),{
+          'stats.gamesPlayed': increment(1),
+          'stats.totalGuesses': increment(myGuesses.length)
+        });
+      }catch(e){}
+    }
+  }
 }
 
 function launchConfetti(){
@@ -3497,7 +3560,7 @@ document.getElementById('burgerBtn').addEventListener('click',()=>{
 document.getElementById('statsClose').addEventListener('click',()=>document.getElementById('statsPanel').classList.remove('show'));
 document.getElementById('statsBackdrop').addEventListener('click',()=>document.getElementById('statsPanel').classList.remove('show'));
 
-function renderStats(){
+async function renderStats(){
   onSnapshot(collection(db,`games/${roomCode}/players`),(snap)=>{
     const lb=document.getElementById('statsLeaderboard'); lb.innerHTML='';
     const ps=[]; snap.forEach(d=>ps.push({id:d.id,...d.data()}));
@@ -3513,11 +3576,20 @@ function renderStats(){
   });
   const el=document.getElementById('statsInfo');
   const elapsed=gameStartTime?Math.floor((Date.now()-gameStartTime)/1000):0;
+  // Get spectator code from Firestore
+  let specCodeHtml = '';
+  try{
+    const gsnap = await getDoc(doc(db,'games',roomCode));
+    const specCode = gsnap.data()?.spectatorCode;
+    if(specCode) specCodeHtml=`<div class="stat-row"><div class="stat-name">📺 TV Code</div><div class="stat-count" style="font-size:14px;letter-spacing:.1em">${specCode}</div></div>`;
+  }catch(e){}
+  
   el.innerHTML=`
-    <div class="stat-row"><div class="stat-name">Room</div><div class="stat-count" style="font-size:14px">${roomCode}</div></div>
-    <div class="stat-row"><div class="stat-name">Time</div><div class="stat-count" style="font-size:14px">${Math.floor(elapsed/60)}m ${elapsed%60}s</div></div>
-    <div class="stat-row"><div class="stat-name">My Guesses</div><div class="stat-count">${myGuesses.length}</div></div>
-    <div class="stat-row"><div class="stat-name">Range</div><div class="stat-count" style="font-size:12px">${origMin??'--'} – ${origMax??'--'}</div></div>
+    <div class="stat-row"><div class="stat-name">🏠 Room</div><div class="stat-count" style="font-size:14px;letter-spacing:.1em">${roomCode}</div></div>
+    ${specCodeHtml}
+    <div class="stat-row"><div class="stat-name">⏱ Time</div><div class="stat-count" style="font-size:14px">${Math.floor(elapsed/60)}m ${elapsed%60}s</div></div>
+    <div class="stat-row"><div class="stat-name">🎯 My Guesses</div><div class="stat-count">${myGuesses.length}</div></div>
+    <div class="stat-row"><div class="stat-name">📊 Range</div><div class="stat-count" style="font-size:12px">${origMin??'--'} – ${origMax??'--'}</div></div>
   `;
 }
 
@@ -3556,6 +3628,16 @@ function launchSpectatorMode(gameId,specCode){
           if(ps.exists())document.getElementById('specActiveName').textContent=ps.data().name;
         });
       }
+      // New round started — stop win sound, switch to live tab
+      if(wonShown){
+        wonShown=false;
+        stopAllMusic();
+        playSpecBgMusic();
+        document.getElementById('specWinOverlay').classList.remove('show');
+        switchSpecTab('live');
+        specAllGuesses=[];
+        document.getElementById('specFeed').innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:16px">New round started!</div>';
+      }
     } else if(data.status==='won'&&!wonShown){
       wonShown=true; specTargetNumber=data.targetNumber;
       getDoc(doc(db,`games/${gameId}/players`,data.winnerId)).then(ps=>{
@@ -3568,7 +3650,10 @@ function launchSpectatorMode(gameId,specCode){
         stopSpecBgMusic();
         soundWin();
         launchConfetti();
-        setTimeout(()=>{document.getElementById('specWinOverlay').classList.remove('show');switchSpecTab('summary');},6000);
+        setTimeout(()=>{
+  document.getElementById('specWinOverlay').classList.remove('show');
+  switchSpecTab('summary');
+},6000);
       });
     }
   });
