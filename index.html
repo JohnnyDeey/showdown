@@ -1537,6 +1537,23 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
     </div>
   </div>
 </div>
+<!-- PREVIOUS ROOMS POPUP -->
+<div class="popup-overlay" id="prevRoomsPopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title">🏠 Your Rooms</div>
+      <div class="popup-close" id="prevRoomsClose">✕</div>
+    </div>
+    <div class="popup-body">
+      <div id="prevRoomsList" style="max-height:320px;overflow-y:auto;margin-bottom:12px">
+        <div style="text-align:center;color:#6D3D1A;font-size:12px">Loading…</div>
+      </div>
+      <button class="game-btn btn-orange" id="createNewRoomBtn">
+        <i class="fa-solid fa-plus"></i><span>Create New Room</span>
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- CONFIRM POPUP -->
 <div class="popup-overlay" id="confirmPopup">
@@ -1573,7 +1590,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore, doc, setDoc, getDoc, onSnapshot,
-  collection, query, orderBy, limit, getDocs,
+  collection, query, where, orderBy, limit, getDocs,
   deleteDoc, updateDoc, serverTimestamp, increment
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
@@ -2248,6 +2265,98 @@ function openStatsView(){
   renderMyGuesses();
 }
 
+// ── PREVIOUS ROOMS ──
+document.getElementById('prevRoomsClose').addEventListener('click',()=>closePopup('prevRoomsPopup'));
+document.getElementById('createNewRoomBtn').addEventListener('click',()=>{
+  closePopup('prevRoomsPopup');
+  openPopup('createPopup');
+});
+
+async function loadPrevRooms(filterMode=null){
+  const list = document.getElementById('prevRoomsList');
+  list.innerHTML='<div style="text-align:center;color:#6D3D1A;font-size:12px">Loading…</div>';
+  try{
+    const nameId1 = currentUser.username;
+    const nameId2 = currentUser.name.toLowerCase().replace(/\s+/g,'_');
+    const nameId3 = currentUser.name.toLowerCase().replace(/\s+/g,'');
+    const snaps = await Promise.all([
+      getDocs(query(collection(db,'games'),where('creatorId','==',nameId1))),
+      getDocs(query(collection(db,'games'),where('creatorId','==',nameId2))),
+      getDocs(query(collection(db,'games'),where('creatorId','==',nameId3)))
+    ]);
+    const rooms=[];
+    const seen=new Set();
+    snaps.forEach(snap=>snap.docs.forEach(d=>{
+      if(!seen.has(d.id)){ seen.add(d.id); rooms.push({roomCode:d.id,...d.data()}); }
+    }));
+    const filtered = filterMode ? rooms.filter(r=> filterMode==='solo'?(r.maxPlayers===1):(r.maxPlayers!==1)) : rooms;
+    if(filtered.length===0){
+      list.innerHTML='<div style="text-align:center;color:#6D3D1A;font-size:12px;padding:16px">No previous rooms yet.</div>';
+      return false;
+    }
+    list.innerHTML='';
+    filtered.sort((a,b)=>(b.lastActiveTimestamp?.toMillis?.()??0)-(a.lastActiveTimestamp?.toMillis?.()??0));
+    filtered.forEach(room=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.4);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;';
+      row.innerHTML=`
+        <div>
+          <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#7D3C98">${room.roomCode} ${room.spectatorCode?`<span style="font-size:13px;color:#E67E22">📺 ${room.spectatorCode}</span>`:''}</div>
+          <div style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:2px">${room.maxPlayers===1?'⚡ Solo':'👥 Multiplayer'} · ${room.origMin??'--'}–${room.origMax??'--'}</div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color:#7D3C98;font-size:14px"></i>
+      `;
+      row.addEventListener('click',async()=>{
+        closePopup('prevRoomsPopup');
+        await useExistingRoom(room);
+      });
+      list.appendChild(row);
+    });
+    return true;
+  }catch(e){
+    list.innerHTML='<div style="text-align:center;color:#6D3D1A;font-size:12px;padding:16px">Could not load rooms.</div>';
+    return false;
+  }
+}
+
+async function useExistingRoom(room){
+  const min=room.origMin||room.rangeMin||1;
+  const max=room.origMax||room.rangeMax||100;
+  const name=currentUser.name;
+  myName=name;
+  myUserId=currentUser.username;
+  isSolo=room.maxPlayers===1;
+  try{
+    const newTarget=parseFloat((Math.random()*(max-min)+min).toFixed(2));
+    const oldPlayers=await getDocs(collection(db,`games/${room.roomCode}/players`));
+    for(const p of oldPlayers.docs) await deleteDoc(p.ref);
+    await setDoc(doc(db,'games',room.roomCode),{
+      rangeMin:min,rangeMax:max,origMin:min,origMax:max,
+      targetNumber:newTarget,status:'waiting',
+      creatorId:myUserId,
+      playerOrder:[myUserId],activePlayerIndex:0,
+      maxPlayers:isSolo?1:99,
+      spectatorCode:room.spectatorCode||null,
+      lastActiveTimestamp:serverTimestamp(),
+      createdAt:serverTimestamp(),
+      winnerId:null,rematchAccepted:[],rematchProposedBy:null
+    });
+    roomCode=room.roomCode;
+    await setDoc(doc(db,`games/${roomCode}/players`,myUserId),{name,guessCount:0,lastGuess:null});
+    playerNames[myUserId]=name;
+    if(isSolo){
+      await updateDoc(doc(db,'games',roomCode),{status:'playing'});
+      closeAllPopups();
+      launchGameplay();
+    } else {
+      startWaitingRoom(99,true,room.spectatorCode);
+    }
+  }catch(e){
+    console.error('Room reset error:',e);
+    toast('Error: '+(e.message||'Could not reset room.'));
+  }
+}
+
 // ── RENDER PROFILE STATS IN BURGER MENU ──
 async function renderProfileStats(){
   const lb = document.getElementById('statsLeaderboard');
@@ -2487,13 +2596,31 @@ document.getElementById('watchBtn').addEventListener('click',()=>{
 
 // Play popup close
 document.getElementById('playPopupClose').addEventListener('click',()=>closePopup('playPopup'));
-document.getElementById('soloPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('soloPopup');});
+document.getElementById('soloPlayBtn').addEventListener('click',async()=>{
+  closePopup('playPopup');
+  if(currentUser){
+    openPopup('prevRoomsPopup');
+    const has=await loadPrevRooms('solo');
+    if(!has) document.getElementById('createNewRoomBtn').style.display='none';
+    else document.getElementById('createNewRoomBtn').style.display='flex';
+  } else {
+    openPopup('soloPopup');
+  }
+});
 document.getElementById('multiPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('multiPopup');});
 
 // Multi popup
 document.getElementById('multiPopupClose').addEventListener('click',()=>{closePopup('multiPopup');openPopup('playPopup');});
 document.getElementById('backToPlay').addEventListener('click',()=>{closePopup('multiPopup');openPopup('playPopup');});
-document.getElementById('createGameBtn').addEventListener('click',()=>{closePopup('multiPopup');openPopup('createPopup');});
+document.getElementById('createGameBtn').addEventListener('click',async()=>{
+  closePopup('multiPopup');
+  if(currentUser){
+    openPopup('prevRoomsPopup');
+    await loadPrevRooms('multi');
+  } else {
+    openPopup('createPopup');
+  }
+});
 document.getElementById('joinGameBtn').addEventListener('click',()=>{closePopup('multiPopup');openPopup('joinPopup');});
 
 // Create popup
