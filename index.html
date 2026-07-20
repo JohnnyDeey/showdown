@@ -2523,6 +2523,67 @@ async function syncHistoryFromFirestore(){
     }
   }catch(e){ console.log('Sync error:', e); }
 }
+// ── CHECK FOR WAITING ROOMS ON LOAD ──
+async function checkWaitingRooms(){
+  if(!currentUser) return;
+  try{
+    const nameId1=currentUser.username;
+    const nameId2=currentUser.name.toLowerCase().replace(/\s+/g,'_');
+    const nameId3=currentUser.name.toLowerCase().replace(/\s+/g,'');
+    const snaps=await Promise.all([
+      getDocs(query(collection(db,'games'),where('status','==','waiting'),where('creatorId','!=',nameId1))),
+    ]);
+    const rooms=[];
+    const seen=new Set();
+    snaps.forEach(snap=>snap.docs.forEach(d=>{
+      const data=d.data();
+      // Check if current user was in this room before
+      if(!seen.has(d.id) && data.playerOrder){
+        seen.add(d.id);
+        rooms.push({code:d.id,...data});
+      }
+    }));
+    // Show banner for first waiting room
+    if(rooms.length>0){
+      const room=rooms[0];
+      showJoinBanner(room.code, room.creatorId.replace(/_/g,' '));
+    }
+  }catch(e){}
+}
+
+function showJoinBanner(code, hostName){
+  // Remove existing banner
+  document.getElementById('joinBanner')?.remove();
+  const banner=document.createElement('div');
+  banner.id='joinBanner';
+  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#f97316,#fb923c);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+  banner.innerHTML=`
+    <div>
+      <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#fff">🎮 ${hostName} started a game!</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.8)">Room: ${code}</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button id="bannerJoinBtn" style="background:#fff;border:none;border-radius:20px;padding:6px 14px;font-family:'Fredoka One',cursive;font-size:13px;color:#f97316;cursor:pointer">Join</button>
+      <button id="bannerCloseBtn" style="background:rgba(255,255,255,.2);border:none;border-radius:20px;padding:6px 10px;color:#fff;cursor:pointer;font-size:13px">✕</button>
+    </div>
+  `;
+  document.body.appendChild(banner);
+  banner.querySelector('#bannerJoinBtn').addEventListener('click',async()=>{
+    banner.remove();
+    roomCode=code;
+    myUserId=currentUser.username;
+    myName=currentUser.name;
+    isSolo=false;
+    playerNames[myUserId]=myName;
+    const existingP=await getDoc(doc(db,`games/${roomCode}/players`,myUserId));
+    if(!existingP.exists()){
+      await setDoc(doc(db,`games/${roomCode}/players`,myUserId),{name:myName,guessCount:0,lastGuess:null});
+    }
+    startWaitingRoom(99,false,null);
+  });
+  banner.querySelector('#bannerCloseBtn').addEventListener('click',()=>banner.remove());
+  setTimeout(()=>{ if(banner.parentNode) banner.remove(); },120000);
+}
 
 // ── INIT ──
 initUser();
