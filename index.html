@@ -1519,6 +1519,25 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
   </div>
 </div>
 
+<!-- LOGIN CHOICE POPUP -->
+<div class="popup-overlay" id="loginChoicePopup">
+  <div class="popup-card">
+    <div class="popup-title-bar">
+      <div class="popup-title">👤 Account</div>
+      <div class="popup-close" id="loginChoiceClose">✕</div>
+    </div>
+    <div class="popup-body">
+      <p style="font-size:13px;font-weight:600;color:#6D3D1A;margin-bottom:16px;text-align:center">Do you have an existing account or are you new?</p>
+      <button class="game-btn btn-green" id="goLoginBtn">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i><span>Login</span>
+      </button>
+      <button class="game-btn btn-orange" id="goRegisterBtn">
+        <i class="fa-solid fa-user-plus"></i><span>Create Account</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM POPUP -->
 <div class="popup-overlay" id="confirmPopup">
   <div class="popup-card">
@@ -1894,10 +1913,6 @@ function saveUserLocal(user){
 
 function showPlayerTag(){
   if(!currentUser) return;
-  const tag = document.getElementById('playerTag');
-  if(tag) tag.style.display='flex';
-  document.getElementById('playerTagEmoji').textContent = currentUser.emoji;
-  document.getElementById('playerTagName').textContent = currentUser.name;
   const hEmoji = document.getElementById('headerChipEmoji');
   const hName  = document.getElementById('headerChipName');
   if(hEmoji) hEmoji.textContent = currentUser.emoji;
@@ -1989,12 +2004,19 @@ document.getElementById('regStep3Btn').addEventListener('click', async ()=>{
 });
 
 // ── LOGIN ──
-document.getElementById('showLoginBtn').addEventListener('click',()=>{
-  closePopup('registerPopup');
+document.getElementById('goLoginBtn').addEventListener('click',()=>{
+  closePopup('loginChoicePopup');
   openPopup('loginPopup');
 });
-document.getElementById('showRegisterBtn').addEventListener('click',()=>{
-  closePopup('loginPopup');
+document.getElementById('loginChoiceClose').addEventListener('click',()=>closePopup('loginChoicePopup'));
+document.getElementById('goRegisterBtn').addEventListener('click',()=>{
+  closePopup('loginChoicePopup');
+  // Reset to step 1
+  document.getElementById('regStep1').style.display='block';
+  document.getElementById('regStep2').style.display='none';
+  if(document.getElementById('regStep3')) document.getElementById('regStep3').style.display='none';
+  const randomEmoji = EMOJIS_LIST[Math.floor(Math.random()*EMOJIS_LIST.length)];
+  document.getElementById('registerEmoji').textContent = randomEmoji;
   openPopup('registerPopup');
 });
 document.getElementById('loginPopupClose').addEventListener('click',()=>closePopup('loginPopup'));
@@ -2013,9 +2035,13 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
     if(data.pinHash !== hashPin(pin)) return toast('Incorrect PIN.');
     currentUser = { name:data.name, username, emoji:data.emoji };
     saveUserLocal(currentUser);
+    currentUser = { name:data.name, username, emoji:data.emoji||'🦁' };
+    saveUserLocal(currentUser);
     closePopup('loginPopup');
     showPlayerTag();
     prefillNameFields();
+    myName = data.name;
+    myUserId = username;
     toast('Welcome back '+data.name+'! 🎉', true);
     syncHistoryFromFirestore();
     onUserReady();
@@ -2060,10 +2086,16 @@ document.getElementById('forgotStep1Btn').addEventListener('click', async ()=>{
       q4:"What is your favourite food?",
       q5:"What was the name of your primary school?"
     };
-    const q = questions[data.securityQuestion] || 'Security question not set — contact developer.';
-    document.getElementById('forgotSecQuestion').textContent = q;
-    document.getElementById('forgotStep1').style.display='none';
-    document.getElementById('forgotStep2').style.display='block';
+    // If no security question set, allow direct PIN reset
+    if(!data.securityQuestion){
+      document.getElementById('forgotStep1').style.display='none';
+      document.getElementById('forgotStep3').style.display='block';
+    } else {
+      const q = questions[data.securityQuestion] || 'Security question not set.';
+      document.getElementById('forgotSecQuestion').textContent = q;
+      document.getElementById('forgotStep1').style.display='none';
+      document.getElementById('forgotStep2').style.display='block';
+    }
   }catch(e){ toast('Error. Try again.'); }
   finally{ btn.disabled=false; btn.querySelector('span').textContent='Continue'; }
 });
@@ -2426,6 +2458,9 @@ document.getElementById('playBtn').addEventListener('click',()=>{
 document.getElementById('watchBtn').addEventListener('click',()=>{
   openPopup('specJoinPopup');
 });
+
+// Play popup close
+document.getElementById('playPopupClose').addEventListener('click',()=>closePopup('playPopup'));
 document.getElementById('soloPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('soloPopup');});
 document.getElementById('multiPlayBtn').addEventListener('click',()=>{closePopup('playPopup');openPopup('multiPopup');});
 
@@ -2459,7 +2494,11 @@ document.getElementById('rulesPopupClose').addEventListener('click',()=>closePop
 
 // ── PROFILE ──
 document.getElementById('profileBtn').addEventListener('click',()=>{
-  if(!currentUser){ checkUserBeforePlay(()=>{}); return; }
+  if(!currentUser){
+    // Show login or register choice
+    openPopup('loginChoicePopup');
+    return;
+  }
   loadAndShowProfile();
 });
 document.getElementById('profilePopupClose').addEventListener('click',()=>closePopup('profilePopup'));
