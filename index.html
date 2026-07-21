@@ -244,6 +244,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
   font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;
   color:#1a0533;outline:none;margin-bottom:10px;
   -webkit-appearance:none;-moz-appearance:textfield;
+  autocomplete:off;
 }
 .popup-field::placeholder{color:#999;font-weight:600}
 .popup-field:focus{border-color:#E67E22;box-shadow:0 0 0 3px rgba(230,126,34,.2)}
@@ -1244,7 +1245,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
           <p style="font-size:11px;font-weight:600;color:#6D3D1A;margin-top:6px">Your avatar is randomly assigned</p>
         </div>
         <div class="popup-label">Your Name</div>
-        <input type="text" class="popup-field" id="registerName" placeholder="e.g. John" autocomplete="off" maxlength="20">
+        <input type="text" class="popup-field" id="registerName" placeholder="e.g. John" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="20">
         <button class="game-btn btn-green" id="regStep1Btn">
           <i class="fa-solid fa-arrow-right"></i><span>Continue</span>
         </button>
@@ -1628,7 +1629,13 @@ document.addEventListener('keydown', e => {
 
   // Check which popup is open and click its primary button
   if(document.getElementById('registerPopup').classList.contains('show')){
-    document.getElementById('registerBtn').click(); return;
+    const s1=document.getElementById('regStep1');
+    const s2=document.getElementById('regStep2');
+    const s3=document.getElementById('regStep3');
+    if(s3&&s3.style.display!=='none') document.getElementById('regStep3Btn').click();
+    else if(s2&&s2.style.display!=='none') document.getElementById('regStep2Btn').click();
+    else document.getElementById('regStep1Btn').click();
+    return;
   }
   if(document.getElementById('soloPopup').classList.contains('show')){
     document.getElementById('soloStartBtn').click(); return;
@@ -1648,6 +1655,18 @@ document.addEventListener('keydown', e => {
   }
   if(document.getElementById('specJoinPopup').classList.contains('show')){
     document.getElementById('specJoinBtn').click(); return;
+  }
+  if(document.getElementById('loginPopup').classList.contains('show')){
+    document.getElementById('loginBtn').click(); return;
+  }
+  if(document.getElementById('forgotPinPopup').classList.contains('show')){
+    const f1=document.getElementById('forgotStep1');
+    const f2=document.getElementById('forgotStep2');
+    const f3=document.getElementById('forgotStep3');
+    if(f3&&f3.style.display!=='none') document.getElementById('forgotStep3Btn').click();
+    else if(f2&&f2.style.display!=='none') document.getElementById('forgotStep2Btn').click();
+    else document.getElementById('forgotStep1Btn').click();
+    return;
   }
 });
 
@@ -1977,6 +1996,10 @@ async function initUser(){
 document.getElementById('registerPopupClose').addEventListener('click',()=>closePopup('registerPopup'));
 let pendingUsername = '';
 let pendingEmoji = '';
+document.getElementById('showLoginBtn').addEventListener('click',()=>{
+  closePopup('registerPopup');
+  openPopup('loginPopup');
+});
 
 document.getElementById('regStep1Btn').addEventListener('click',()=>{
   const name = document.getElementById('registerName').value.trim();
@@ -2055,6 +2078,13 @@ document.getElementById('goRegisterBtn').addEventListener('click',()=>{
   openPopup('registerPopup');
 });
 document.getElementById('loginPopupClose').addEventListener('click',()=>closePopup('loginPopup'));
+document.getElementById('showRegisterBtn').addEventListener('click',()=>{
+  closePopup('loginPopup');
+  document.getElementById('regStep1').style.display='block';
+  document.getElementById('regStep2').style.display='none';
+  if(document.getElementById('regStep3')) document.getElementById('regStep3').style.display='none';
+  openPopup('registerPopup');
+});
 
 document.getElementById('loginBtn').addEventListener('click', async ()=>{
   const username = document.getElementById('loginUsername').value.trim().toLowerCase();
@@ -2604,6 +2634,13 @@ function showJoinBanner(code, hostName){
   banner.querySelector('#bannerCloseBtn').addEventListener('click',()=>banner.remove());
   setTimeout(()=>{ if(banner.parentNode) banner.remove(); },120000);
 }
+// Remove autofill icons from all input fields
+document.querySelectorAll('.popup-field').forEach(el=>{
+  el.setAttribute('autocomplete','off');
+  el.setAttribute('autocorrect','off');
+  el.setAttribute('autocapitalize','off');
+  el.setAttribute('spellcheck','false');
+});
 
 // ── INIT ──
 initUser();
