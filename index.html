@@ -3172,7 +3172,7 @@ async function renderMyGuesses(){
 
   let history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
   
-  if(currentUser){try{const snaps=await Promise.all([getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.username))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,'_')))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,''))))]);const gameRooms=[];const seen=new Set();snaps.forEach(snap=>snap.docs.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);gameRooms.push({roomCode:d.id,...d.data()});}}));history=history.map(round=>{if(round.roomCode&&round.roomCode!=='Unknown')return round;const roundDate=new Date(round.date).toDateString();const match=gameRooms.find(g=>{const gDate=g.lastActiveTimestamp?.toDate?.()?.toDateString()||g.createdAt?.toDate?.()?.toDateString();return gDate===roundDate;});return match?{...round,roomCode:match.roomCode}:round;});localStorage.setItem('showdown_history',JSON.stringify(history));}catch(e){console.log('Enrichment:',e);}}
+  if(currentUser){try{const snaps=await Promise.all([getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.username))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,'_')))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,''))))]);const gameRooms=[];const seen=new Set();snaps.forEach(snap=>snap.docs.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);gameRooms.push({roomCode:d.id,...d.data()});}}));history=history.map(round=>{if(round.won&&round.guesses&&round.guesses.length>0){const gs=[...round.guesses];gs[gs.length-1]={...gs[gs.length-1],result:'won'};round={...round,guesses:gs};}if(round.roomCode&&round.roomCode!=='Unknown')return round;const roundDate=new Date(round.date).toDateString();const match=gameRooms.find(g=>{const gDate=g.lastActiveTimestamp?.toDate?.()?.toDateString()||g.createdAt?.toDate?.()?.toDateString();return gDate===roundDate;});return match?{...round,roomCode:match.roomCode}:round;});localStorage.setItem('showdown_history',JSON.stringify(history));}catch(e){console.log('Enrichment:',e);}}
   const allRounds=[...history];
 
   // Add current round at top
@@ -3213,7 +3213,9 @@ async function renderMyGuesses(){
       const {text,cls}=dirLabel(g.result);
       const row=document.createElement('div');
       row.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.04);';
-      row.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#fff;min-width:50px">${g.val}</span><span class="mg-tag ${cls}" style="font-size:11px">${text}</span><span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>`;
+      const isWinG=g.result==='won'||g.result==='correct';
+      const textColorG=isWinG?'#22c55e':g.result==='higher'?'#f43f5e':'#f97316';
+      row.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:${isWinG?'#22c55e':'#fff'};min-width:50px">${g.val}</span><span style="font-size:11px;color:${textColorG};font-weight:700">${isWinG?'✓ Correct':text}</span><span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>`;
       body.appendChild(row);
     });
     hdr.addEventListener('click',()=>{
@@ -3326,7 +3328,9 @@ async function renderMyGuesses(){
             const {text,cls}=dirLabel(g.result);
             const row=document.createElement('div');
             row.style.cssText='display:flex;align-items:center;gap:8px;padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.03);';
-            row.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#fff;min-width:46px">${g.val}</span><span class="mg-tag ${cls}" style="font-size:10px">${text}</span><span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>`;
+            const isWin=g.result==='won'||g.result==='correct';
+            const textColor=isWin?'#22c55e':g.result==='higher'?'#f43f5e':'#f97316';
+            row.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:${isWin?'#22c55e':'#fff'};min-width:46px">${g.val}</span><span style="font-size:10px;color:${textColor};font-weight:700">${isWin?'✓ Correct':text}</span><span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:auto">#${gi+1}</span>`;
             rBody.appendChild(row);
           });
           rHdr.addEventListener('click',()=>{
