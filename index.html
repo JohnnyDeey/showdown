@@ -998,7 +998,11 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
         </div>
         <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
           <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">👤 Your Profile</div>
-          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Register once with your name and a 4-digit PIN. Your username is generated automatically. Your game history and medals are saved permanently. Login with your username and PIN on any device to access your stats.</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Register once with your name and a 4-digit PIN. Your username is generated automatically. Login with your username and PIN on any device to access your stats.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.5);border-radius:12px;padding:12px">
+          <div style="font-family:'Fredoka One',cursive;font-size:16px;color:#7D3C98;margin-bottom:4px">☁️ Auto Cloud Backup</div>
+          <div style="font-size:12px;font-weight:600;color:#6D3D1A;line-height:1.5">Every round you play is automatically saved to the cloud after the game ends. Your full history — including guesses, scores and room codes — is accessible from any device when you login with your username and PIN.</div>
         </div>
       </div>
     </div>
@@ -1447,9 +1451,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;us
           <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#7D3C98" id="profileGuesses">0</span>
         </div>
       </div>
-      <button class="game-btn btn-green" id="backupHistoryBtn" style="margin-bottom:8px">
-        <i class="fa-solid fa-cloud-arrow-up"></i><span>Backup My History</span>
-      </button>
+      <!-- History auto-backed up after every game -->
       <button class="game-btn btn-orange" id="changePinBtn" style="margin-bottom:8px">
         <i class="fa-solid fa-key"></i><span>Change PIN</span>
       </button>
@@ -2230,6 +2232,7 @@ document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=
         guesses: round.guesses,
         won: round.won||false,
         roundNumber: i+1,
+        roomCode: round.roomCode||"Unknown",
         backedUpAt: serverTimestamp()
       });
     }
@@ -2252,6 +2255,7 @@ document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=
         guesses: round.guesses,
         won: round.won||false,
         roundNumber: i+1,
+        roomCode: round.roomCode||"Unknown",
         backedUpAt: serverTimestamp()
       });
     }
@@ -3125,11 +3129,13 @@ function renderChips(playerOrder,activeIndex){
   });
 }
 
-function renderMyGuesses(){
+async function renderMyGuesses(){
   const el=document.getElementById('myGuessList');
   el.innerHTML='';
 
-  const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  let history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  
+  if(currentUser){try{const snaps=await Promise.all([getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.username))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,'_')))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,''))))]);const gameRooms=[];const seen=new Set();snaps.forEach(snap=>snap.docs.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);gameRooms.push({roomCode:d.id,...d.data()});}}));history=history.map(round=>{if(round.roomCode&&round.roomCode!=='Unknown')return round;const roundDate=new Date(round.date).toDateString();const match=gameRooms.find(g=>{const gDate=g.lastActiveTimestamp?.toDate?.()?.toDateString()||g.createdAt?.toDate?.()?.toDateString();return gDate===roundDate;});return match?{...round,roomCode:match.roomCode}:round;});localStorage.setItem('showdown_history',JSON.stringify(history));}catch(e){console.log('Enrichment:',e);}}
   const allRounds=[...history];
 
   // Add current round at top
@@ -3599,6 +3605,23 @@ document.getElementById('endResetBtn').addEventListener('click',()=>{
 // Win
 async function showWin(data){
   clearInterval(timerInterval);
+  // Auto-save round to Firestore gameHistory
+  if(currentUser && myGuesses.length>0){
+    try{
+      const roundHistory=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+      const roundNum=roundHistory.length+1;
+      await setDoc(doc(db,`users/${currentUser.username}/gameHistory/round_${roundNum}`),{
+        date: new Date().toLocaleDateString(),
+        roomCode: roomCode||'Unknown',
+        mode: isSolo?'Solo':'Multiplayer',
+        min: origMin, max: origMax,
+        guesses: [...myGuesses],
+        won: myGuesses.some(g=>g.result==='won')||data.winnerId===myUserId,
+        roundNumber: roundNum,
+        savedAt: serverTimestamp()
+      });
+    }catch(e){ console.log('Auto-save error:',e); }
+  }
   // Save current round to history
   if(myGuesses.length>0){
     const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
@@ -3758,7 +3781,9 @@ if(myGuesses.length>0){
     date: new Date().toLocaleDateString(),
     min: origMin, max: origMax,
     guesses: myGuesses,
-    won: myGuesses.some(g=>g.result==='won')
+    won: myGuesses.some(g=>g.result==='won'),
+    roomCode: roomCode||"Unknown",
+    mode: isSolo?"Solo":"Multiplayer"
   });
   localStorage.setItem('showdown_history', JSON.stringify(roundHistory));
 }
