@@ -2317,9 +2317,11 @@ function openStatsView(){
 
 // ── PREVIOUS ROOMS ──
 document.getElementById('prevRoomsClose').addEventListener('click',()=>closePopup('prevRoomsPopup'));
+let _prevRoomsMode = 'solo';
 document.getElementById('createNewRoomBtn').addEventListener('click',()=>{
   closePopup('prevRoomsPopup');
-  openPopup('createPopup');
+  if(_prevRoomsMode==='solo') openPopup('soloPopup');
+  else openPopup('createPopup');
 });
 
 async function loadPrevRooms(filterMode=null){
@@ -2717,10 +2719,9 @@ document.getElementById('playPopupClose').addEventListener('click',()=>closePopu
 document.getElementById('soloPlayBtn').addEventListener('click',async()=>{
   closePopup('playPopup');
   if(currentUser){
+    _prevRoomsMode='solo';
     openPopup('prevRoomsPopup');
-    const has=await loadPrevRooms('solo');
-    if(!has) document.getElementById('createNewRoomBtn').style.display='none';
-    else document.getElementById('createNewRoomBtn').style.display='flex';
+    await loadPrevRooms('solo');
   } else {
     openPopup('soloPopup');
   }
@@ -2733,6 +2734,7 @@ document.getElementById('backToPlay').addEventListener('click',()=>{closePopup('
 document.getElementById('createGameBtn').addEventListener('click',async()=>{
   closePopup('multiPopup');
   if(currentUser){
+    _prevRoomsMode='multi';
     openPopup('prevRoomsPopup');
     await loadPrevRooms('multi');
   } else {
