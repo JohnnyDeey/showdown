@@ -2107,6 +2107,9 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
     prefillNameFields();
     myName = data.name;
     myUserId = username;
+    // Clear old history before loading this user's data
+    localStorage.removeItem(historyKey());
+    localStorage.removeItem("showdown_history");
     toast('Welcome back '+data.name+'! 🎉', true);
     syncHistoryFromFirestore();
     onUserReady();
@@ -2250,7 +2253,7 @@ document.getElementById('changePinBtn').addEventListener('click',()=>{
 // One-time backup button
 document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=>{
   if(!currentUser) return;
-  const history = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  const history = JSON.parse(localStorage.getItem(historyKey())||'[]');
   if(history.length===0){ toast('No history to backup.'); return; }
   try{
     for(let i=0;i<history.length;i++){
@@ -2273,7 +2276,7 @@ document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=
 // One-time backup button
 document.getElementById('backupHistoryBtn')?.addEventListener('click', async ()=>{
   if(!currentUser) return;
-  const history = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  const history = JSON.parse(localStorage.getItem(historyKey())||'[]');
   if(history.length===0){ toast('No history to backup.'); return; }
   try{
     for(let i=0;i<history.length;i++){
@@ -2557,6 +2560,11 @@ document.getElementById('playBtn').addEventListener('click',()=>{
   playHomeMusic();
 },{once:true});
 
+// ── USER-SPECIFIC HISTORY KEY ──
+function historyKey(){
+  return currentUser ? `showdown_history_${currentUser.username}` : 'showdown_history';
+}
+
 // ── SYNC HISTORY FROM FIRESTORE TO LOCALSTORAGE ──
 async function syncHistoryFromFirestore(){
   if(!currentUser) return;
@@ -2568,9 +2576,9 @@ async function syncHistoryFromFirestore(){
     // Sort by round number
     firestoreRounds.sort((a,b)=>(a.roundNumber||0)-(b.roundNumber||0));
     // Only sync if Firestore has more rounds than localStorage
-    const localHistory = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+    const localHistory = JSON.parse(localStorage.getItem(historyKey())||'[]');
     if(firestoreRounds.length > localHistory.length){
-      localStorage.setItem('showdown_history', JSON.stringify(firestoreRounds));
+      localStorage.setItem(historyKey(), JSON.stringify(firestoreRounds));
       toast('History synced from cloud!', true);
     }
   }catch(e){ console.log('Sync error:', e); }
@@ -2781,7 +2789,7 @@ async function loadAndShowProfile(){
     const snap = await getDoc(doc(db,'users',currentUser.username));
     const data = snap.exists() ? snap.data() : {};
     const stats = data.stats || {};
-    const history = JSON.parse(localStorage.getItem('showdown_history')||'[]');
+    const history = JSON.parse(localStorage.getItem(historyKey())||'[]');
     const localWins = history.filter(r=>r.won).length;
     const localGuesses = history.reduce((sum,r)=>sum+(r.guesses?.length||0),0);
     document.getElementById('profileEmoji').textContent    = currentUser.emoji;
@@ -2814,6 +2822,9 @@ document.getElementById('profileNameBtn').addEventListener('touchend',(e)=>{
 
 document.getElementById('logoutBtn').addEventListener('click',()=>{
   localStorage.removeItem('showdown_user');
+  localStorage.removeItem("showdown_history");
+  localStorage.removeItem(historyKey());
+  localStorage.removeItem('showdown_session');
   currentUser = null;
   document.getElementById('playerTag').style.display='none';
   closePopup('profilePopup');
@@ -3172,16 +3183,16 @@ async function renderMyGuesses(){
   const el=document.getElementById('myGuessList');
   el.innerHTML='';
 
-  let history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  let history=JSON.parse(localStorage.getItem(historyKey())||'[]');
   
-  if(currentUser){try{const snaps=await Promise.all([getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.username))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,'_')))),getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.name.toLowerCase().replace(/\s+/g,''))))]);const gameRooms=[];const seen=new Set();snaps.forEach(snap=>snap.docs.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);gameRooms.push({roomCode:d.id,...d.data()});}}));history=history.map(round=>{if(round.won&&round.guesses&&round.guesses.length>0){const gs=[...round.guesses];gs[gs.length-1]={...gs[gs.length-1],result:'won'};round={...round,guesses:gs};}if(round.roomCode&&round.roomCode!=='Unknown')return round;const roundDate=new Date(round.date).toDateString();const match=gameRooms.find(g=>{const gDate=g.lastActiveTimestamp?.toDate?.()?.toDateString()||g.createdAt?.toDate?.()?.toDateString();return gDate===roundDate;});return match?{...round,roomCode:match.roomCode}:round;});localStorage.setItem('showdown_history',JSON.stringify(history));}catch(e){console.log('Enrichment:',e);}}
+  if(currentUser){try{const snaps=await Promise.all([getDocs(query(collection(db,'games'),where('creatorId','==',currentUser.username)))]);const gameRooms=[];const seen=new Set();snaps.forEach(snap=>snap.docs.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);gameRooms.push({roomCode:d.id,...d.data()});}}));history=history.map(round=>{if(round.won&&round.guesses&&round.guesses.length>0){const gs=[...round.guesses];gs[gs.length-1]={...gs[gs.length-1],result:'won'};round={...round,guesses:gs};}if(round.roomCode&&round.roomCode!=='Unknown')return round;const roundDate=new Date(round.date).toDateString();const match=gameRooms.find(g=>{const gDate=g.lastActiveTimestamp?.toDate?.()?.toDateString()||g.createdAt?.toDate?.()?.toDateString();return gDate===roundDate;});return match?{...round,roomCode:match.roomCode}:round;});localStorage.setItem(historyKey(),JSON.stringify(history));}catch(e){console.log('Enrichment:',e);}}
   const allRounds=[...history];
 
   // Add current round at top
   if(myGuesses.length>0){
     allRounds.push({
       label:'Current Round',
-      date:new Date().toLocaleDateString(),
+      date:new Date().toISOString().split('T')[0],
       min:origMin, max:origMax,
       guesses:[...myGuesses],
       current:true,
@@ -3236,10 +3247,17 @@ async function renderMyGuesses(){
   // Build tree: {year: {month: {day: [rounds]}}}
   const tree = {};
   pastRounds.forEach(round=>{
-    const d = new Date(round.date);
-    const year = d.getFullYear() || new Date().getFullYear();
-    const month = d.toLocaleString('default',{month:'long'}) || 'Unknown';
-    const day = d.getDate() || 1;
+    // Handle both old locale format (7/21/2026) and new ISO format (2026-07-21)
+    let d = new Date(round.date);
+    if(isNaN(d.getTime())){
+      // Try DD/MM/YYYY format
+      const parts = round.date.split('/');
+      if(parts.length===3) d = new Date(`${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`);
+    }
+    if(isNaN(d.getTime())) d = new Date();
+    const year = d.getFullYear();
+    const month = d.toLocaleString('default',{month:'long'});
+    const day = d.getDate();
     if(!tree[year]) tree[year]={};
     if(!tree[year][month]) tree[year][month]={};
     if(!tree[year][month][day]) tree[year][month][day]=[];
@@ -3498,14 +3516,9 @@ async function submitGuess(){
 }
 
 function showResultToast(result,val){
+  // Toast removed — results show silently in history tab
+  return;
   const el=document.getElementById('resultToast');
-  el.className='';
-  if(result==='higher'){el.className='higher';el.innerHTML='<i class="fa-solid fa-arrow-up"></i> Too Low — Guess Higher';}
-  else if(result==='lower'){el.className='lower';el.innerHTML='<i class="fa-solid fa-arrow-down"></i> Too High — Guess Lower';}
-  else if(result==='won'){el.className='correct';el.innerHTML='<i class="fa-solid fa-trophy"></i> Correct! You got it!';}
-  else{el.className='lower';el.innerHTML='Guess sent';}
-  el.id='resultToast'; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2500);
 }
 
 // Timer
@@ -3651,10 +3664,10 @@ async function showWin(data){
   // Auto-save round to Firestore gameHistory
   if(currentUser && myGuesses.length>0){
     try{
-      const roundHistory=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+      const roundHistory=JSON.parse(localStorage.getItem(historyKey())||'[]');
       const roundNum=roundHistory.length+1;
       await setDoc(doc(db,`users/${currentUser.username}/gameHistory/round_${roundNum}`),{
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString().split('T')[0],
         roomCode: roomCode||'Unknown',
         mode: isSolo?'Solo':'Multiplayer',
         min: origMin, max: origMax,
@@ -3667,15 +3680,15 @@ async function showWin(data){
   }
   // Save current round to history
   if(myGuesses.length>0){
-    const history=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+    const history=JSON.parse(localStorage.getItem(historyKey())||'[]');
     history.push({
       label:'Round '+(history.length+1),
-      date:new Date().toLocaleDateString(),
+      date:new Date().toISOString().split('T')[0],
       min:origMin, max:origMax,
       guesses:[...myGuesses],
       won: myGuesses.some(g=>g.result==='won') || data.winnerId===myUserId
     });
-    localStorage.setItem('showdown_history',JSON.stringify(history));
+    localStorage.setItem(historyKey(),JSON.stringify(history));
   }
   const isWinner=data.winnerId===myUserId;
   document.getElementById('winTitle').textContent=isWinner?'You Won! 🏆':'Game Over!';
@@ -3818,17 +3831,17 @@ async function startNewRound(min,max,roundNum){
     }
     // Save current round to history before clearing
 if(myGuesses.length>0){
-  const roundHistory=JSON.parse(localStorage.getItem('showdown_history')||'[]');
+  const roundHistory=JSON.parse(localStorage.getItem(historyKey())||'[]');
   roundHistory.push({
     round: document.getElementById('roundNum').textContent||'1',
-    date: new Date().toLocaleDateString(),
+    date: new Date().toISOString().split('T')[0],
     min: origMin, max: origMax,
     guesses: myGuesses,
     won: myGuesses.some(g=>g.result==='won'),
     roomCode: roomCode||"Unknown",
     mode: isSolo?"Solo":"Multiplayer"
   });
-  localStorage.setItem('showdown_history', JSON.stringify(roundHistory));
+  localStorage.setItem(historyKey(), JSON.stringify(roundHistory));
 }
 myGuesses=[]; origMin=min; origMax=max; lastTimerKey=null;
       currentRoundStartTime=Date.now();
